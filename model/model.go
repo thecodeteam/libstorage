@@ -72,7 +72,8 @@ type BlockDevice struct {
 	// The ID of the instance to which the device is connected.
 	InstanceID *InstanceID `json:"instanceID"`
 
-	// The name of the network on which the device resides.
+	// The name the device is known by in order to discover
+	// locally.
 	NetworkName string `json:"networkName"`
 
 	// The name of the provider that owns the block device.
