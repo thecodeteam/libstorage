@@ -18,7 +18,7 @@ import (
 
 //the filtering mechanism applies a simple match, you could do something like
 //this future https://github.com/golang/appengine/blob/master/datastore/query.go
-func applyFilter(obj *types.Volume, filters map[string][]string) bool {
+func applyFilter(obj *types.Snapshot, filters map[string][]string) bool {
 	include := true
 	for key, values := range filters {
 		//fmt.Print("Filter Key: ", key, "\n")
