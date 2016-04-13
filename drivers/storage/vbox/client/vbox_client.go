@@ -10,14 +10,36 @@ import (
 	"time"
 )
 
+type logonRequest struct {
+	XMLName  xml.Name `xml:"IWebsessionManager_logon"`
+	Username string   `xml:"username,omitempty"`
+	Password string   `xml:"password,omitempty"`
+}
+
+type logonResponse struct {
+	XMLName   xml.Name `xml:"IWebsessionManager_logonResponse"`
+	Returnval string   `xml:"returnval,omitempty"`
+}
+
+type findMachineRequest struct {
+	XMLName  xml.Name `xml:"IVirtualBox_findMachine"`
+	VbID     string   `xml:"_this,omitempty"`
+	NameOrID string   `xml:"nameOrId,omitempty"`
+}
+
+type findMachineResponse struct {
+	XMLName   xml.Name `xml:"IVirtualBox_findMachineResponse"`
+	Returnval string   `xml:"returnval,omitempty"`
+}
+
 // VirtualBox Represents a virtualbox sesion
 type VirtualBox struct {
-	ConnectionTimeout time.Duration
-	username          string
-	password          string
-	vbURL             string
-	client            *http.Client
-	transport         *http.Transport
+	username     string
+	password     string
+	vbURL        string
+	client       *http.Client
+	useBasicAuth bool
+	id           string
 }
 
 type envelope struct {
@@ -39,7 +61,7 @@ func NewVirtualBox(uname, pwd, url string) *VirtualBox {
 				InsecureSkipVerify: false,
 			},
 			Dial: (&net.Dialer{
-				Timeout:   30 * time.Second,
+				Timeout:   10 * time.Second,
 				KeepAlive: 30 * time.Second,
 			}).Dial,
 			TLSHandshakeTimeout:   15 * time.Second,
@@ -56,6 +78,12 @@ func (vb *VirtualBox) WithTimeout(dur time.Duration) *VirtualBox {
 		Timeout:   dur,
 		KeepAlive: 30 * time.Second,
 	}).Dial
+	return vb
+}
+
+// UseBasicAuth Sets the use of basic-auth as true or false
+func (vb *VirtualBox) UseBasicAuth(flag bool) *VirtualBox {
+	vb.useBasicAuth = true
 	return vb
 }
 
@@ -83,6 +111,9 @@ func (vb *VirtualBox) send(request, response interface{}) error {
 	}
 	httpReq.Header.Add("Content-Type", "text/xml; charset=\"utf-8\"")
 	httpReq.Header.Set("User-Agent", "libstorage/0.1")
+	if vb.useBasicAuth {
+		httpReq.SetBasicAuth(vb.username, vb.password)
+	}
 
 	httpResp, err := vb.client.Do(httpReq)
 	if err != nil {
@@ -105,4 +136,30 @@ func (vb *VirtualBox) send(request, response interface{}) error {
 		return fmt.Errorf("Failed to unmarshal payload: %s", err)
 	}
 	return nil
+}
+
+// Logon logs into the soap server.
+func (vb *VirtualBox) Logon() error {
+	request := logonRequest{
+		Username: vb.username,
+		Password: vb.password,
+	}
+	response := new(logonResponse)
+	if err := vb.send(request, response); err != nil {
+		return err
+	}
+	vb.id = response.Returnval
+	return nil
+}
+
+// FindMachine finds a machine based on its name or machine id.
+func (vb *VirtualBox) FindMachine(nameOrID string) (*Machine, error) {
+	request := findMachineRequest{VbID: vb.id, NameOrID: nameOrID}
+	response := new(findMachineResponse)
+	err := vb.send(request, response)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Machine{id: response.Returnval, vb: vb}, nil
 }
