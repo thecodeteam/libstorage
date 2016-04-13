@@ -16,6 +16,49 @@ import (
 	"github.com/emccode/libstorage/api/utils/schema"
 )
 
+//the filtering mechanism applies a simple match, you could do something like
+//this future https://github.com/golang/appengine/blob/master/datastore/query.go
+func applyFilter(obj *types.Volume, filters map[string][]string) bool {
+	include := true
+	for key, values := range filters {
+		//fmt.Print("Filter Key: ", key, "\n")
+		if len(obj.Fields[key]) == 0 {
+			//fmt.Print("Key ", key, " not found\n")
+			include = false
+			break
+		}
+		if !include {
+			//fmt.Print("Exiting early with no key found\n")
+			break
+		}
+
+		found := false
+		for _, value := range values {
+			//fmt.Print("Filter Val: ", value, "\n")
+			//omit adding to the slice if the key and value doesnt exist
+			if strings.Compare(value, obj.Fields[key]) == 0 {
+				//fmt.Print(value, " = ", obj.Fields[key], "\n")
+				found = true //key exists and value exists in the map
+				break
+			}
+		}
+		if !found {
+			//fmt.Print("Exiting early with no value found\n")
+			include = false
+			break
+		}
+
+		//fmt.Print("Found: ", found, "\n")
+		include = include && found
+		if !include {
+			//fmt.Print("Exiting early with no key found\n")
+			break
+		}
+	}
+
+	return include
+}
+
 func (r *router) snapshots(
 	ctx context.Context,
 	w http.ResponseWriter,
@@ -45,20 +88,8 @@ func (r *router) snapshots(
 
 			objMap := map[string]*types.Snapshot{}
 			for _, obj := range objs {
-				//omit adding to the slice if the key and value doesnt exist
-				omit := true
-				for key, value := range obj.Fields {
-					if len(filters[key]) == 0 {
-						break //key doesnt exist
-					}
-					for testval := range filters[key] {
-						if strings.Compare(value, testval) == 0 {
-							omit = false //key exists and value exists in the map
-						}
-					}
-				}
-				if omit {
-					continue
+				if !applyFilter(obj, filters) {
+					continue //object didnt not meet filter requirements
 				}
 				objMap[obj.ID] = obj
 			}
@@ -125,20 +156,8 @@ func (r *router) snapshotsForService(
 		}
 
 		for _, obj := range objs {
-			//omit adding to the slice if the key and value doesnt exist
-			omit := true
-			for key, value := range obj.Fields {
-				if len(filters[key]) == 0 {
-					break //key doesnt exist
-				}
-				for testval := range filters[key] {
-					if strings.Compare(value, testval) == 0 {
-						omit = false //key exists and value exists in the map
-					}
-				}
-			}
-			if omit {
-				continue
+			if !applyFilter(obj, filters) {
+				continue //object didnt not meet filter requirements
 			}
 			reply[obj.ID] = obj
 		}
