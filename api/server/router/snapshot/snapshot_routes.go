@@ -2,6 +2,7 @@ package snapshot
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/akutz/goof"
 
@@ -27,6 +28,10 @@ func (r *router) snapshots(
 		reply   apihttp.ServiceSnapshotMap = map[string]apihttp.SnapshotMap{}
 	)
 
+	//filtering is done by query parameters on the URI
+	var filters map[string][]string
+	filters = req.URL.Query()
+
 	for service := range services.StorageServices() {
 
 		run := func(
@@ -40,6 +45,21 @@ func (r *router) snapshots(
 
 			objMap := map[string]*types.Snapshot{}
 			for _, obj := range objs {
+				//omit adding to the slice if the key and value doesnt exist
+				omit := true
+				for key, value := range obj.Fields {
+					if len(filters[key]) == 0 {
+						break //key doesnt exist
+					}
+					for testval := range filters[key] {
+						if strings.Compare(value, testval) == 0 {
+							omit = false //key exists and value exists in the map
+						}
+					}
+				}
+				if omit {
+					continue
+				}
 				objMap[obj.ID] = obj
 			}
 			return objMap, nil
@@ -89,6 +109,10 @@ func (r *router) snapshotsForService(
 		return err
 	}
 
+	//filtering is done by query parameters on the URI
+	var filters map[string][]string
+	filters = req.URL.Query()
+
 	run := func(
 		ctx context.Context,
 		svc apisvcs.StorageService) (interface{}, error) {
@@ -101,6 +125,21 @@ func (r *router) snapshotsForService(
 		}
 
 		for _, obj := range objs {
+			//omit adding to the slice if the key and value doesnt exist
+			omit := true
+			for key, value := range obj.Fields {
+				if len(filters[key]) == 0 {
+					break //key doesnt exist
+				}
+				for testval := range filters[key] {
+					if strings.Compare(value, testval) == 0 {
+						omit = false //key exists and value exists in the map
+					}
+				}
+			}
+			if omit {
+				continue
+			}
 			reply[obj.ID] = obj
 		}
 		return reply, nil
