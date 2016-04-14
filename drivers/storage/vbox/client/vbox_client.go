@@ -135,7 +135,34 @@ func (vb *VirtualBox) FindMachine(nameOrID string) (*Machine, error) {
 		return nil, err
 	}
 
-	return &Machine{id: response.Returnval, vb: vb}, nil
+	m := &Machine{mobref: response.Returnval, vb: vb}
+	return m, nil
+}
+
+//PopulateMachineInfo loads additional descriptive information for machine
+func (vb *VirtualBox) PopulateMachineInfo(machine *Machine) error {
+	if machine.mobref == "" {
+		return fmt.Errorf("Machine missing object reference id")
+	}
+	// get machine id
+	req1 := getMachineIDRequest{Mobref: machine.mobref}
+	rsp1 := new(getMachineIDResponse)
+	err := vb.send(req1, rsp1)
+	if err != nil {
+		return err
+	}
+	machine.id = rsp1.Returnval
+
+	// get machine name
+	req2 := getMachineNameRequest{Mobref: machine.mobref}
+	rsp2 := new(getMachineNameResponse)
+	err = vb.send(req2, rsp2)
+	if err != nil {
+		return err
+	}
+	machine.name = rsp2.Returnval
+
+	return nil
 }
 
 // GetMachines returns all registered machines for the virtualbox

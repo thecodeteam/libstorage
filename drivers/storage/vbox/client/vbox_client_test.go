@@ -147,7 +147,7 @@ func TestFindMachine(t *testing.T) {
 	if m == nil {
 		t.Fatal("Machine should not be nil")
 	}
-	if m.id != "000-machine-000" {
+	if m.mobref != "000-machine-000" {
 		t.Fatal("Machine id not set properly")
 	}
 	if m.vb != vb {

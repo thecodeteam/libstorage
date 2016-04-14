@@ -32,6 +32,26 @@ type findMachineResponse struct {
 	Returnval string   `xml:"returnval,omitempty"`
 }
 
+type getMachineIDRequest struct {
+	XMLName xml.Name `xml:"IMachine_getId"`
+	Mobref  string   `xml:"_this,omitempty"`
+}
+
+type getMachineIDResponse struct {
+	XMLName   xml.Name `xml:"IMachine_getIdResponse"`
+	Returnval string   `xml:"returnval,omitempty"`
+}
+
+type getMachineNameRequest struct {
+	XMLName xml.Name `xml:"IMachine_getName"`
+	Mobref  string   `xml:"_this,omitempty"`
+}
+
+type getMachineNameResponse struct {
+	XMLName   xml.Name `xml:"IMachine_getNameResponse"`
+	Returnval string   `xml:"returnval,omitempty"`
+}
+
 type getMachinesRequest struct {
 	XMLName xml.Name `xml:"IVirtualBox_getMachines"`
 	VbID    string   `xml:"_this,omitempty"`
