@@ -154,3 +154,46 @@ func TestFindMachine(t *testing.T) {
 		t.Fatal("Machine's vb reference not set")
 	}
 }
+
+func TestGetMachines(t *testing.T) {
+	server := httptest.NewServer(
+		http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+			// unmarshal request
+			env := new(envelope)
+			machine := new(getMachinesRequest)
+			if err := xml.NewDecoder(req.Body).Decode(env); err != nil {
+				t.Fatal("Error decoding getMachinesRequest", err)
+			}
+			if err := xml.Unmarshal(env.Body.Payload, machine); err != nil {
+				t.Fatal("Error unmarshaling payload: ", err)
+			}
+			// return response
+			resp.WriteHeader(http.StatusOK)
+			payload := `<vbox:IVirtualBox_getMachinesResponse>
+      <returnval>0000-machine-0</returnval>
+      <returnval>0000-machine-1</returnval>
+    </vbox:IVirtualBox_getMachinesResponse>`
+			xmlResp := fmt.Sprintf(xmlEnvelope, payload)
+			resp.Write([]byte(xmlResp))
+		}),
+	)
+	defer server.Close()
+
+	vb := NewVirtualBox(uname, password, server.URL)
+	vb.id = "000-test-000" // simulated logon
+	machines, err := vb.GetMachines()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(machines) != 2 {
+		t.Fatal("Unexpected result, expected 2 machines, got ", len(machines))
+	}
+	for _, m := range machines {
+		if m.vb != vb {
+			t.Fatal("GetMachines not setting vb reference")
+		}
+		if m.id != "0000-machine-0" && m.id != "0000-machine-1" {
+			t.Fatal("GetMachines not setting machine id's properly")
+		}
+	}
+}

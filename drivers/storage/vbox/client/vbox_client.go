@@ -32,6 +32,16 @@ type findMachineResponse struct {
 	Returnval string   `xml:"returnval,omitempty"`
 }
 
+type getMachinesRequest struct {
+	XMLName xml.Name `xml:"IVirtualBox_getMachines"`
+	VbID    string   `xml:"_this,omitempty"`
+}
+
+type getMachinesResponse struct {
+	XMLName   xml.Name `xml:"IVirtualBox_getMachinesResponse"`
+	Returnval []string `xml:"returnval,omitempty"`
+}
+
 // VirtualBox Represents a virtualbox sesion
 type VirtualBox struct {
 	username     string
@@ -165,4 +175,22 @@ func (vb *VirtualBox) FindMachine(nameOrID string) (*Machine, error) {
 	}
 
 	return &Machine{id: response.Returnval, vb: vb}, nil
+}
+
+// GetMachines returns all registered machines for the virtualbox
+func (vb *VirtualBox) GetMachines() ([]*Machine, error) {
+	if vb.id == "" {
+		return nil, fmt.Errorf("Missing VirtualBox object id")
+	}
+	request := getMachinesRequest{VbID: vb.id}
+	response := new(getMachinesResponse)
+	err := vb.send(request, response)
+	if err != nil {
+		return nil, err
+	}
+	machines := make([]*Machine, len(response.Returnval))
+	for i, machineID := range response.Returnval {
+		machines[i] = NewMachine(vb, machineID)
+	}
+	return machines, nil
 }

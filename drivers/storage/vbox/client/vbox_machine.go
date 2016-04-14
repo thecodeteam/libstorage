@@ -7,6 +7,6 @@ type Machine struct {
 }
 
 // NewMachine returns a pointer to a Machine value
-func NewMachine(vb *VirtualBox) *Machine {
-	return &Machine{vb: vb}
+func NewMachine(vb *VirtualBox, id string) *Machine {
+	return &Machine{vb: vb, id: id}
 }
