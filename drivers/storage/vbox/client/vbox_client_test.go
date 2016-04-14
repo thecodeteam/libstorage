@@ -2,6 +2,7 @@ package client
 
 import (
 	"encoding/xml"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -11,6 +12,15 @@ const (
 	uname    = ""
 	password = ""
 )
+const xmlEnvelope = `<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope
+	xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:vbox="http://www.virtualbox.org/">
+	<SOAP-ENV:Body>%s</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>`
 
 type testTag struct {
 	Value string `xml:"val"`
@@ -77,20 +87,18 @@ func TestLogon(t *testing.T) {
 				t.Fatal("Error decoding logonRequest", err)
 			}
 			if err := xml.Unmarshal(env.Body.Payload, logon); err != nil {
-				t.Fatal("Error unmarshaling payload", err)
+				t.Fatal("Error unmarshaling payload: ", err)
 			}
 			if logon.Username != uname {
 				t.Fatal("Unexpected data from logonRequest")
 			}
 			// return response
 			resp.WriteHeader(http.StatusOK)
-			payload, err := xml.Marshal(&logonResponse{Returnval: "000-test-000"})
-			if err != nil {
-				t.Fatal(err)
-			}
-			env = new(envelope)
-			env.Body.Payload = payload
-			xml.NewEncoder(resp).Encode(env)
+			payload := `<vbox:IWebsessionManager_logonResponse>
+			<returnval>000-test-000</returnval>
+			</vbox:IWebsessionManager_logonResponse>`
+			xmlResp := fmt.Sprintf(xmlEnvelope, payload)
+			resp.Write([]byte(xmlResp))
 		}),
 	)
 	defer server.Close()
@@ -101,5 +109,48 @@ func TestLogon(t *testing.T) {
 	}
 	if vb.id != "000-test-000" {
 		t.Fatal("Failed to get session id from logon")
+	}
+}
+
+func TestFindMachine(t *testing.T) {
+	server := httptest.NewServer(
+		http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+			// unmarshal request
+			env := new(envelope)
+			machine := new(findMachineRequest)
+			if err := xml.NewDecoder(req.Body).Decode(env); err != nil {
+				t.Fatal("Error decoding findMachineREquest", err)
+			}
+			if err := xml.Unmarshal(env.Body.Payload, machine); err != nil {
+				t.Fatal("Error unmarshaling payload: ", err)
+			}
+			if machine.NameOrID != "000-machine-000" {
+				t.Fatal("Unexpected data from findMachineREquest")
+			}
+			// return response
+			resp.WriteHeader(http.StatusOK)
+			payload := `<vbox:IVirtualBox_findMachineResponse>
+			<returnval>000-machine-000</returnval>
+			</vbox:IVirtualBox_findMachineResponse>`
+			xmlResp := fmt.Sprintf(xmlEnvelope, payload)
+			resp.Write([]byte(xmlResp))
+		}),
+	)
+	defer server.Close()
+
+	vb := NewVirtualBox(uname, password, server.URL)
+	vb.id = "000-test-000" // simulated logon
+	m, err := vb.FindMachine("000-machine-000")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if m == nil {
+		t.Fatal("Machine should not be nil")
+	}
+	if m.id != "000-machine-000" {
+		t.Fatal("Machine id not set properly")
+	}
+	if m.vb != vb {
+		t.Fatal("Machine's vb reference not set")
 	}
 }

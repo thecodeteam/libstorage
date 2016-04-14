@@ -154,6 +154,9 @@ func (vb *VirtualBox) Logon() error {
 
 // FindMachine finds a machine based on its name or machine id.
 func (vb *VirtualBox) FindMachine(nameOrID string) (*Machine, error) {
+	if vb.id == "" {
+		return nil, fmt.Errorf("Missing VirtualBox object id")
+	}
 	request := findMachineRequest{VbID: vb.id, NameOrID: nameOrID}
 	response := new(findMachineResponse)
 	err := vb.send(request, response)
