@@ -2,8 +2,9 @@ package client
 
 // Machine represents an installed virtual machine in vbox.
 type Machine struct {
-	id string
-	vb *VirtualBox
+	mobref string
+	id     string
+	vb     *VirtualBox
 }
 
 // NewMachine returns a pointer to a Machine value

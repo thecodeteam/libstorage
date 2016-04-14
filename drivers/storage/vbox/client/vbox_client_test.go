@@ -107,7 +107,7 @@ func TestLogon(t *testing.T) {
 	if err := vb.Logon(); err != nil {
 		t.Fatal("Logon failed", err)
 	}
-	if vb.id != "000-test-000" {
+	if vb.mobref != "000-test-000" {
 		t.Fatal("Failed to get session id from logon")
 	}
 }
@@ -139,7 +139,7 @@ func TestFindMachine(t *testing.T) {
 	defer server.Close()
 
 	vb := NewVirtualBox(uname, password, server.URL)
-	vb.id = "000-test-000" // simulated logon
+	vb.mobref = "000-test-000" // simulated logon
 	m, err := vb.FindMachine("000-machine-000")
 	if err != nil {
 		t.Fatal(err)
@@ -180,7 +180,7 @@ func TestGetMachines(t *testing.T) {
 	defer server.Close()
 
 	vb := NewVirtualBox(uname, password, server.URL)
-	vb.id = "000-test-000" // simulated logon
+	vb.mobref = "000-test-000" // simulated logon
 	machines, err := vb.GetMachines()
 	if err != nil {
 		t.Fatal(err)

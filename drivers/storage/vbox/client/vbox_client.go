@@ -10,38 +10,6 @@ import (
 	"time"
 )
 
-type logonRequest struct {
-	XMLName  xml.Name `xml:"IWebsessionManager_logon"`
-	Username string   `xml:"username,omitempty"`
-	Password string   `xml:"password,omitempty"`
-}
-
-type logonResponse struct {
-	XMLName   xml.Name `xml:"IWebsessionManager_logonResponse"`
-	Returnval string   `xml:"returnval,omitempty"`
-}
-
-type findMachineRequest struct {
-	XMLName  xml.Name `xml:"IVirtualBox_findMachine"`
-	VbID     string   `xml:"_this,omitempty"`
-	NameOrID string   `xml:"nameOrId,omitempty"`
-}
-
-type findMachineResponse struct {
-	XMLName   xml.Name `xml:"IVirtualBox_findMachineResponse"`
-	Returnval string   `xml:"returnval,omitempty"`
-}
-
-type getMachinesRequest struct {
-	XMLName xml.Name `xml:"IVirtualBox_getMachines"`
-	VbID    string   `xml:"_this,omitempty"`
-}
-
-type getMachinesResponse struct {
-	XMLName   xml.Name `xml:"IVirtualBox_getMachinesResponse"`
-	Returnval []string `xml:"returnval,omitempty"`
-}
-
 // VirtualBox Represents a virtualbox sesion
 type VirtualBox struct {
 	username     string
@@ -49,15 +17,7 @@ type VirtualBox struct {
 	vbURL        string
 	client       *http.Client
 	useBasicAuth bool
-	id           string
-}
-
-type envelope struct {
-	XMLName xml.Name `xml:"Envelope"`
-	Body    struct {
-		XMLName xml.Name `xml:"Body"`
-		Payload []byte   `xml:",innerxml"`
-	}
+	mobref       string
 }
 
 // NewVirtualBox returns a reference to a VirtualBox value.
@@ -158,16 +118,17 @@ func (vb *VirtualBox) Logon() error {
 	if err := vb.send(request, response); err != nil {
 		return err
 	}
-	vb.id = response.Returnval
+	vb.mobref = response.Returnval
 	return nil
 }
 
 // FindMachine finds a machine based on its name or machine id.
 func (vb *VirtualBox) FindMachine(nameOrID string) (*Machine, error) {
-	if vb.id == "" {
-		return nil, fmt.Errorf("Missing VirtualBox object id")
+	if err := vb.assertMobRef(); err != nil {
+		return nil, err
 	}
-	request := findMachineRequest{VbID: vb.id, NameOrID: nameOrID}
+
+	request := findMachineRequest{VbID: vb.mobref, NameOrID: nameOrID}
 	response := new(findMachineResponse)
 	err := vb.send(request, response)
 	if err != nil {
@@ -179,10 +140,11 @@ func (vb *VirtualBox) FindMachine(nameOrID string) (*Machine, error) {
 
 // GetMachines returns all registered machines for the virtualbox
 func (vb *VirtualBox) GetMachines() ([]*Machine, error) {
-	if vb.id == "" {
-		return nil, fmt.Errorf("Missing VirtualBox object id")
+	if err := vb.assertMobRef(); err != nil {
+		return nil, err
 	}
-	request := getMachinesRequest{VbID: vb.id}
+
+	request := getMachinesRequest{VbID: vb.mobref}
 	response := new(getMachinesResponse)
 	err := vb.send(request, response)
 	if err != nil {
@@ -193,4 +155,11 @@ func (vb *VirtualBox) GetMachines() ([]*Machine, error) {
 		machines[i] = NewMachine(vb, machineID)
 	}
 	return machines, nil
+}
+
+func (vb *VirtualBox) assertMobRef() error {
+	if vb.mobref == "" {
+		return fmt.Errorf("Missing VirtualBox managed object id")
+	}
+	return nil
 }
