@@ -162,6 +162,25 @@ func (vb *VirtualBox) PopulateMachineInfo(machine *Machine) error {
 	}
 	machine.name = rsp2.Returnval
 
+	// get machine attached media
+	req3 := getMediumAttachmentsRequest{Mobref: vb.mobref}
+	rsp3 := new(getMediumAttachmentsResponse)
+	err = vb.send(req3, rsp3)
+	if err != nil {
+		return err
+	}
+	attachments := make([]*MediumAttachment, len(rsp3.Returnval))
+	for i, attachVal := range rsp3.Returnval {
+		attach := new(MediumAttachment)
+		attach.Medium = attachVal.Medium
+		attach.Controller = attachVal.Controller
+		attach.Port = attachVal.Port
+		attach.Type = attachVal.Type
+		attach.Device = attachVal.Device
+		attachments[i] = attach
+	}
+	machine.attachments = attachments
+
 	return nil
 }
 
@@ -171,7 +190,7 @@ func (vb *VirtualBox) GetMachines() ([]*Machine, error) {
 		return nil, err
 	}
 
-	request := getMachinesRequest{VbID: vb.mobref}
+	request := getMachinesRequest{MobRef: vb.mobref}
 	response := new(getMachinesResponse)
 	err := vb.send(request, response)
 	if err != nil {

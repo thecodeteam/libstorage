@@ -54,10 +54,36 @@ type getMachineNameResponse struct {
 
 type getMachinesRequest struct {
 	XMLName xml.Name `xml:"IVirtualBox_getMachines"`
-	VbID    string   `xml:"_this,omitempty"`
+	MobRef  string   `xml:"_this,omitempty"`
 }
 
 type getMachinesResponse struct {
 	XMLName   xml.Name `xml:"IVirtualBox_getMachinesResponse"`
 	Returnval []string `xml:"returnval,omitempty"`
+}
+
+type mediumAttachment struct {
+	XMLName        xml.Name `xml:"IMediumAttachment"`
+	Medium         string   `xml:"medium,omitempty"`
+	Controller     string   `xml:"controller,omitempty"`
+	Port           int32    `xml:"port,omitempty"`
+	Device         int32    `xml:"device,omitempty"`
+	Type           string   `xml:"type,omitempty"`
+	Passthrough    bool     `xml:"passthrough,omitempty"`
+	TemporaryEject bool     `xml:"temporaryEject,omitempty"`
+	IsEjected      bool     `xml:"isEjected,omitempty"`
+	NonRotational  bool     `xml:"nonRotational,omitempty"`
+	Discard        bool     `xml:"discard,omitempty"`
+	HotPluggable   bool     `xml:"hotPluggable,omitempty"`
+	BandwidthGroup string   `xml:"bandwidthGroup,omitempty"`
+}
+
+type getMediumAttachmentsRequest struct {
+	XMLName xml.Name `xml:"IMachine_getMediumAttachments"`
+	Mobref  string   `xml:"_this,omitempty"`
+}
+
+type getMediumAttachmentsResponse struct {
+	XMLName   xml.Name            `xml:"IMachine_getMediumAttachmentsResponse"`
+	Returnval []*mediumAttachment `xml:"returnval,omitempty"`
 }

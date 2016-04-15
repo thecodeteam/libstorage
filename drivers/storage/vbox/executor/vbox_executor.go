@@ -18,8 +18,9 @@ const (
 // Executor is the storage executor for the VFS storage driver.
 type Executor struct {
 	// Config is the executor's configuration instance.
-	Config gofig.Config
-	vbox   *client.VirtualBox
+	Config  gofig.Config
+	vbox    *client.VirtualBox
+	machine *client.Machine
 }
 
 func init() {
@@ -39,7 +40,15 @@ func (d *Executor) Init(config gofig.Config) error {
 	pwd := d.Config.GetString("virtualbox.username")
 	endpoint := d.Config.GetString("virtualbox.endpoint")
 	d.vbox = client.NewVirtualBox(uname, pwd, endpoint)
-	return d.vbox.Logon()
+	err := d.vbox.Logon()
+	if err != nil {
+		return err
+	}
+	err = d.loadMachineInfo()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Name returns the human-readable name of the executor
@@ -51,32 +60,52 @@ func (d *Executor) Name() string {
 func (d *Executor) InstanceID(
 	ctx context.Context,
 	opts types.Store) (*types.InstanceID, error) {
-	m, err := d.vbox.FindMachine(d.Config.GetString("virtualbox.nameOrID"))
-	if err != nil {
-		return nil, err
+	if d.machine == nil {
+		err := d.loadMachineInfo()
+		if err != nil {
+			return nil, err
+		}
 	}
-	d.vbox.PopulateMachineInfo(m) // grab additional info
-	return &types.InstanceID{ID: m.GetID()}, nil
+	return &types.InstanceID{ID: d.machine.GetID()}, nil
 }
 
-// NextDevice returns the next available device.
+// NextDevice returns the next available device (not implemented).
 func (d *Executor) NextDevice(
 	ctx context.Context,
 	opts types.Store) (string, error) {
-	return "", nil
+	return "", types.ErrNotImplemented
 }
 
 // LocalDevices returns a map of the system's local devices.
 func (d *Executor) LocalDevices(
 	ctx context.Context,
 	opts types.Store) (map[string]string, error) {
-
+	if d.machine == nil {
+		err := d.loadMachineInfo()
+		if err != nil {
+			return nil, err
+		}
+	}
 	return nil, nil
 }
 
 // RootDir returns the path to the VFS root directory.
 func (d *Executor) RootDir() string {
 	return d.Config.GetString("vfs.root")
+}
+
+func (d *Executor) loadMachineInfo() error {
+	m, err := d.vbox.FindMachine(d.Config.GetString("virtualbox.nameOrID"))
+	if err != nil {
+		return err
+	}
+	d.machine = m
+
+	err = d.vbox.PopulateMachineInfo(m)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func configRegistration() *gofig.Registration {

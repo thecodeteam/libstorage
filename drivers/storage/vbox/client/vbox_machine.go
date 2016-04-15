@@ -2,10 +2,20 @@ package client
 
 // Machine represents an installed virtual machine in vbox.
 type Machine struct {
-	mobref string
-	id     string
-	name   string
-	vb     *VirtualBox
+	mobref      string
+	id          string
+	name        string
+	attachments []*MediumAttachment
+	vb          *VirtualBox
+}
+
+//MediumAttachment represents attached devices to machine
+type MediumAttachment struct {
+	Medium     string
+	Controller string
+	Port       int32
+	Device     int32
+	Type       string
 }
 
 // NewMachine returns a pointer to a Machine value
@@ -21,4 +31,9 @@ func (m *Machine) GetID() string {
 // GetName returns the Name last populated for this machine
 func (m *Machine) GetName() string {
 	return m.name
+}
+
+// GetMediumAttachments returns the attached media to machine
+func (m *Machine) GetMediumAttachments() []*MediumAttachment {
+	return m.attachments
 }
