@@ -2,6 +2,7 @@ package snapshot
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/akutz/goof"
 
@@ -15,6 +16,49 @@ import (
 	"github.com/emccode/libstorage/api/utils/schema"
 )
 
+//the filtering mechanism applies a simple match, you could do something like
+//this future https://github.com/golang/appengine/blob/master/datastore/query.go
+func applyFilter(obj *types.Snapshot, filters map[string][]string) bool {
+	include := true
+	for key, values := range filters {
+		//fmt.Print("Filter Key: ", key, "\n")
+		if len(obj.Fields[key]) == 0 {
+			//fmt.Print("Key ", key, " not found\n")
+			include = false
+			break
+		}
+		if !include {
+			//fmt.Print("Exiting early with no key found\n")
+			break
+		}
+
+		found := false
+		for _, value := range values {
+			//fmt.Print("Filter Val: ", value, "\n")
+			//omit adding to the slice if the key and value doesnt exist
+			if strings.Compare(value, obj.Fields[key]) == 0 {
+				//fmt.Print(value, " = ", obj.Fields[key], "\n")
+				found = true //key exists and value exists in the map
+				break
+			}
+		}
+		if !found {
+			//fmt.Print("Exiting early with no value found\n")
+			include = false
+			break
+		}
+
+		//fmt.Print("Found: ", found, "\n")
+		include = include && found
+		if !include {
+			//fmt.Print("Exiting early with no key found\n")
+			break
+		}
+	}
+
+	return include
+}
+
 func (r *router) snapshots(
 	ctx context.Context,
 	w http.ResponseWriter,
@@ -26,6 +70,10 @@ func (r *router) snapshots(
 		taskIDs []int
 		reply   apihttp.ServiceSnapshotMap = map[string]apihttp.SnapshotMap{}
 	)
+
+	//filtering is done by query parameters on the URI
+	var filters map[string][]string
+	filters = req.URL.Query()
 
 	for service := range services.StorageServices() {
 
@@ -40,6 +88,9 @@ func (r *router) snapshots(
 
 			objMap := map[string]*types.Snapshot{}
 			for _, obj := range objs {
+				if !applyFilter(obj, filters) {
+					continue //object didnt not meet filter requirements
+				}
 				objMap[obj.ID] = obj
 			}
 			return objMap, nil
@@ -89,6 +140,10 @@ func (r *router) snapshotsForService(
 		return err
 	}
 
+	//filtering is done by query parameters on the URI
+	var filters map[string][]string
+	filters = req.URL.Query()
+
 	run := func(
 		ctx context.Context,
 		svc apisvcs.StorageService) (interface{}, error) {
@@ -101,6 +156,9 @@ func (r *router) snapshotsForService(
 		}
 
 		for _, obj := range objs {
+			if !applyFilter(obj, filters) {
+				continue //object didnt not meet filter requirements
+			}
 			reply[obj.ID] = obj
 		}
 		return reply, nil
