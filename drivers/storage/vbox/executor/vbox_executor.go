@@ -1,6 +1,11 @@
 package executor
 
 import (
+	"fmt"
+	"io/ioutil"
+	"path/filepath"
+	"strings"
+
 	"github.com/akutz/gofig"
 
 	"github.com/emccode/libstorage/api/registry"
@@ -80,13 +85,24 @@ func (d *Executor) NextDevice(
 func (d *Executor) LocalDevices(
 	ctx context.Context,
 	opts types.Store) (map[string]string, error) {
-	if d.machine == nil {
-		err := d.loadMachineInfo()
-		if err != nil {
-			return nil, err
+	mapDiskByID := make(map[string]string)
+	diskIDPath := "/dev/disk/by-id"
+	files, err := ioutil.ReadDir(diskIDPath)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, f := range files {
+		if strings.Contains(f.Name(), "VBOX_HARDDISK_VB") {
+			sid := d.getShortDeviceID(f.Name())
+			if sid == "" {
+				continue
+			}
+			devPath, _ := filepath.EvalSymlinks(fmt.Sprintf("%s/%s", diskIDPath, f.Name()))
+			mapDiskByID[sid] = devPath
 		}
 	}
-	return nil, nil
+	return mapDiskByID, nil
 }
 
 // RootDir returns the path to the VFS root directory.
@@ -106,6 +122,18 @@ func (d *Executor) loadMachineInfo() error {
 		return err
 	}
 	return nil
+}
+
+func (d *Executor) getShortDeviceID(f string) string {
+	sid := strings.Split(f, "VBOX_HARDDISK_VB")
+	if len(sid) < 1 {
+		return ""
+	}
+	aid := strings.Split(sid[1], "-")
+	if len(aid) < 1 {
+		return ""
+	}
+	return aid[0]
 }
 
 func configRegistration() *gofig.Registration {
