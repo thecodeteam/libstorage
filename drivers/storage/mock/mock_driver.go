@@ -91,6 +91,10 @@ func (d *driver) Type() types.StorageType {
 	return types.Block
 }
 
+func (d *driver) SupportsFilters() bool {
+	return false
+}
+
 func (d *driver) NextDeviceInfo() *types.NextDeviceInfo {
 	return d.nextDeviceInfo
 }
@@ -281,7 +285,7 @@ func (d *driver) VolumeDetach(
 
 func (d *driver) Snapshots(
 	ctx context.Context,
-	opts types.Store) ([]*types.Snapshot, error) {
+	opts *drivers.SnapshotsOpts) ([]*types.Snapshot, error) {
 
 	return d.snapshots, nil
 }

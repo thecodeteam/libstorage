@@ -3,6 +3,7 @@ package drivers
 import (
 	"github.com/emccode/libstorage/api/types"
 	"github.com/emccode/libstorage/api/types/context"
+	"github.com/emccode/libstorage/api/types/filters"
 )
 
 // NewStorageExecutor is a function that constructs a new StorageExecutors.
@@ -11,9 +12,10 @@ type NewStorageExecutor func() StorageExecutor
 // NewStorageDriver is a function that constructs a new StorageDriver.
 type NewStorageDriver func() StorageDriver
 
-// VolumesOpts are options when inspecting a volume.
+// VolumesOpts are options when querying volumes.
 type VolumesOpts struct {
 	Attachments bool
+	Filter      *filters.Filter
 	Opts        types.Store
 }
 
@@ -36,6 +38,12 @@ type VolumeCreateOpts struct {
 type VolumeAttachByIDOpts struct {
 	NextDevice *string
 	Opts       types.Store
+}
+
+// SnapshotsOpts are options when querying snapshots.
+type SnapshotsOpts struct {
+	Filter *filters.Filter
+	Opts   types.Store
 }
 
 // StorageExecutor is the client-side functionality for a StorageDriver.
@@ -67,6 +75,10 @@ always return ErrResourceNotFound if the acted upon resource cannot be found.
 */
 type StorageDriver interface {
 	StorageExecutor
+
+	// SupportsFilters returns a flag indicating whether or not the backend
+	// storage platform supports filtered results.
+	SupportsFilters() bool
 
 	// NextDeviceInfo returns the information about the driver's next available
 	// device workflow.
@@ -143,7 +155,9 @@ type StorageDriver interface {
 	**                             Snapshots                                  **
 	***************************************************************************/
 	// Snapshots returns all volumes or a filtered list of snapshots.
-	Snapshots(ctx context.Context, opts types.Store) ([]*types.Snapshot, error)
+	Snapshots(
+		ctx context.Context,
+		opts *SnapshotsOpts) ([]*types.Snapshot, error)
 
 	// SnapshotInspect inspects a single snapshot.
 	SnapshotInspect(

@@ -25,6 +25,10 @@ func newDriver() drivers.StorageDriver {
 	return &driver{executor.Executor{}}
 }
 
+func (d *driver) SupportsFilters() bool {
+	return false
+}
+
 func (d *driver) Type() types.StorageType {
 	return types.Object
 }
@@ -103,7 +107,7 @@ func (d *driver) VolumeDetach(
 
 func (d *driver) Snapshots(
 	ctx context.Context,
-	opts types.Store) ([]*types.Snapshot, error) {
+	opts *drivers.SnapshotsOpts) ([]*types.Snapshot, error) {
 	return nil, nil
 }
 

@@ -9,9 +9,11 @@ import (
 	"github.com/emccode/libstorage/api/server/services"
 	"github.com/emccode/libstorage/api/types"
 	"github.com/emccode/libstorage/api/types/context"
+	"github.com/emccode/libstorage/api/types/drivers"
 	apihttp "github.com/emccode/libstorage/api/types/http"
 	apisvcs "github.com/emccode/libstorage/api/types/services"
 	"github.com/emccode/libstorage/api/utils"
+	"github.com/emccode/libstorage/api/utils/filters"
 	"github.com/emccode/libstorage/api/utils/schema"
 )
 
@@ -27,13 +29,21 @@ func (r *router) snapshots(
 		reply   apihttp.ServiceSnapshotMap = map[string]apihttp.SnapshotMap{}
 	)
 
+	opts := &drivers.SnapshotsOpts{Opts: store}
+	if store.IsSet("filter") {
+		filter, err := filters.CompileFilter(store.GetString("filter"))
+		if err == nil {
+			opts.Filter = filter
+		}
+	}
+
 	for service := range services.StorageServices() {
 
 		run := func(
 			ctx context.Context,
 			svc apisvcs.StorageService) (interface{}, error) {
 
-			objs, err := svc.Driver().Snapshots(ctx, store)
+			objs, err := svc.Driver().Snapshots(ctx, opts)
 			if err != nil {
 				return nil, err
 			}
@@ -89,13 +99,22 @@ func (r *router) snapshotsForService(
 		return err
 	}
 
+	opts := &drivers.SnapshotsOpts{Opts: store}
+	if store.IsSet("filter") {
+		filter, err := filters.CompileFilter(store.GetString("filter"))
+		if err == nil {
+			opts.Filter = filter
+		}
+	}
+
 	run := func(
 		ctx context.Context,
 		svc apisvcs.StorageService) (interface{}, error) {
 
 		var reply apihttp.SnapshotMap = map[string]*types.Snapshot{}
 
-		objs, err := svc.Driver().Snapshots(ctx, store)
+		objs, err := svc.Driver().Snapshots(ctx, opts)
+
 		if err != nil {
 			return nil, err
 		}
