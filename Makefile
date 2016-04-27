@@ -6,7 +6,7 @@ all: build
 
 # a space-delimited, ordered list of drivers for which to build the libstorage
 # server, client(s), and executor(s)
-DRIVERS ?= mock vfs
+DRIVERS ?= mock vfs scaleio
 
 ################################################################################
 ##                                 CONSTANTS                                  ##
