@@ -527,23 +527,23 @@ func (d *driver) VolumeAttach(
 func (d *driver) VolumeDetach(
 	ctx context.Context,
 	volumeID string,
-	opts types.Store) error {
+	opts types.Store) (*types.Volume, error) {
 	fields := eff(map[string]interface{}{
 		"moduleName": ctx,
 		"volumeId":   volumeID,
 	})
 
 	if volumeID == "" {
-		return goof.WithFields(fields, "volumeId is required")
+		return &types.Volume{}, goof.WithFields(fields, "volumeId is required")
 	}
 
 	volumes, err := d.getVolume(volumeID, "", false)
 	if err != nil {
-		return goof.WithFieldsE(fields, "error getting volume", err)
+		return &types.Volume{}, goof.WithFieldsE(fields, "error getting volume", err)
 	}
 
 	if len(volumes) == 0 {
-		return goof.WithFields(fields, "no volumes returned")
+		return &types.Volume{}, goof.WithFields(fields, "no volumes returned")
 	}
 
 	targetVolume := goscaleio.NewVolume(d.client)
@@ -563,7 +563,14 @@ func (d *driver) VolumeDetach(
 		"moduleName": ctx,
 		"provider":   Name,
 		"volumeId":   volumeID}).Debug("detached volume")
-	return nil
+
+	return &types.Volume{
+    Name: targetVolume.Volume.Name,
+    Size: int64(targetVolume.Volume.SizeInKb),
+    Type: targetVolume.Volume.VolumeType,
+    ID: targetVolume.Volume.ID,
+    Attachments: nil,
+  }, nil
 }
 
 func (d *driver) Snapshots(
@@ -684,7 +691,7 @@ func (d *driver) createVolume(ctx context.Context,
 
 func eff(fields goof.Fields) map[string]interface{} {
 	errFields := map[string]interface{}{
-		"provider": "scaleIO",
+		"provider": "scaleio",
 	}
 	if fields != nil {
 		for k, v := range fields {
