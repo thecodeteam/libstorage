@@ -12,6 +12,7 @@ import (
 
   "github.com/emccode/libstorage/api/server/executors"
   apitests "github.com/emccode/libstorage/api/tests"
+  apihttp "github.com/emccode/libstorage/api/types/http"
   "github.com/emccode/libstorage/api/types"
   "github.com/emccode/libstorage/client"
 
@@ -101,7 +102,7 @@ func TestRoot(t *testing.T) {
 
 func TestServices(t *testing.T) {
   tf := func(config gofig.Config, client client.Client, t *testing.T) {
-    reply, err := client.API().Services(nil)
+    reply, err := client.Services()
     assert.NoError(t, err)
     assert.Equal(t, len(reply), 1)
 
@@ -113,7 +114,7 @@ func TestServices(t *testing.T) {
 
 func TestServiceInspect(t *testing.T) {
   tf := func(config gofig.Config, client client.Client, t *testing.T) {
-    reply, err := client.API().ServiceInspect(nil, "scaleio")
+    reply, err := client.ServiceInspect("scaleio")
     assert.NoError(t, err)
     assert.Equal(t, "scaleio", reply.Name)
     assert.Equal(t, "scaleio", reply.Driver.Name)
@@ -121,11 +122,63 @@ func TestServiceInspect(t *testing.T) {
   apitests.Run(t, scaleio.Name, configYAML, tf)
 }
 
+func TestVolumeWorkflow(t *testing.T) {
+  volumeEndpointTest := func(config gofig.Config, client client.Client, t *testing.T) {
+    serviceVolumeMap, err := client.Volumes(false)
+    assert.Equal(t, err, nil)
+    svMap := serviceVolumeMap["scaleio"]
+    for _, v := range svMap {
+      assert.NotEqual(t, v.Name, "libstorageTest")
+    }
+  }
+  var volumeID string
+
+  createVolumeTest := func(config gofig.Config, client client.Client, t *testing.T) {
+
+    volumeName := "libstorageTest"
+    size := int64(8)
+
+    volumeCreateRequest := &apihttp.VolumeCreateRequest{
+      Name:             volumeName,
+      Size:             &size,
+    }
+
+    created, err := client.VolumeCreate("scaleio",volumeCreateRequest)
+    assert.Nil(t, err)
+    assert.Equal(t, created.Name, volumeCreateRequest.Name)
+    assert.Equal(t, created.Size, *volumeCreateRequest.Size)
+    assert.NotNil(t, created.ID)
+    volumeID = created.ID
+
+    inspected, err := client.VolumeInspect("scaleio", created.ID, false)
+    assert.Nil(t, err)
+    assert.Equal(t, inspected.Name, volumeCreateRequest.Name)
+    assert.Equal(t, inspected.Size, *volumeCreateRequest.Size)
+
+  }
+
+
+
+  deleteVolumeTest := func(config gofig.Config, client client.Client, t *testing.T) {
+
+    err := client.VolumeRemove("scaleio", volumeID)
+    assert.Nil(t, err)
+
+    inspected, err := client.VolumeInspect("scaleio", volumeID, false)
+    assert.Error(t, err)
+    assert.Empty(t, inspected)
+  }
+
+  apitests.RunGroup(
+    t, scaleio.Name, configYAML,
+    volumeEndpointTest,
+    createVolumeTest,
+    deleteVolumeTest)
+}
 
 //////////////////////
 ///  Test Helpers  ///
 //////////////////////
-
 
 func getSdcLocalGUID() *types.InstanceID {
   // get sdc kernel guid

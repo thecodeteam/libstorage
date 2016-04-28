@@ -1,7 +1,6 @@
 package scaleio
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -156,12 +155,12 @@ func (d *driver) Volumes(ctx context.Context,
 
 	mapStoragePoolName, err := d.getStoragePoolIDs()
 	if err != nil {
-		return nil, err
+		return []*types.Volume{}, err
 	}
 
 	mapProtectionDomainName, err := d.getProtectionDomainIDs()
 	if err != nil {
-		return nil, err
+		return []*types.Volume{}, err
 	}
 
 	getStoragePoolName := func(ID string) string {
@@ -248,12 +247,12 @@ func (d *driver) VolumeInspect(
 
 	mapStoragePoolName, err := d.getStoragePoolIDs()
 	if err != nil {
-		return nil, err
+		return &types.Volume{}, err
 	}
 
 	mapProtectionDomainName, err := d.getProtectionDomainIDs()
 	if err != nil {
-		return nil, err
+		return &types.Volume{}, err
 	}
 
 	getStoragePoolName := func(ID string) string {
@@ -281,12 +280,11 @@ func (d *driver) VolumeInspect(
 	for _, sdcMappedVolume := range sdcMappedVolumes {
 		sdcDeviceMap[sdcMappedVolume.VolumeID] = sdcMappedVolume
 	}
-	fmt.Printf("Requested VolumeID: %+v", volumeID)
 	volumes, err := d.getVolume(volumeID, "", false)
 	if err != nil {
+    log.Warn(err)
 		return &types.Volume{}, err
 	}
-	fmt.Printf("Volumes Returned: %+v", volumes)
 
 	var volumesSD []*types.Volume
 	for _, volume := range volumes {
@@ -327,7 +325,7 @@ func (d *driver) VolumeInspect(
 		volumesSD = append(volumesSD, volumeSD)
 	}
 	if len(volumesSD) == 0 {
-		return nil, nil
+		return &types.Volume{}, nil
 	}
 	return volumesSD[0], nil
 }
@@ -336,7 +334,7 @@ func (d *driver) VolumeCreate(
 	ctx context.Context,
 	name string,
 	opts *drivers.VolumeCreateOpts) (*types.Volume, error) {
-	fmt.Printf("OPTS: %+v", opts)
+
 	if opts == nil {
 		opts = &drivers.VolumeCreateOpts{}
 	}
@@ -361,40 +359,38 @@ func (d *driver) VolumeCreate(
 	// notUsed bool,volumeName, volumeID, snapshotID, volumeType string,
 	// IOPS, size int64, availabilityZone string) (*types.VolumeResp, error)
 	if name == "" {
-		return nil, goof.WithFields(eff(map[string]interface{}{
+		return &types.Volume{}, goof.WithFields(eff(map[string]interface{}{
 			"moduleName": ctx}),
 			"no volume name specified")
 	}
 
 	volumes, err := d.getVolume("", name, false)
 	if err != nil {
-		return nil, err
+		return &types.Volume{}, err
 	}
 
 	if len(volumes) > 0 {
-		return nil, goof.WithFields(eff(map[string]interface{}{
+		return &types.Volume{}, goof.WithFields(eff(map[string]interface{}{
 			"moduleName": ctx,
 			"volumeName": name}),
 			"volume name already exists")
 	}
 
-	//TODO notUsed doesn't seem to be used here...is it needed?
 	resp, err := d.createVolume(ctx,
 		false, name, "",
 		*opts.Type, *opts.IOPS, *opts.Size, *opts.AvailabilityZone)
-
 	if err != nil {
-		return nil, err
+		return &types.Volume{}, err
 	}
 
 	volumes, err = d.getVolume(resp.ID, "", false)
 	if err != nil {
-		return nil, err
+		return &types.Volume{}, err
 	}
 
 	createdVolume, err := d.VolumeInspect(ctx, resp.ID, nil)
 	if err != nil {
-		return nil, err
+		return &types.Volume{}, err
 	}
 
 	log.WithFields(log.Fields{
@@ -566,10 +562,10 @@ func (d *driver) VolumeDetach(
 
 	return &types.Volume{
     Name: targetVolume.Volume.Name,
-    Size: int64(targetVolume.Volume.SizeInKb),
+    Size: int64(targetVolume.Volume.SizeInKb/1048576),
     Type: targetVolume.Volume.VolumeType,
     ID: targetVolume.Volume.ID,
-    Attachments: nil,
+    Attachments: []*types.VolumeAttachment{},
   }, nil
 }
 
@@ -646,7 +642,7 @@ func (d *driver) getVolume(
 
 	volumes, err := d.client.GetVolume("", volumeID, "", volumeName, getSnapshots)
 	if err != nil {
-		return nil, err
+		return []*goscaleioTypes.Volume{}, err
 	}
 	return volumes, nil
 }
@@ -681,7 +677,7 @@ func (d *driver) createVolume(ctx context.Context,
 
 	volumeResp, err := d.client.CreateVolume(volumeParam, volumeType)
 	if err != nil {
-		return nil, goof.WithFieldsE(fields, "error creating volume", err)
+		return &goscaleioTypes.VolumeResp{}, goof.WithFieldsE(fields, "error creating volume", err)
 	}
 
 	return volumeResp, nil
