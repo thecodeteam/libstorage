@@ -13,8 +13,6 @@ import (
 
 	"github.com/emccode/libstorage/api/registry"
 	"github.com/emccode/libstorage/api/types"
-	"github.com/emccode/libstorage/api/types/context"
-	"github.com/emccode/libstorage/api/types/drivers"
 	"github.com/emccode/libstorage/drivers/storage/scaleio/executor"
 )
 
@@ -37,10 +35,10 @@ type driver struct {
 }
 
 func init() {
-	registry.RegisterRemoteStorageDriver(Name, newDriver)
+	registry.RegisterStorageDriver(Name, newDriver)
 }
 
-func newDriver() drivers.RemoteStorageDriver {
+func newDriver() types.StorageDriver {
 	d := &driver{StorageExecutor: *executor.NewExecutor()}
 	d.StorageExecutor.InitDriver = d.driverInit
 	return d
@@ -126,27 +124,27 @@ func (d *driver) driverInit() error {
 	return nil
 }
 
-func (d *driver) Type() types.StorageType {
-	return types.Block
+func (d *driver) Type(ctx types.Context) (types.StorageType, error) {
+	return types.Block, nil
 }
 
 // NextDeviceInfo returns the information about the driver's next available
 // device workflow.
 
-func (d *driver) NextDeviceInfo() *types.NextDeviceInfo {
-	return nil
+func (d *driver) NextDeviceInfo(ctx types.Context) (*types.NextDeviceInfo, error) {
+	return nil, nil
 }
 
 func (d *driver) InstanceInspect(
-	ctx context.Context,
+	ctx types.Context,
 	opts types.Store) (*types.Instance, error) {
 	iid, _ := d.InstanceID(ctx, opts)
 	curInstance := &types.Instance{InstanceID: iid}
 	return curInstance, nil
 }
 
-func (d *driver) Volumes(ctx context.Context,
-	opts *drivers.VolumesOpts) ([]*types.Volume, error) {
+func (d *driver) Volumes(ctx types.Context,
+	opts *types.VolumesOpts) ([]*types.Volume, error) {
 
 	sdcMappedVolumes, err := goscaleio.GetLocalVolumeMap()
 	if err != nil {
@@ -237,8 +235,8 @@ func (d *driver) Volumes(ctx context.Context,
 }
 
 func (d *driver) VolumeInspect(
-	ctx context.Context,
-	volumeID string, opts *drivers.VolumeInspectOpts) (*types.Volume, error) {
+	ctx types.Context,
+	volumeID string, opts *types.VolumeInspectOpts) (*types.Volume, error) {
 
 	sdcMappedVolumes, err := goscaleio.GetLocalVolumeMap()
 	if err != nil {
@@ -331,12 +329,12 @@ func (d *driver) VolumeInspect(
 }
 
 func (d *driver) VolumeCreate(
-	ctx context.Context,
+	ctx types.Context,
 	name string,
-	opts *drivers.VolumeCreateOpts) (*types.Volume, error) {
+	opts *types.VolumeCreateOpts) (*types.Volume, error) {
 
 	if opts == nil {
-		opts = &drivers.VolumeCreateOpts{}
+		opts = &types.VolumeCreateOpts{}
 	}
 
 	if opts.Type == nil {
@@ -403,28 +401,28 @@ func (d *driver) VolumeCreate(
 }
 
 func (d *driver) VolumeCreateFromSnapshot(
-	ctx context.Context,
+	ctx types.Context,
 	snapshotID, volumeName string,
-	opts *drivers.VolumeCreateOpts) (*types.Volume, error) {
+	opts *types.VolumeCreateOpts) (*types.Volume, error) {
 	return nil, nil
 }
 
 func (d *driver) VolumeCopy(
-	ctx context.Context,
+	ctx types.Context,
 	volumeID, volumeName string,
 	opts types.Store) (*types.Volume, error) {
 	return nil, nil
 }
 
 func (d *driver) VolumeSnapshot(
-	ctx context.Context,
+	ctx types.Context,
 	volumeID, snapshotName string,
 	opts types.Store) (*types.Snapshot, error) {
 	return nil, nil
 }
 
 func (d *driver) VolumeRemove(
-	ctx context.Context,
+	ctx types.Context,
 	volumeID string,
 	opts types.Store) error {
 
@@ -455,9 +453,9 @@ func (d *driver) VolumeRemove(
 }
 
 func (d *driver) VolumeAttach(
-	ctx context.Context,
+	ctx types.Context,
 	volumeID string,
-	opts *drivers.VolumeAttachByIDOpts) (*types.Volume, error) {
+	opts *types.VolumeAttachOpts) (*types.Volume, error) {
 
 	fields := eff(map[string]interface{}{
 		"volumeId":   volumeID,
@@ -499,7 +497,7 @@ func (d *driver) VolumeAttach(
 	}
 
 	instanceID, _ := d.InstanceID(ctx, opts.Opts)
-	volumeInspectOpts := &drivers.VolumeInspectOpts{true, opts.Opts}
+	volumeInspectOpts := &types.VolumeInspectOpts{true, opts.Opts}
 	_, err = d.GetVolumeAttach(ctx, volumeID, instanceID.ID, volumeInspectOpts)
 	if err != nil {
 		return nil, goof.WithFieldsE(
@@ -521,9 +519,9 @@ func (d *driver) VolumeAttach(
 }
 
 func (d *driver) VolumeDetach(
-	ctx context.Context,
+	ctx types.Context,
 	volumeID string,
-	opts types.Store) (*types.Volume, error) {
+	opts *types.VolumeDetachOpts) (*types.Volume, error) {
 	fields := eff(map[string]interface{}{
 		"moduleName": ctx,
 		"volumeId":   volumeID,
@@ -570,27 +568,27 @@ func (d *driver) VolumeDetach(
 }
 
 func (d *driver) Snapshots(
-	ctx context.Context,
+	ctx types.Context,
 	opts types.Store) ([]*types.Snapshot, error) {
 	return nil, nil
 }
 
 func (d *driver) SnapshotInspect(
-	ctx context.Context,
+	ctx types.Context,
 	snapshotID string,
 	opts types.Store) (*types.Snapshot, error) {
 	return nil, nil
 }
 
 func (d *driver) SnapshotCopy(
-	ctx context.Context,
+	ctx types.Context,
 	snapshotID, snapshotName, destinationID string,
 	opts types.Store) (*types.Snapshot, error) {
 	return nil, nil
 }
 
 func (d *driver) SnapshotRemove(
-	ctx context.Context,
+	ctx types.Context,
 	snapshotID string,
 	opts types.Store) error {
 	return nil
@@ -647,7 +645,7 @@ func (d *driver) getVolume(
 	return volumes, nil
 }
 
-func (d *driver) createVolume(ctx context.Context,
+func (d *driver) createVolume(ctx types.Context,
 	notUsed bool,
 	volumeName, volumeID, volumeType string,
 	IOPS, size int64, availabilityZone string) (*goscaleioTypes.VolumeResp, error) {
@@ -697,7 +695,7 @@ func eff(fields goof.Fields) map[string]interface{} {
 	return errFields
 }
 
-func (d *driver) waitMount(ctx context.Context, volumeID string, opts types.Store) (*goscaleio.SdcMappedVolume, error) {
+func (d *driver) waitMount(ctx types.Context, volumeID string, opts types.Store) (*goscaleio.SdcMappedVolume, error) {
 
 	timeout := make(chan bool, 1)
 	go func() {
@@ -756,7 +754,7 @@ func (d *driver) waitMount(ctx context.Context, volumeID string, opts types.Stor
 }
 
 func (d *driver) GetVolumeAttach(
-	ctx context.Context, volumeID, instanceID string, opts *drivers.VolumeInspectOpts) ([]*types.VolumeAttachment, error) {
+	ctx types.Context, volumeID, instanceID string, opts *types.VolumeInspectOpts) ([]*types.VolumeAttachment, error) {
 
 	fields := eff(map[string]interface{}{
 		"volumeId":   volumeID,

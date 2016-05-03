@@ -12,13 +12,13 @@ import (
 
   "github.com/emccode/libstorage/api/server/executors"
   apitests "github.com/emccode/libstorage/api/tests"
-  apihttp "github.com/emccode/libstorage/api/types/http"
   "github.com/emccode/libstorage/api/types"
   "github.com/emccode/libstorage/client"
 
 
   // load the  driver
   "github.com/emccode/libstorage/drivers/storage/scaleio"
+  "github.com/emccode/libstorage/api/server"
 )
 
 var (
@@ -73,15 +73,15 @@ func init() {
 }
 
 func TestMain(m *testing.M) {
+  server.CloseOnAbort()
   ec := m.Run()
-  client.Close()
   os.Exit(ec)
 }
 
 func TestClient(t *testing.T) {
   apitests.Run(t, scaleio.Name, configYAML,
     func(config gofig.Config, client client.Client, t *testing.T) {
-      iid, err := client.InstanceID(scaleio.Name)
+      iid, err := client.API().InstanceID(nil, scaleio.Name)
       assert.NoError(t, err)
       assert.NotNil(t, iid)
     })
@@ -102,7 +102,7 @@ func TestRoot(t *testing.T) {
 
 func TestServices(t *testing.T) {
   tf := func(config gofig.Config, client client.Client, t *testing.T) {
-    reply, err := client.Services()
+    reply, err := client.API().Services(nil)
     assert.NoError(t, err)
     assert.Equal(t, len(reply), 1)
 
@@ -114,7 +114,7 @@ func TestServices(t *testing.T) {
 
 func TestServiceInspect(t *testing.T) {
   tf := func(config gofig.Config, client client.Client, t *testing.T) {
-    reply, err := client.ServiceInspect("scaleio")
+    reply, err := client.API().ServiceInspect(nil, "scaleio")
     assert.NoError(t, err)
     assert.Equal(t, "scaleio", reply.Name)
     assert.Equal(t, "scaleio", reply.Driver.Name)
@@ -124,7 +124,7 @@ func TestServiceInspect(t *testing.T) {
 
 func TestVolumeWorkflow(t *testing.T) {
   volumeEndpointTest := func(config gofig.Config, client client.Client, t *testing.T) {
-    serviceVolumeMap, err := client.Volumes(false)
+    serviceVolumeMap, err := client.API().Volumes(nil, false)
     assert.Equal(t, err, nil)
     svMap := serviceVolumeMap["scaleio"]
     for _, v := range svMap {
@@ -138,19 +138,19 @@ func TestVolumeWorkflow(t *testing.T) {
     volumeName := "libstorageTest"
     size := int64(8)
 
-    volumeCreateRequest := &apihttp.VolumeCreateRequest{
+    volumeCreateRequest := &types.VolumeCreateRequest{
       Name:             volumeName,
       Size:             &size,
     }
 
-    created, err := client.VolumeCreate("scaleio",volumeCreateRequest)
+    created, err := client.API().VolumeCreate(nil, "scaleio",volumeCreateRequest)
     assert.Nil(t, err)
     assert.Equal(t, created.Name, volumeCreateRequest.Name)
     assert.Equal(t, created.Size, *volumeCreateRequest.Size)
     assert.NotNil(t, created.ID)
     volumeID = created.ID
 
-    inspected, err := client.VolumeInspect("scaleio", created.ID, false)
+    inspected, err := client.API().VolumeInspect(nil, "scaleio", created.ID, false)
     assert.Nil(t, err)
     assert.Equal(t, inspected.Name, volumeCreateRequest.Name)
     assert.Equal(t, inspected.Size, *volumeCreateRequest.Size)
@@ -161,10 +161,10 @@ func TestVolumeWorkflow(t *testing.T) {
 
   deleteVolumeTest := func(config gofig.Config, client client.Client, t *testing.T) {
 
-    err := client.VolumeRemove("scaleio", volumeID)
+    err := client.API().VolumeRemove(nil, "scaleio", volumeID)
     assert.Nil(t, err)
 
-    inspected, err := client.VolumeInspect("scaleio", volumeID, false)
+    inspected, err := client.API().VolumeInspect(nil, "scaleio", volumeID, false)
     assert.Error(t, err)
     assert.Empty(t, inspected)
   }

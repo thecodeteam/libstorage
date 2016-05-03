@@ -11,8 +11,6 @@ import (
 	"github.com/akutz/gofig"
 	"github.com/emccode/libstorage/api/registry"
 	"github.com/emccode/libstorage/api/types"
-	"github.com/emccode/libstorage/api/types/context"
-	"github.com/emccode/libstorage/api/types/drivers"
 )
 
 const Name = "scaleio"
@@ -30,7 +28,7 @@ func init() {
 	registry.RegisterStorageExecutor(Name, newExecutor)
 }
 
-func (e *StorageExecutor) Init(config gofig.Config) error {
+func (e *StorageExecutor) Init(ctx types.Context, config gofig.Config) error {
 	e.Config = config
 	if e.InitDriver != nil {
 		if err := e.InitDriver(); err != nil {
@@ -45,7 +43,7 @@ func (e *StorageExecutor) Init(config gofig.Config) error {
 	return nil
 }
 
-func newExecutor() drivers.StorageExecutor {
+func newExecutor() types.StorageExecutor {
 	return NewExecutor()
 }
 
@@ -61,21 +59,21 @@ func (e *StorageExecutor) Name() string {
 
 // InstanceID returns the local system's InstanceID.
 func (e *StorageExecutor) InstanceID(
-	ctx context.Context,
+	ctx types.Context,
 	opts types.Store) (*types.InstanceID, error) {
 	return e.instanceID, nil
 }
 
 // NextDevice returns the next available device.
 func (e *StorageExecutor) NextDevice(
-	ctx context.Context,
+	ctx types.Context,
 	opts types.Store) (string, error) {
 	return "", nil
 }
 
 // LocalDevices returns a map of the system's local devices.
 func (e *StorageExecutor) LocalDevices(
-	ctx context.Context,
+	ctx types.Context,
 	opts types.Store) (map[string]string, error) {
 
 	var volumeMap = make(map[string]string)
