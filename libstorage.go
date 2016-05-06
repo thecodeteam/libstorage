@@ -107,7 +107,7 @@ func New(config gofig.Config) (types.Client, io.Closer, error, <-chan error) {
 		serving bool
 	)
 
-	if !config.IsSet("libstorage.host") {
+	if config.GetString("libstorage.host") == "" {
 		addr := os.Getenv("LIBSTORAGE_RUN_HOST")
 		if addr == "" {
 			addr = fmt.Sprintf("unix://%s", utils.GetTempSockFile())
@@ -117,17 +117,18 @@ func New(config gofig.Config) (types.Client, io.Closer, error, <-chan error) {
 		if err := config.ReadConfig(bytes.NewReader(yaml)); err != nil {
 			return nil, nil, err, nil
 		}
-		if s, err, errs = Serve(config); err != nil {
-			return nil, nil, err, nil
-		}
-		serving = true
-		go func() {
-			e := <-errs
-			if e != nil {
-				panic(e)
-			}
-		}()
 	}
+
+	if s, err, errs = Serve(config); err != nil {
+		return nil, nil, err, nil
+	}
+	serving = true
+	go func() {
+		e := <-errs
+		if e != nil {
+			panic(e)
+		}
+	}()
 
 	if c, err = Dial(config); err != nil {
 		return nil, nil, err, nil
@@ -135,9 +136,8 @@ func New(config gofig.Config) (types.Client, io.Closer, error, <-chan error) {
 
 	if serving {
 		return c, s, nil, errs
-	} else {
-		return c, nil, nil, nil
 	}
+	return c, nil, nil, nil
 }
 
 const embeddedHostPatt = `libstorage:
