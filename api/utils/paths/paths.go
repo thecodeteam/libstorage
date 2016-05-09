@@ -259,7 +259,7 @@ func checkPerms(k fileKey, mustPerm bool) bool {
 			log.WithField("path", p).Debug("file exists")
 		}
 	} else {
-		log.WithFields(fields).Info("making libStorage directory")
+		log.WithFields(fields).Debug("making libStorage directory")
 		noPermMkdirErr := fmt.Sprintf("mkdir %s: permission denied", p)
 		if err := os.MkdirAll(p, k.perms()); err != nil {
 			if err.Error() == noPermMkdirErr {
