@@ -73,6 +73,7 @@ func (d *driver) LocalDevices(
 	if ld, ok := context.LocalDevices(ctx); ok {
 		return ld, nil
 	}
+	panic("here1")
 	return nil, goof.New("missing local devices")
 }
 
@@ -99,7 +100,7 @@ func getMacs(ctx types.Context) []string {
 	iid := context.MustInstanceID(ctx)
 	var macs []string
 	if err := json.Unmarshal(iid.Metadata, &macs); err != nil {
-		panic(err)
+		return nil
 	}
 
 	ctx.WithField("instanceID", iid.ID).Debug("checking instance ID")
@@ -131,6 +132,11 @@ func (d *driver) getInstanceID(
 func (d *driver) InstanceInspect(
 	ctx types.Context,
 	opts types.Store) (*types.Instance, error) {
+
+	iid := context.MustInstanceID(ctx)
+	if iid.ID != "" {
+		return &types.Instance{InstanceID: iid}, nil
+	}
 
 	d.refreshSession(ctx)
 

@@ -128,12 +128,17 @@ func (d *driver) InstanceInspect(
 	ctx types.Context,
 	opts types.Store) (*types.Instance, error) {
 
+	iid := context.MustInstanceID(ctx)
+	if iid.ID != "" && iid.Formatted == true {
+		return &types.Instance{InstanceID: iid}, nil
+	}
+
 	//if transformed return
 	guid, _, err := d.verifySdc(ctx, context.MustInstanceID(ctx).ID)
 	if err != nil {
 		return nil, goof.WithError("problem looking up instanceID", err)
 	}
-	iid := &types.InstanceID{
+	iid = &types.InstanceID{
 		ID: guid,
 	}
 

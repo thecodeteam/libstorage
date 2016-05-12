@@ -73,15 +73,15 @@ func (c *client) Volumes(
 
 	ctx = c.requireCtx(ctx)
 
-	if attachments {
-		ctxA, err := c.withAllLocalDevices(ctx)
-		if err != nil {
-			return nil, err
-		}
-		ctx = ctxA
-
-		ctx = c.withAllInstanceIDs(ctx)
+	// if attachments {
+	ctxA, err := c.withAllLocalDevices(ctx)
+	if err != nil {
+		return nil, err
 	}
+	ctx = ctxA
+
+	ctx = c.withAllInstanceIDs(ctx)
+	// }
 
 	return c.APIClient.Volumes(ctx, attachments)
 }
@@ -93,14 +93,14 @@ func (c *client) VolumesByService(
 
 	ctx = c.requireCtx(ctx).WithValue(context.ServiceKey, service)
 
-	if attachments {
-		ctxA, err := c.withAllLocalDevices(ctx)
-		if err != nil {
-			return nil, err
-		}
-		ctx = ctxA
-		ctx = c.withInstanceID(ctx, service)
+	// if attachments {
+	ctxA, err := c.withAllLocalDevices(ctx)
+	if err != nil {
+		return nil, err
 	}
+	ctx = ctxA
+	ctx = c.withInstanceID(ctx, service)
+	// }
 
 	return c.APIClient.VolumesByService(ctx, service, attachments)
 }
@@ -112,14 +112,14 @@ func (c *client) VolumeInspect(
 
 	ctx = c.requireCtx(ctx).WithValue(context.ServiceKey, service)
 
-	if attachments {
-		ctxA, err := c.withAllLocalDevices(ctx)
-		if err != nil {
-			return nil, err
-		}
-		ctx = ctxA
-		ctx = c.withInstanceID(ctx, service)
+	// if attachments {
+	ctxA, err := c.withAllLocalDevices(ctx)
+	if err != nil {
+		return nil, err
 	}
+	ctx = ctxA
+	ctx = c.withInstanceID(ctx, service)
+	// }
 
 	return c.APIClient.VolumeInspect(ctx, service, volumeID, attachments)
 }
@@ -130,6 +130,12 @@ func (c *client) VolumeCreate(
 	request *types.VolumeCreateRequest) (*types.Volume, error) {
 
 	ctx = c.requireCtx(ctx).WithValue(context.ServiceKey, service)
+	ctxA, err := c.withAllLocalDevices(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ctx = ctxA
+	ctx = c.withInstanceID(ctx, service)
 
 	lsd, _ := registry.NewClientDriver(service)
 	if lsd != nil {
@@ -255,6 +261,16 @@ func (c *client) VolumeAttach(
 	request *types.VolumeAttachRequest) (*types.Volume, string, error) {
 
 	ctx = c.withInstanceID(c.requireCtx(ctx), service)
+	ctxA, err := c.withAllLocalDevices(ctx)
+	if err != nil {
+		return nil, "", err
+	}
+	ctx = ctxA
+	ctx, err = c.withAllLocalDevices(ctx)
+	if err != nil {
+		return nil, "", err
+	}
+
 	return c.APIClient.VolumeAttach(ctx, service, volumeID, request)
 }
 
@@ -265,6 +281,12 @@ func (c *client) VolumeDetach(
 	request *types.VolumeDetachRequest) (*types.Volume, error) {
 
 	ctx = c.withInstanceID(c.requireCtx(ctx), service)
+	ctxA, err := c.withAllLocalDevices(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ctx = ctxA
+
 	return c.APIClient.VolumeDetach(ctx, service, volumeID, request)
 }
 
@@ -273,6 +295,12 @@ func (c *client) VolumeDetachAll(
 	request *types.VolumeDetachRequest) (types.ServiceVolumeMap, error) {
 
 	ctx = c.withAllInstanceIDs(c.requireCtx(ctx))
+	ctxA, err := c.withAllLocalDevices(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ctx = ctxA
+
 	return c.APIClient.VolumeDetachAll(ctx, request)
 }
 
@@ -282,6 +310,12 @@ func (c *client) VolumeDetachAllForService(
 	request *types.VolumeDetachRequest) (types.VolumeMap, error) {
 
 	ctx = c.withInstanceID(c.requireCtx(ctx), service)
+	ctxA, err := c.withAllLocalDevices(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ctx = ctxA
+
 	return c.APIClient.VolumeDetachAllForService(ctx, service, request)
 }
 
