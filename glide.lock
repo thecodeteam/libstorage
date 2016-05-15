@@ -1,5 +1,5 @@
-hash: a40b76f83c0a061d7e78be85db4b98d3dc59dce7d6128a33353ed30fd8c028ab
-updated: 2016-05-12T14:11:07.282703504-05:00
+hash: 6d5f9dca49616fa3cd4d023bd751fdaa847beb6b7b6814801f14d0df4211746a
+updated: 2016-05-15T19:55:17.2880788Z
 imports:
 - name: github.com/akutz/gofig
   version: 84e1fb25c0a0fd2f2da6d7ce7827881f7c80eef5
@@ -17,7 +17,7 @@ imports:
   - vboxwebsrv
   - virtualboxclient
 - name: github.com/asaskevich/govalidator
-  version: 5b6e9375cbf581a9008064f7216e816b568d6daa
+  version: 37d5f827499d1c346df42f2ad7fcb7f453833a57
 - name: github.com/blang/semver
   version: 31b736133b98f26d5e078ec9eb591666edfd091f
   vcs: git
@@ -33,12 +33,67 @@ imports:
   version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
   subpackages:
   - spew
+- name: github.com/emccode/goisilon
+  version: f9b53f0aaadb12a26b134830142fc537f492cb13
+  vcs: git
+  subpackages:
+  - api/v1
 - name: github.com/emccode/goscaleio
   version: 53ea76f52205380ab52b9c1f4ad89321c286bb95
   repo: https://github.com/emccode/goscaleio
   vcs: git
   subpackages:
   - types/v1
+- name: github.com/emccode/libstorage
+  version: b831d17a9db2d1b994496a99af5efc656adfd51d
+  subpackages:
+  - api/registry
+  - api/server
+  - api/types
+  - api/utils
+  - client
+  - api/context
+  - api/server/handlers
+  - api/server/services
+  - api/utils/config
+  - api/utils/semaphore
+  - imports/remote
+  - imports/routers
+  - api/server/httputils
+  - api/utils/schema
+  - api/server/router/executor
+  - api/server/router/root
+  - api/server/router/service
+  - api/server/router/snapshot
+  - api/server/router/tasks
+  - api/server/router/volume
+  - api/server/executors
+  - api/utils/filters
+  - api/utils/paths
+  - imports/config
+  - cli/lss
+  - imports/executors
+  - cli/lsx
+  - imports/local
+  - drivers/storage/isilon
+  - api/client
+  - drivers/storage/mock/executor
+  - drivers/storage/scaleio
+  - drivers/storage/vbox
+  - drivers/storage/vfs
+  - drivers/storage/isilon/executor
+  - drivers/storage/scaleio/executor
+  - drivers/storage/vbox/executor
+  - drivers/storage/vfs/executor
+  - drivers/integration/docker
+  - drivers/os/darwin
+  - drivers/os/linux
+  - drivers/storage/libstorage
+  - drivers/storage/vfs/client
+  - drivers/storage/isilon/storage
+  - drivers/storage/scaleio/storage
+  - drivers/storage/vbox/storage
+  - drivers/storage/vfs/storage
 - name: github.com/gorilla/context
   version: a8d44e7d8e4d532b6a27a02dd82abb31cc1b01bd
 - name: github.com/gorilla/mux
@@ -83,12 +138,12 @@ imports:
   subpackages:
   - assert
 - name: golang.org/x/net
-  version: 96dbb961a39ddccf16860cdd355bfa639c497f23
+  version: ef00b378c73f107bf44d5c9b69875255ce89b79a
   subpackages:
   - context/ctxhttp
   - context
 - name: golang.org/x/sys
-  version: e82cb4d7dffc35bcec7bc8bf9e402377e0ecf3f4
+  version: 33267e036fd93fcd26ea95b7bdaf2d8306cb743c
   subpackages:
   - unix
 - name: gopkg.in/fsnotify.v1
