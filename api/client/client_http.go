@@ -31,6 +31,10 @@ func (c *client) httpDo(
 		return nil, err
 	}
 
+	for k, v := range c.headers {
+		req.Header[k] = v
+	}
+
 	ctx = context.RequireTX(ctx)
 	tx := context.MustTransaction(ctx)
 	req.Header.Set(types.TransactionHeader, tx.String())

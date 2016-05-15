@@ -1,9 +1,11 @@
 package client
 
 import (
-	"net/http"
-
+	"fmt"
 	"github.com/emccode/libstorage/api/types"
+	"net/http"
+	"regexp"
+	"sync"
 )
 
 // Client is the libStorage API client.
@@ -13,6 +15,8 @@ type client struct {
 	logRequests  bool
 	logResponses bool
 	serverName   string
+	headers      http.Header
+	headersRWL   *sync.RWMutex
 }
 
 // New returns a new API client.
@@ -21,7 +25,9 @@ func New(host string, transport *http.Transport) types.APIClient {
 		Client: http.Client{
 			Transport: transport,
 		},
-		host: host,
+		host:       host,
+		headers:    http.Header{},
+		headersRWL: &sync.RWMutex{},
 	}
 }
 
@@ -35,4 +41,45 @@ func (c *client) LogRequests(enabled bool) {
 
 func (c *client) LogResponses(enabled bool) {
 	c.logResponses = enabled
+}
+
+func (c *client) AddHeader(key, value string) {
+	c.AddHeaderForDriver("", key, value)
+}
+
+func (c *client) AddHeaderForDriver(driverName, key, value string) {
+	c.headersRWL.Lock()
+	defer c.headersRWL.Unlock()
+
+	var (
+		ckey = http.CanonicalHeaderKey(key)
+		vals = c.headers[ckey]
+		xist = 1
+		vrgx *regexp.Regexp
+	)
+
+	if vals == nil {
+		vals = []string{}
+	}
+
+	if driverName == "" {
+		vrgx = regexp.MustCompile(fmt.Sprintf(`(?i)%s`, value))
+	} else {
+		vrgx = regexp.MustCompile(fmt.Sprintf(`(?i)%s=.*`, driverName))
+		value = fmt.Sprintf("%s=%s", driverName, value)
+	}
+
+	for x, v := range vals {
+		if vrgx.MatchString(v) {
+			xist = x
+			break
+		}
+	}
+
+	if xist >= 0 {
+		vals = append(vals[:xist], vals[xist+1:]...)
+	}
+	vals = append(vals, value)
+
+	c.headers[ckey] = vals
 }
