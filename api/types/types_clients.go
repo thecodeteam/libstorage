@@ -44,6 +44,16 @@ type APIClient interface {
 	// LogResponses enables or disables the logging of client HTTP responses.
 	LogResponses(enabled bool)
 
+	// AddHeader provides the API client with a key/value pair that are
+	// added to all outgoing HTTP requests as a header.
+	AddHeader(key, value string)
+
+	// AddHeaderForDriver is a variant of AddHeader and adds a header in the
+	// format HEADER_KEY: DRIVER_NAME=HEADER_VALUE_KEY=HEADER_VALUE_VALUE.
+	// If there's an existing header with the same HEADER_KEY and
+	// DRIVER_NAME it is replaced.
+	AddHeaderForDriver(driverName, key, value string)
+
 	// Root returns a list of root resources.
 	Root(ctx Context) ([]string, error)
 
