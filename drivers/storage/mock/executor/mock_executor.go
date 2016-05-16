@@ -1,5 +1,3 @@
-// +build mock
-
 package executor
 
 import (
@@ -83,10 +81,11 @@ func (d *Executor) LocalDevices(
 
 // GetInstanceID gets the mock instance ID.
 func GetInstanceID() *types.InstanceID {
-	return &types.InstanceID{
-		ID:       "12345",
-		Metadata: instanceIDMetadata(),
+	iid := &types.InstanceID{
+		ID: "12345",
 	}
+	_ = iid.MarshalMetadata(instanceIDMetadata())
+	return iid
 }
 
 func instanceIDMetadata() json.RawMessage {
