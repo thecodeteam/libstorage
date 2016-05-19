@@ -23,8 +23,8 @@ will be a few differences from the examples below:
 
   * The examples show `libStorage` configured with its server component hosted
     on a UNIX socket. This is ideal for when the client/server exist on the same
-    when host as it reduces security risks. However, in most real-world
-    scenarios the client and server are *not* residing on the same host, the
+    host as it reduces security risks. However, in most real-world scenarios
+    the client and server are *not* residing on the same host, the
     `libStorage`  server should use a TCP endpoint so it can be accessed
     remotely.
 
@@ -42,15 +42,10 @@ This section outlines the most common configuration scenarios encountered by
 The first example is a simple `libStorage` configuration with the VirtualBox
 storage driver. The below example omits the host property, but the configuration
 is still valid. If the `libstorage.host` property is not found, the server is
-hosted via a temporary UNIX socket file.
+hosted via a temporary UNIX socket file in `/var/run/libstorage`.
 
 ```yaml
 libstorage:
-  integration:
-    volume:
-      create:
-        default:
-          size: 1 # GB
   server:
     services:
       virtualbox:
@@ -58,7 +53,7 @@ libstorage:
         virtualbox:
           endpoint:       http://10.0.2.2:18083
           tls:            false
-          volumePath:     /var/lib/libstorage/virtualbox/volumes
+          volumePath:     /Users/your_user/VirtualBox Volumes
           controllerName: SATA
 ```
 
@@ -70,11 +65,6 @@ accessible - a single TCP port, 7979, bound to the localhost network interface.
 ```yaml
 libstorage:
   host: tcp://127.0.0.1:7979
-  integration:
-    volume:
-      create:
-        default:
-          size: 1 # GB
   server:
     services:
       virtualbox:
@@ -82,7 +72,7 @@ libstorage:
         virtualbox:
           endpoint:       http://10.0.2.2:18083
           tls:            false
-          volumePath:     /var/lib/libstorage/virtualbox/volumes
+          volumePath:     /Users/your_user/VirtualBox Volumes
           controllerName: SATA
 ```
 
@@ -99,11 +89,6 @@ encrypt communications between client and server.
 ```yaml
 libstorage:
   host: tcp://127.0.0.1:7979
-  integration:
-    volume:
-      create:
-        default:
-          size: 1 # GB
   client:
     tls:
       certFile: $HOME/.libstorage/libstorage-client.crt
@@ -121,7 +106,7 @@ libstorage:
         virtualbox:
           endpoint:       http://10.0.2.2:18083
           tls:            false
-          volumePath:     /var/lib/libstorage/virtualbox/volumes
+          volumePath:     /Users/your_user/VirtualBox Volumes
           controllerName: SATA
 ```
 
@@ -132,16 +117,13 @@ settings, logging, etc.
 
 ### UNIX Socket
 For the security conscious, there is no safer way to run a client/server setup
-on a single system than the option to use a UNIX socket.
+on a single system than the option to use a UNIX socket. The socket offloads
+authentication and relies on the file system file access to ensure authorized
+users can use the `libStorage` API.
 
 ```yaml
 libstorage:
   host: unix:///var/run/libstorage/localhost.sock
-  integration:
-    volume:
-      create:
-        default:
-          size: 1 # GB
   server:
     services:
       virtualbox:
@@ -149,9 +131,12 @@ libstorage:
         virtualbox:
           endpoint:       http://10.0.2.2:18083
           tls:            false
-          volumePath:     /var/lib/libstorage/virtualbox/volumes
+          volumePath:     /Users/your_user/VirtualBox Volumes
           controllerName: SATA
 ```
+
+It is possible to apply TLS to the UNIX socket. Refer to the TCP+TLS section
+for applying TLS to the UNIX sockets.
 
 ### Multiple Endpoints
 There may be occasions when it is desirable to provide multiple ingress vectors
@@ -167,11 +152,6 @@ public | tcp | \*:7980 | yes | no
 ```yaml
 libstorage:
   host: unix:///var/run/libstorage/localhost.sock
-  integration:
-    volume:
-      create:
-        default:
-          size: 1 # GB
   server:
     services:
       virtualbox:
@@ -179,7 +159,7 @@ libstorage:
         virtualbox:
           endpoint:       http://10.0.2.2:18083
           tls:            false
-          volumePath:     /var/lib/libstorage/virtualbox/volumes
+          volumePath:     /Users/your_user/VirtualBox Volumes
           controllerName: SATA
     endpoints:
       sock:
@@ -218,14 +198,18 @@ virtualbox-00 | virtualbox
 virtualbox-01 | virtualbox
 scaleio | scaleio
 
+Notice how the `virtualbox-01` service includes an added `integration` section.
+The integration definition refers to the integration interface and parameters
+specific to incoming requests through this layer. In this case we defined
+`libstorage.server.services.virtualbox-01` with the
+`integration.volume.create.default.size` parameter set. This enables all
+create requests that come in through `virtualbox-01` to have a default size of
+1GB. So although it is technically the same platform below the covers,
+`virtualbox-00` requests may have different default values than those defined
+in `virtualbox-01`.
+
 ```yaml
 libstorage:
-  host: unix:///var/run/libstorage/localhost.sock
-  integration:
-    volume:
-      create:
-        default:
-          size: 1 # GB
   server:
     services:
       virtualbox-00:
@@ -233,15 +217,20 @@ libstorage:
         virtualbox:
           endpoint:       http://10.0.2.2:18083
           tls:            false
-          volumePath:     /var/lib/libstorage/virtualbox/volumes-00
+          volumePath:     /Users/your_user/VirtualBox Volumes
           controllerName: SATA
       virtualbox-01:
         driver: virtualbox
         virtualbox:
           endpoint:       http://10.0.2.2:18083
           tls:            false
-          volumePath:     /var/lib/libstorage/virtualbox/volumes-01
+          volumePath:     /Users/your_user/VirtualBox Volumes
           controllerName: SATA
+        integration:
+          volume:
+            create:
+              default:
+                size: 1 # GB
       scaleio:
         driver: scaleio
         scaleio:
@@ -252,18 +241,6 @@ libstorage:
           systemName: tenantName
           protectionDomainName: protectionDomainName
           storagePoolName: storagePoolName
-    endpoints:
-      sock:
-        address: unix:///var/run/libstorage/localhost.sock
-      private:
-        address: tcp://127.0.0.1:7979
-      public:
-        address: tcp://:7980
-        tls:
-          certFile: /etc/libstorage/libstorage-server.crt
-          keyFile: /etc/libstorage/libstorage-server.key
-          trustedCertsFile: /etc/libstorage/trusted-certs.crt
-          clientCertRequired: true
 ```
 
 A very important point to make about the relationship between services and
@@ -277,9 +254,9 @@ services host one driver, VirtualBox, and the third service hosts ScaleIO.
 However, why two services for one driver, in this case, VirtualBox? Because,
 in addition to services being configured to host different types of drivers,
 services can also host different driver configurations. In service
-`virtualbox-00`, the volume path is `/var/lib/libstorage/virtualbox/volumes-00`,
+`virtualbox-00`, the volume path is `/Users/your_user/VirtualBox Volumes-00`,
 whereas for service `virtualbox-01`, the volume path is
-`/var/lib/libstorage/virtualbox/volumes-01`.
+`/Users/your_user/VirtualBox Volumes-01`.
 
 ### Logging
 Sometimes it helps to see a little more, or maybe even a little less,
@@ -289,11 +266,6 @@ information in the logs. Configuring logging is quite straight-forward:
 libstorage:
   logging:
     level: warn
-  integration:
-    volume:
-      create:
-        default:
-          size: 1 # GB
   server:
     logging:
       level: info
@@ -303,7 +275,7 @@ libstorage:
         virtualbox:
           endpoint:       http://10.0.2.2:18083
           tls:            false
-          volumePath:     /var/lib/libstorage/virtualbox/volumes
+          volumePath:     /Users/your_user/VirtualBox Volumes
           controllerName: SATA
 ```
 
@@ -373,12 +345,6 @@ the `libStorage` server is hosted:
 ```yaml
 libstorage:
   host: tcp://192.168.0.20:7979
-  logging:
-    level: warn
-    stdout:
-    stderr:
-    httpRequests: false
-    httpResponses: false
 ```
 
 The property `libstorage.host` is a string. This value can also be set via
@@ -404,6 +370,21 @@ Nested properties follow these rules for CLI flags:
     remaining text of that level left unaltered.
   * All levels are then concatenated together.
 
+The following example builds on the previous. In this case we have added logging
+directives to the client instance and reference how their transformation in
+the table below the example.
+
+```yaml
+  libstorage:
+    host: tcp://192.168.0.20:7979
+    logging:
+      level: warn
+      stdout:
+      stderr:
+      httpRequests: false
+      httpResponses: false
+```
+
 The following table illustrates the transformations:
 
 Property Name | Environment Variable | CLI Flag
@@ -423,7 +404,6 @@ can be rewritten and simplified in the process:
 
 ```yaml
 libstorage:
-  host: unix:///var/run/libstorage/localhost.sock
   integration:
     volume:
       create:
@@ -438,33 +418,11 @@ libstorage:
       virtualbox-00:
         driver: virtualbox
         virtualbox:
-          volumePath:     /var/lib/libstorage/virtualbox/volumes-00      
+          volumePath:     /Users/your_user/VirtualBox Volumes-00      
       virtualbox-01:
         driver: virtualbox
         virtualbox:
-          volumePath:     /var/lib/libstorage/virtualbox/volumes-01
-      scaleio:
-        driver: scaleio
-        scaleio:
-          endpoint: https://gateway_ip/api
-          insecure: true
-          userName: username
-          password: password
-          systemName: tenantName
-          protectionDomainName: protectionDomainName
-          storagePoolName: storagePoolName
-    endpoints:
-      sock:
-        address: unix:///var/run/libstorage/localhost.sock
-      private:
-        address: tcp://127.0.0.1:7979
-      public:
-        address: tcp://:7980
-        tls:
-          certFile: /etc/libstorage/libstorage-server.crt
-          keyFile: /etc/libstorage/libstorage-server.key
-          trustedCertsFile: /etc/libstorage/trusted-certs.crt
-          clientCertRequired: true
+          volumePath:     /Users/your_user/VirtualBox Volumes-01
 ```
 
 The above example may look different than the previous one, but it's actually
@@ -508,7 +466,7 @@ libstorage:
         virtualbox:
           endpoint:       http://10.0.2.2:18083
           tls:            false
-          volumePath:     /var/lib/libstorage/virtualbox/volumes
+          volumePath:     /Users/your_user/VirtualBox Volumes
           controllerName: SATA
 ```
 
@@ -538,7 +496,7 @@ There are three types of drivers:
 
   1. OS Drivers
   2. Storage Drivers
-  3. Volume Drivers
+  3. Integration Drivers
 
 #### OS Drivers
 Operating system (OS) drivers enable `libStorage` to manage storage on
@@ -560,11 +518,12 @@ remote storage systems. Currently the following storage drivers are supported:
 [Isilon](./storage-providers.md#isilon) | isilon
 [ScaleIO](./storage-providers.md#scaleio) | scaleio
 [VirtualBox](./storage-providers.md#virtualbox) | virtualbox
+..more coming|
 
 The `libstorage.server.libstorage.storage.driver` property can be used to
 activate a storage drivers. That is not a typo; the `libstorage` key is repeated
 beneath `libstorage.server`. This is because configuration property paths are
-absolute, and when nested under an architectual component, such as
+absolute, and when nested under an architectural component, such as
 `libstorage.server`, the entire key path must be replicated.
 
 That said, and this may seem to contradict the last point, the storage driver
@@ -582,7 +541,8 @@ integration drivers are supported:
 --------|------------
 Docker   | docker
 
-The integration driver `docker` is automatically activated.
+The integration driver `docker` provides necessary functionality to enable
+most consuming platforms to work with storage volumes.
 
 ### Volume Configuration
 This section describes various global configuration options related to an
@@ -595,8 +555,8 @@ driver's volume-related properties.
 parameter|description
 ---------|-----------
 `libstorage.integration.volume.mount.preempt`|Forcefully take control of volumes when requested
-`libstorage.integration.volume.mount.path`|The default path for mounting volumes
-`libstorage.integration.volume.mount.rootPath`|The path within the volume to private mount (ex. `/data`)
+`libstorage.integration.volume.mount.path`|The default host path for mounting volumes
+`libstorage.integration.volume.mount.rootPath`|The path within the volume to return to the integrator (ex. `/data`)
 `libstorage.integration.volume.create.disable`|Disable the ability for a volume to be created
 `libstorage.integration.volume.remove.disable`|Disable the ability for a volume to be removed
 
@@ -645,6 +605,7 @@ without the current owner instance being involved.  The operation is considered
 equivalent to a power off of the existing instance for the device.
 
 Example configuration file follows:
+
 ```yaml
 libstorage:
   integration:
@@ -674,6 +635,7 @@ is stopped.
 The following setting should only be used if you wish to *disable* this
 functionality.  This would make sense if the accounting is being done from
 higher layers and all unmount operations should proceed without control.
+
 ```yaml
 libstorage:
   integration:

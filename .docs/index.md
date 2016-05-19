@@ -26,6 +26,20 @@ long running plugins per host
 and applications
 - Flexible HTTP/JSON API for other deployment opportunities
 
+## Operations
+Today `libStorage` supports the following volume management features.
+
+- List/Inspect for retrieving volumes and detailed information
+- Create/Remove for managing volume lifecycle
+- Attach/Detach for getting volumes to instaces to be used
+- Mount/Unmount to comprehensively get volumes to instances, discover,
+optionally format, and mount
+- Path to review the existing mounted path of a volume
+- Map to list the current attached volumes to an instance
+
+The operations for `Snapshots` and `Storage Pools` is planned for future
+releases.
+
 ## Getting Started
 Using libStorage can be broken down into several, distinct steps:
 

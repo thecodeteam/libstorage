@@ -70,11 +70,7 @@ Below is a full `config.yml` file that works with Isilon.
 
 ```yaml
 libstorage:
-  host: unix:///var/run/libstorage/localhost.sock
   server:
-    endpoints:
-      localhost:
-        address: unix:///var/run/libstorage/localhost.sock
     services:
       isilon:
         driver: isilon
@@ -214,7 +210,6 @@ Below is a full `config.yml` file that works with ScaleIO.
 
 ```yaml
 libstorage:
-  host: unix:///var/run/libstorage/localhost.sock
   server:
     services:
       scaleio:
@@ -289,11 +284,7 @@ Below is a working `config.yml` file that works with VirtualBox.
 
 ```yaml
 libstorage:
-  host: unix:///var/run/libstorage/localhost.sock
   server:
-    endpoints:
-      localhost:
-        address: unix:///var/run/libstorage/localhost.sock
     services:
       virtualbox:
         driver: virtualbox
