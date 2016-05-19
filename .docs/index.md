@@ -1,23 +1,23 @@
-# LibStorage
+# libStorage
 
 Opening up storage for all
 
 ---
 
 ## Overview
-LibStorage provides a vendor agnostic storage orchestration model,
+libStorage provides a vendor agnostic storage orchestration model,
 API, and reference client and server implementations.
 
 ## Getting Started
-Using LibStorage can be broken down into several, distinct steps:
+Using libStorage can be broken down into several, distinct steps:
 
-1. Understanding the LibStorage [model](/user-guide/model/)
-2. Understanding the LibStorage API
-3. Identifying a server implementation such as
+1. Configuring [libStorage](./user-guide/config.md)
+2. Understanding the [API](http://docs.libstorage.apiary.io)
+3. Identifying a production server and client implementation, such as
    [REX-Ray](https://rexray.rtfd.org)
 
 ## Getting Help
-To get help with LibStorage, please use the
+To get help with libStorage, please use the
 [discussion group](https://groups.google.com/forum/#!forum/emccode-users),
 [GitHub issues](https://github.com/emccode/libstorage/issues), or tagging
 questions with **EMC** at [StackOverflow](https://stackoverflow.com).
