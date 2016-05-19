@@ -5,8 +5,26 @@ Opening up storage for all
 ---
 
 ## Overview
-libStorage provides a vendor agnostic storage orchestration model,
-API, and reference client and server implementations.
+`libStorage` provides a vendor agnostic storage orchestration model,
+API, and reference client and server implementations. It focuses on being a
+portable storage driver framework that brings external storage functionality to
+any platform or application.
+
+## Features
+The project has some very unique qualities that make it perfect for embedding
+in upstream projects to centralize external storage functionality.
+
+- Lightweight client package enable minimal dependencies to provide full
+featured storage functionality to platforms
+- Embedded and remotable modes for providing choice of centralized control of
+storage operations
+- Optionally enables storage platforms to serve as libStorage servers making
+integration of application platforms native
+- Dynamically downloaded executors run specific storage tasks without critical
+long running plugins per host
+- Includes Go client/server packages for simple integration to other platforms
+and applications
+- Flexible HTTP/JSON API for other deployment opportunities
 
 ## Getting Started
 Using libStorage can be broken down into several, distinct steps:
