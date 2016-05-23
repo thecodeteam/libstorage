@@ -1,6 +1,13 @@
-// +build linux
+// +build linux darwin
 
-package linux
+/*
+Package unix is the OS driver for linux and darwin. In order to reduce external
+dependencies, this package borrows the following packages:
+
+  - github.com/docker/docker/pkg/mount
+  - github.com/opencontainers/runc/libcontainer/label
+*/
+package unix
 
 import (
 	"bytes"
@@ -9,8 +16,9 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+	"syscall"
+	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/akutz/gofig"
 	"github.com/akutz/goof"
 
@@ -18,10 +26,9 @@ import (
 	"github.com/emccode/libstorage/api/types"
 )
 
-const driverName = "linux"
+var driverName = runtime.GOOS
 
 var (
-	errUnknownOS             = goof.New("unknown OS")
 	errUnknownFileSystem     = goof.New("unknown file system")
 	errUnsupportedFileSystem = goof.New("unsupported file system")
 )
@@ -40,9 +47,6 @@ func newDriver() types.OSDriver {
 }
 
 func (d *driver) Init(ctx types.Context, config gofig.Config) error {
-	if runtime.GOOS != "linux" {
-		return errUnknownOS
-	}
 	d.config = config
 	return nil
 }
@@ -56,7 +60,7 @@ func (d *driver) Mounts(
 	deviceName, mountPoint string,
 	opts types.Store) ([]*types.MountInfo, error) {
 
-	mounts, err := getMounts()
+	mounts, err := mounts(ctx, deviceName, mountPoint, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +126,24 @@ func (d *driver) Unmount(
 	mountPoint string,
 	opts types.Store) error {
 
-	return unmount(mountPoint)
+	var (
+		err       error
+		isMounted bool
+	)
+
+	isMounted, err = d.IsMounted(ctx, mountPoint, opts)
+	if err != nil || !isMounted {
+		return err
+	}
+
+	for i := 0; i < 10; i++ {
+		if err = syscall.Unmount(mountPoint, 0); err == nil {
+			return nil
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+
+	return nil
 }
 
 func (d *driver) IsMounted(
@@ -130,7 +151,18 @@ func (d *driver) IsMounted(
 	mountPoint string,
 	opts types.Store) (bool, error) {
 
-	return mounted(mountPoint)
+	entries, err := mounts(ctx, "", mountPoint, opts)
+	if err != nil {
+		return false, err
+	}
+
+	// Search the table for the mountpoint
+	for _, e := range entries {
+		if e.MountPoint == mountPoint {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 func (d *driver) Format(
@@ -138,43 +170,7 @@ func (d *driver) Format(
 	deviceName string,
 	opts *types.DeviceFormatOpts) error {
 
-	fsType, err := probeFsType(deviceName)
-	if err != nil && err != errUnknownFileSystem {
-		return err
-	}
-	fsDetected := fsType != ""
-
-	ctx.WithFields(log.Fields{
-		"fsDetected":  fsDetected,
-		"fsType":      fsType,
-		"deviceName":  deviceName,
-		"overwriteFs": opts.OverwriteFS,
-		"driverName":  driverName}).Info("probe information")
-
-	if opts.OverwriteFS || !fsDetected {
-		switch opts.NewFSType {
-		case "ext4":
-			if err := exec.Command(
-				"mkfs.ext4", "-F", deviceName).Run(); err != nil {
-				return goof.WithFieldE(
-					"deviceName", deviceName,
-					"error creating filesystem",
-					err)
-			}
-		case "xfs":
-			if err := exec.Command(
-				"mkfs.xfs", "-f", deviceName).Run(); err != nil {
-				return goof.WithFieldE(
-					"deviceName", deviceName,
-					"error creating filesystem",
-					err)
-			}
-		default:
-			return errUnsupportedFileSystem
-		}
-	}
-
-	return nil
+	return format(ctx, deviceName, opts)
 }
 
 func (d *driver) isNfsDevice(device string) bool {
@@ -182,6 +178,7 @@ func (d *driver) isNfsDevice(device string) bool {
 }
 
 func (d *driver) nfsMount(device, target string) error {
+
 	command := exec.Command("mount", device, target)
 	output, err := command.CombinedOutput()
 	if err != nil {
@@ -244,6 +241,28 @@ func probeFsType(device string) (string, error) {
 	}
 
 	return "", errUnknownFileSystem
+}
+
+/*
+formatMountLabel returns a string to be used by the mount command.
+The format of this string will be used to alter the labeling of the mountpoint.
+The string returned is suitable to be used as the options field of the mount
+command.
+
+If you need to have additional mount point options, you can pass them in as
+the first parameter.  Second parameter is the label that you wish to apply
+to all content in the mount point.
+*/
+func formatMountLabel(src, mountLabel string) string {
+	if mountLabel != "" {
+		switch src {
+		case "":
+			src = fmt.Sprintf("context=%q", mountLabel)
+		default:
+			src = fmt.Sprintf("%s,context=%q", src, mountLabel)
+		}
+	}
+	return src
 }
 
 func (d *driver) volumeMountPath(target string) string {

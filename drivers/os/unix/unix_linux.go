@@ -1,15 +1,17 @@
-// +build linux
-
-package linux
+package unix
 
 import (
 	"bufio"
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"strings"
 	"syscall"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
+	"github.com/akutz/goof"
 
 	"github.com/emccode/libstorage/api/types"
 )
@@ -263,8 +265,12 @@ func parseTmpfsOptions(options string) (int, string, error) {
 	return flags, data, nil
 }
 
-// getMounts retrieves a list of mounts for the current running process.
-func getMounts() ([]*types.MountInfo, error) {
+// mounts retrieves a list of mounts for the current running process.
+func mounts(
+	ctx types.Context,
+	deviceName, mountPoint string,
+	opts types.Store) ([]*types.MountInfo, error) {
+
 	return parseMountTable()
 }
 
@@ -353,4 +359,48 @@ func forceUnmount(target string) (err error) {
 		time.Sleep(100 * time.Millisecond)
 	}
 	return
+}
+
+func format(
+	ctx types.Context,
+	deviceName string,
+	opts *types.DeviceFormatOpts) error {
+
+	fsType, err := probeFsType(deviceName)
+	if err != nil && err != errUnknownFileSystem {
+		return err
+	}
+	fsDetected := fsType != ""
+
+	ctx.WithFields(log.Fields{
+		"fsDetected":  fsDetected,
+		"fsType":      fsType,
+		"deviceName":  deviceName,
+		"overwriteFs": opts.OverwriteFS,
+		"driverName":  driverName}).Info("probe information")
+
+	if opts.OverwriteFS || !fsDetected {
+		switch opts.NewFSType {
+		case "ext4":
+			if err := exec.Command(
+				"mkfs.ext4", "-F", deviceName).Run(); err != nil {
+				return goof.WithFieldE(
+					"deviceName", deviceName,
+					"error creating filesystem",
+					err)
+			}
+		case "xfs":
+			if err := exec.Command(
+				"mkfs.xfs", "-f", deviceName).Run(); err != nil {
+				return goof.WithFieldE(
+					"deviceName", deviceName,
+					"error creating filesystem",
+					err)
+			}
+		default:
+			return errUnsupportedFileSystem
+		}
+	}
+
+	return nil
 }

@@ -1,4 +1,4 @@
-package local
+package client
 
 import (
 	// load the config
@@ -6,10 +6,6 @@ import (
 
 	// load the libStorage storage driver
 	_ "github.com/emccode/libstorage/drivers/storage/libstorage"
-
-	// load the os drivers
-	_ "github.com/emccode/libstorage/drivers/os/darwin"
-	_ "github.com/emccode/libstorage/drivers/os/linux"
 
 	// load the integration drivers
 	_ "github.com/emccode/libstorage/drivers/integration/docker"
