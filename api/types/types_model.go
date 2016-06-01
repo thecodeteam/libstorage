@@ -51,49 +51,6 @@ type Instance struct {
 	Fields map[string]string `json:"fields,omitempty"`
 }
 
-// MountInfo reveals information about a particular mounted filesystem. This
-// struct is populated from the content in the /proc/<pid>/mountinfo file.
-type MountInfo struct {
-	// ID is a unique identifier of the mount (may be reused after umount).
-	ID int `json:"id"`
-
-	// Parent indicates the ID of the mount parent (or of self for the top of
-	// the mount tree).
-	Parent int `json:"parent"`
-
-	// Major indicates one half of the device ID which identifies the device
-	// class.
-	Major int `json:"major"`
-
-	// Minor indicates one half of the device ID which identifies a specific
-	// instance of device.
-	Minor int `json:"minor"`
-
-	// Root of the mount within the filesystem.
-	Root string `json:"root"`
-
-	// MountPoint indicates the mount point relative to the process's root.
-	MountPoint string `json:"mountPoint"`
-
-	// Opts represents mount-specific options.
-	Opts string `json:"opts"`
-
-	// Optional represents optional fields.
-	Optional string `json:"optional"`
-
-	// FSType indicates the type of filesystem, such as EXT3.
-	FSType string `json:"fsType"`
-
-	// DevicePath is the path of the mounted path.
-	DevicePath FileSystemDevicePath `json:"devicePath"`
-
-	// VFSOpts represents per super block options.
-	VFSOpts string `json:"vfsOpts"`
-
-	// Fields are additional properties that can be defined for this type.
-	Fields map[string]string `json:"fields,omitempty"`
-}
-
 // Snapshot provides information about a storage-layer snapshot.
 type Snapshot struct {
 	// A description of the snapshot.
