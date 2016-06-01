@@ -84,8 +84,8 @@ type MountInfo struct {
 	// FSType indicates the type of filesystem, such as EXT3.
 	FSType string `json:"fsType"`
 
-	// Source indicates filesystem specific information or "none".
-	Source string `json:"source"`
+	// DevicePath is the path of the mounted path.
+	DevicePath FileSystemDevicePath `json:"devicePath"`
 
 	// VFSOpts represents per super block options.
 	VFSOpts string `json:"vfsOpts"`
@@ -105,7 +105,8 @@ type Snapshot struct {
 	// The snapshot's ID.
 	ID string `json:"id"`
 
-	// The time (epoch) at which the request to create the snapshot was submitted.
+	// The time (epoch) at which the request to create the snapshot was
+	// submitted.
 	StartTime int64 `json:"startTime,omitempty"`
 
 	// The status of the snapshot.
@@ -173,9 +174,9 @@ func (v *Volume) MountPoint() string {
 // VolumeAttachment provides information about an object attached to a
 // storage volume.
 type VolumeAttachment struct {
-	// The name of the device on which the volume to which the object is
-	// attached is mounted.
-	DeviceName string `json:"deviceName"`
+	// DevicePath is the name of the device on which the volume to which the
+	// object is attached is mounted.
+	DevicePath FileSystemDevicePath `json:"devicePath"`
 
 	// MountPoint is the mount point for the volume. This field is set when a
 	// volume is retrieved via an integration driver.
