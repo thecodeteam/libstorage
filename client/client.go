@@ -12,8 +12,8 @@ import (
 	"github.com/emccode/libstorage/api/utils"
 	apicnfg "github.com/emccode/libstorage/api/utils/config"
 
-	// load the local imports
-	_ "github.com/emccode/libstorage/imports/local"
+	// load the client imports
+	_ "github.com/emccode/libstorage/imports/client"
 )
 
 type client struct {
