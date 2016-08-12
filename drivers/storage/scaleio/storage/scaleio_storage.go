@@ -23,9 +23,9 @@ const (
 type driver struct {
 	config           gofig.Config
 	client           *sio.Client
-	system           *sio.System
-	protectionDomain *sio.ProtectionDomain
-	storagePool      *sio.StoragePool
+	system           *siotypes.System
+	protectionDomain *siotypes.ProtectionDomain
+	storagePool      *siotypes.StoragePool
 }
 
 func init() {
@@ -60,12 +60,7 @@ func (d *driver) Init(context types.Context, config gofig.Config) error {
 		return goof.WithFieldsE(fields, "error constructing new client", err)
 	}
 
-	if _, err = d.client.Authenticate(
-		&sio.ConfigConnect{
-			Endpoint: d.endpoint(),
-			Version:  d.version(),
-			Username: d.userName(),
-			Password: d.password()}); err != nil {
+	if err = d.auth(); err != nil {
 		fields["userName"] = d.userName()
 		if d.password() != "" {
 			fields["password"] = "******"
@@ -74,39 +69,33 @@ func (d *driver) Init(context types.Context, config gofig.Config) error {
 		return goof.WithFieldsE(fields, "error authenticating", err)
 	}
 
-	if d.system, err = d.client.FindSystem(
-		d.systemID(),
-		d.systemName(), ""); err != nil {
+	if d.system, err = d.findSystem(d.systemID(), d.systemName()); err != nil {
 		fields["systemId"] = d.systemID()
 		fields["systemName"] = d.systemName()
 		log.WithFields(fields).Debug(err.Error())
 		return goof.WithFieldsE(fields, "error finding system", err)
 	}
 
-	var pd *siotypes.ProtectionDomain
-	if pd, err = d.system.FindProtectionDomain(
+	if d.protectionDomain, err = d.findProtectionDomain(
 		d.protectionDomainID(),
-		d.protectionDomainName(), ""); err != nil {
+		d.protectionDomainName()); err != nil {
+
 		fields["domainId"] = d.protectionDomainID()
 		fields["domainName"] = d.protectionDomainName()
 		log.WithFields(fields).Debug(err.Error())
 		return goof.WithFieldsE(fields,
 			"error finding protection domain", err)
 	}
-	d.protectionDomain = sio.NewProtectionDomain(d.client)
-	d.protectionDomain.ProtectionDomain = pd
 
-	var sp *siotypes.StoragePool
-	if sp, err = d.protectionDomain.FindStoragePool(
+	if d.storagePool, err = d.findStoragePool(
 		d.storagePoolID(),
-		d.storagePoolName(), ""); err != nil {
+		d.storagePoolName()); err != nil {
+
 		fields["storagePoolId"] = d.storagePoolID()
 		fields["storagePoolName"] = d.storagePoolName()
 		log.WithFields(fields).Debug(err.Error())
 		return goof.WithFieldsE(fields, "error finding storage pool", err)
 	}
-	d.storagePool = sio.NewStoragePool(d.client)
-	d.storagePool.StoragePool = sp
 
 	log.WithFields(fields).Info("storage driver initialized")
 
@@ -134,7 +123,7 @@ func (d *driver) InstanceInspect(
 	var (
 		err     error
 		sdcGUID string
-		sdc     *sio.Sdc
+		sdc     *siotypes.Sdc
 	)
 
 	if err = iid.UnmarshalMetadata(&sdcGUID); err != nil {
@@ -142,14 +131,14 @@ func (d *driver) InstanceInspect(
 	}
 
 	sdcGUID = strings.ToUpper(sdcGUID)
-	if sdc, err = d.system.FindSdc("SdcGuid", sdcGUID); err != nil {
+	if sdc, err = d.getSdcByGUID(sdcGUID); err != nil {
 		return nil, scaleio.ErrFindingSDC(sdcGUID, err)
 	}
 
 	if sdc != nil {
 		return &types.Instance{
 			InstanceID: &types.InstanceID{
-				ID:     sdc.Sdc.ID,
+				ID:     sdc.ID,
 				Driver: d.Name(),
 			},
 		}, nil
@@ -169,61 +158,32 @@ func (d *driver) Volumes(
 		}
 	}
 
-	mapStoragePoolName, err := d.getStoragePoolIDs()
+	volumes, err := d.getVolumes()
 	if err != nil {
 		return nil, err
-	}
-
-	mapProtectionDomainName, err := d.getProtectionDomainIDs()
-	if err != nil {
-		return nil, err
-	}
-
-	getStoragePoolName := func(ID string) string {
-		if pool, ok := mapStoragePoolName[ID]; ok {
-			return pool.Name
-		}
-		return ""
-	}
-
-	getProtectionDomainName := func(poolID string) string {
-		var ok bool
-		var pool *siotypes.StoragePool
-
-		if pool, ok = mapStoragePoolName[poolID]; !ok {
-			return ""
-		}
-
-		if protectionDomain, ok := mapProtectionDomainName[pool.ProtectionDomainID]; ok {
-			return protectionDomain.Name
-		}
-		return ""
-	}
-
-	volumes, err := d.getVolume("", "", false)
-	if err != nil {
-		return []*types.Volume{}, err
 	}
 
 	var volumesSD []*types.Volume
 	for _, volume := range volumes {
 		var attachmentsSD []*types.VolumeAttachment
-		for _, attachment := range volume.MappedSdcInfo {
-			var deviceName string
-			if _, exists := sdcMappedVolumes[volume.ID]; exists {
-				deviceName = sdcMappedVolumes[volume.ID]
+		if opts != nil && opts.Attachments {
+			for _, attachment := range volume.MappedSdcInfo {
+				var deviceName string
+				if _, exists := sdcMappedVolumes[volume.ID]; exists {
+					deviceName = sdcMappedVolumes[volume.ID]
+				}
+				instanceID := &types.InstanceID{
+					ID:     attachment.SdcID,
+					Driver: d.Name(),
+				}
+				attachmentSD := &types.VolumeAttachment{
+					VolumeID:   volume.ID,
+					InstanceID: instanceID,
+					DeviceName: deviceName,
+					Status:     "",
+				}
+				attachmentsSD = append(attachmentsSD, attachmentSD)
 			}
-			instanceID := &types.InstanceID{
-				ID:     attachment.SdcID,
-				Driver: d.Name(),
-			}
-			attachmentSD := &types.VolumeAttachment{
-				VolumeID:   volume.ID,
-				InstanceID: instanceID,
-				DeviceName: deviceName,
-				Status:     "",
-			}
-			attachmentsSD = append(attachmentsSD, attachmentSD)
 		}
 
 		var IOPS int64
@@ -233,9 +193,9 @@ func (d *driver) Volumes(
 		volumeSD := &types.Volume{
 			Name:             volume.Name,
 			ID:               volume.ID,
-			AvailabilityZone: getProtectionDomainName(volume.StoragePoolID),
+			AvailabilityZone: d.protectionDomain.Name,
 			Status:           "",
-			Type:             getStoragePoolName(volume.StoragePoolID),
+			Type:             d.storagePool.Name,
 			IOPS:             IOPS,
 			Size:             int64(volume.SizeInKb / 1024 / 1024),
 			Attachments:      attachmentsSD,
@@ -262,49 +222,13 @@ func (d *driver) VolumeInspect(
 		}
 	}
 
-	volumes, err := d.getVolume(volumeID, "", opts.Attachments)
+	volume, err := d.getVolumeByID(volumeID)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(volumes) == 0 {
-		return nil, nil
-	}
-
-	mapStoragePoolName, err := d.getStoragePoolIDs()
-	if err != nil {
-		return nil, err
-	}
-
-	mapProtectionDomainName, err := d.getProtectionDomainIDs()
-	if err != nil {
-		return nil, err
-	}
-
-	getStoragePoolName := func(ID string) string {
-		if pool, ok := mapStoragePoolName[ID]; ok {
-			return pool.Name
-		}
-		return ""
-	}
-
-	getProtectionDomainName := func(poolID string) string {
-		var ok bool
-		var pool *siotypes.StoragePool
-
-		if pool, ok = mapStoragePoolName[poolID]; !ok {
-			return ""
-		}
-
-		if protectionDomain, ok := mapProtectionDomainName[pool.ProtectionDomainID]; ok {
-			return protectionDomain.Name
-		}
-		return ""
-	}
-
-	var volumesSD []*types.Volume
-	for _, volume := range volumes {
-		var attachmentsSD []*types.VolumeAttachment
+	var attachmentsSD []*types.VolumeAttachment
+	if opts != nil && opts.Attachments {
 		for _, attachment := range volume.MappedSdcInfo {
 			var deviceName string
 			if _, exists := sdcMappedVolumes[volume.ID]; exists {
@@ -322,25 +246,24 @@ func (d *driver) VolumeInspect(
 			}
 			attachmentsSD = append(attachmentsSD, attachmentSD)
 		}
-
-		var IOPS int64
-		if len(volume.MappedSdcInfo) > 0 {
-			IOPS = int64(volume.MappedSdcInfo[0].LimitIops)
-		}
-		volumeSD := &types.Volume{
-			Name:             volume.Name,
-			ID:               volume.ID,
-			AvailabilityZone: getProtectionDomainName(volume.StoragePoolID),
-			Status:           "",
-			Type:             getStoragePoolName(volume.StoragePoolID),
-			IOPS:             IOPS,
-			Size:             int64(volume.SizeInKb / 1024 / 1024),
-			Attachments:      attachmentsSD,
-		}
-		volumesSD = append(volumesSD, volumeSD)
 	}
 
-	return volumesSD[0], nil
+	var IOPS int64
+	if len(volume.MappedSdcInfo) > 0 {
+		IOPS = int64(volume.MappedSdcInfo[0].LimitIops)
+	}
+	volumeSD := &types.Volume{
+		Name:             volume.Name,
+		ID:               volume.ID,
+		AvailabilityZone: d.protectionDomain.Name,
+		Status:           "",
+		Type:             d.storagePool.Name,
+		IOPS:             IOPS,
+		Size:             int64(volume.SizeInKb / 1024 / 1024),
+		Attachments:      attachmentsSD,
+	}
+
+	return volumeSD, nil
 }
 
 func (d *driver) VolumeCreate(ctx types.Context, volumeName string,
@@ -368,12 +291,12 @@ func (d *driver) VolumeCreate(ctx types.Context, volumeName string,
 		volume.IOPS = *opts.IOPS
 	}
 
-	vol, err := d.createVolume(ctx, volumeName, volume)
+	volID, err := d.createVolume(ctx, volumeName, volume)
 	if err != nil {
 		return nil, err
 	}
 
-	return d.VolumeInspect(ctx, vol.ID, &types.VolumeInspectOpts{
+	return d.VolumeInspect(ctx, volID, &types.VolumeInspectOpts{
 		Attachments: true,
 	})
 }
@@ -389,7 +312,7 @@ func (d *driver) VolumeCreateFromSnapshot(
 		return nil, goof.New("no volume name specified")
 	}
 
-	volumes, err := d.getVolume("", volumeName, false)
+	volumes, err := d.findVolumes("", volumeName, false)
 	if err != nil {
 		return nil, err
 	}
@@ -400,26 +323,7 @@ func (d *driver) VolumeCreateFromSnapshot(
 			"volume name already exists")
 	}
 
-	resp, err := d.VolumeCreate(ctx, volumeName, opts)
-	if err != nil {
-		return nil, err
-	}
-
-	volumeInspectOpts := &types.VolumeInspectOpts{
-		Attachments: true,
-		Opts:        opts.Opts,
-	}
-
-	createdVolume, err := d.VolumeInspect(ctx, resp.ID, volumeInspectOpts)
-	if err != nil {
-		return nil, err
-	}
-
-	log.WithFields(log.Fields{
-		"provider": "scaleIO",
-		"volume":   createdVolume,
-	}).Debug("created volume")
-	return createdVolume, nil
+	return d.VolumeCreate(ctx, volumeName, opts)
 }
 
 func (d *driver) VolumeCopy(
@@ -445,17 +349,11 @@ func (d *driver) VolumeRemove(
 		"volumeId": volumeID,
 	})
 
-	var err error
-	var volumes []*siotypes.Volume
-
-	if volumes, err = d.getVolume(volumeID, "", false); err != nil {
-		return goof.WithFieldsE(fields, "error getting volume", err)
+	err := d.client.RemoveVolume(volumeID, sio.RemoveMode.OnlyMe)
+	if d.isReauthNeeded(err) {
+		err = d.client.RemoveVolume(volumeID, sio.RemoveMode.OnlyMe)
 	}
-
-	targetVolume := sio.NewVolume(d.client)
-	targetVolume.Volume = volumes[0]
-
-	if err = targetVolume.RemoveVolume("ONLY_ME"); err != nil {
+	if err != nil {
 		return goof.WithFieldsE(fields, "error removing volume", err)
 	}
 
@@ -476,31 +374,31 @@ func (d *driver) VolumeAttach(
 		AllSdcs:               "",
 	}
 
-	vol, err := d.VolumeInspect(
-		ctx, volumeID, &types.VolumeInspectOpts{
-			Attachments: true,
-		})
-	if err != nil {
-		return nil, "", goof.WithError("error getting volume", err)
-	}
-
-	if len(vol.Attachments) > 0 && !opts.Force {
-		return nil, "", goof.New("volume already attached to a host")
-	}
-
-	if len(vol.Attachments) > 0 && opts.Force {
-		if _, err := d.VolumeDetach(ctx, volumeID,
-			&types.VolumeDetachOpts{Force: opts.Force}); err != nil {
-			return nil, "", err
+	if !opts.Force {
+		if err := d.addMappedSdc(volumeID, mapVolumeSdcParam); err != nil {
+			return nil, "", goof.WithError("error mapping volume sdc", err)
 		}
-	}
-
-	targetVolume := sio.NewVolume(d.client)
-	targetVolume.Volume = &siotypes.Volume{ID: vol.ID}
-
-	err = targetVolume.MapVolumeSdc(mapVolumeSdcParam)
-	if err != nil {
-		return nil, "", goof.WithError("error mapping volume sdc", err)
+	} else {
+		vol, err := d.VolumeInspect(
+			ctx, volumeID, &types.VolumeInspectOpts{
+				Attachments: true,
+			})
+		if err != nil {
+			return nil, "", goof.WithError("error getting volume", err)
+		}
+		if len(vol.Attachments) > 0 && opts.Force {
+			param := &siotypes.UnmapVolumeSdcParam{
+				IgnoreScsiInitiators: "true",
+				AllSdcs:              "true",
+			}
+			if err := d.removeMappedSdc(volumeID, param); err != nil {
+				return nil, "", goof.WithError(
+					"error removing sdc mapping", err)
+			}
+		}
+		if err := d.addMappedSdc(volumeID, mapVolumeSdcParam); err != nil {
+			return nil, "", goof.WithError("error mapping volume sdc", err)
+		}
 	}
 
 	attachedVol, err := d.VolumeInspect(
@@ -522,18 +420,6 @@ func (d *driver) VolumeDetach(
 
 	iid := context.MustInstanceID(ctx)
 
-	volumes, err := d.getVolume(volumeID, "", false)
-	if err != nil {
-		return nil, goof.WithError("error getting volume", err)
-	}
-
-	if len(volumes) == 0 {
-		return nil, goof.New("no volumes returned")
-	}
-
-	targetVolume := sio.NewVolume(d.client)
-	targetVolume.Volume = volumes[0]
-
 	unmapVolumeSdcParam := &siotypes.UnmapVolumeSdcParam{
 		SdcID:                "",
 		IgnoreScsiInitiators: "true",
@@ -546,7 +432,11 @@ func (d *driver) VolumeDetach(
 		unmapVolumeSdcParam.SdcID = iid.ID
 	}
 
-	if err := targetVolume.UnmapVolumeSdc(unmapVolumeSdcParam); err != nil {
+	err := d.client.RemoveMappedSdc(volumeID, unmapVolumeSdcParam)
+	if d.isReauthNeeded(err) {
+		err = d.client.RemoveMappedSdc(volumeID, unmapVolumeSdcParam)
+	}
+	if err != nil {
 		return nil, err
 	}
 
@@ -605,9 +495,141 @@ func shrink(n string) string {
 	return n
 }
 
+// isReauthNeeded tests the passed error for unauthorized, if so, reauth.
+func (d *driver) isReauthNeeded(err error) bool {
+	if err == nil {
+		log.WithField("reauth", "false").
+			Debug("reauth assertion skipped")
+		return false
+	}
+
+	// test for unauthorized
+	if err, ok := err.(*siotypes.Error); ok {
+		if err.HTTPStatusCode == 401 ||
+			strings.ToLower(err.Message) == "unauthorized" {
+			log.WithField("reauth", "true").Debug("reauthorizing API access")
+			if authErr := d.auth(); authErr != nil {
+				log.WithField("reauth", "true").
+					WithError(err).Error("reauthorizing failed")
+				return false
+			}
+			return true
+		}
+	}
+	log.WithField("reauth", "false").Debugf("not auth error: type %T", err)
+	return false
+}
+
+func (d *driver) auth() error {
+	return d.client.Authenticate(
+		&sio.ConfigConnect{
+			Endpoint: d.endpoint(),
+			Version:  d.version(),
+			Username: d.userName(),
+			Password: d.password()})
+}
+
+func (d *driver) getSdcByGUID(guid string) (*siotypes.Sdc, error) {
+	sdc, err := d.client.GetSdcByGUID(guid)
+	if d.isReauthNeeded(err) {
+		sdc, err = d.client.GetSdcByGUID(guid)
+	}
+	return sdc, err
+}
+
+func (d *driver) getVolumes() ([]*siotypes.Volume, error) {
+	volumes, err := d.client.GetVolumes()
+	if d.isReauthNeeded(err) {
+		volumes, err = d.client.GetVolumes()
+	}
+	return volumes, err
+}
+
+func (d *driver) getVolumeByID(id string) (*siotypes.Volume, error) {
+	vol, err := d.client.GetVolumeByID(id)
+	if d.isReauthNeeded(err) {
+		vol, err = d.client.GetVolumeByID(id)
+	}
+	return vol, err
+}
+
+func (d *driver) addMappedSdc(volID string,
+	param *siotypes.MapVolumeSdcParam) error {
+	err := d.client.AddMappedSdc(volID, param)
+	if d.isReauthNeeded(err) {
+		err = d.client.AddMappedSdc(volID, param)
+	}
+	return err
+}
+
+func (d *driver) removeMappedSdc(volID string,
+	param *siotypes.UnmapVolumeSdcParam) error {
+	err := d.client.RemoveMappedSdc(volID, param)
+	if d.isReauthNeeded(err) {
+		err = d.client.RemoveMappedSdc(volID, param)
+	}
+	return err
+}
+
+func (d *driver) findSystem(id, name string) (*siotypes.System, error) {
+	if id != "" {
+		sys, err := d.client.GetSystemByID(id)
+		if d.isReauthNeeded(err) {
+			sys, err = d.client.GetSystemByID(id)
+		}
+		return sys, err
+	} else if name != "" {
+		sys, err := d.client.GetSystemByName(name)
+		if d.isReauthNeeded(err) {
+			sys, err = d.client.GetSystemByName(name)
+		}
+		return sys, err
+	}
+	return nil, goof.New("missing id or name")
+}
+
+func (d *driver) findStoragePool(
+	id, name string) (*siotypes.StoragePool, error) {
+	if id != "" {
+		pool, err := d.client.GetStoragePoolByID(id)
+		if d.isReauthNeeded(err) {
+			pool, err = d.client.GetStoragePoolByID(id)
+		}
+		return pool, err
+	} else if name != "" {
+		pool, err := d.client.GetStoragePoolByName(name)
+		if d.isReauthNeeded(err) {
+			pool, err = d.client.GetStoragePoolByName(name)
+		}
+		return pool, err
+	}
+	return nil, goof.New("missing id or name")
+}
+
+func (d *driver) findProtectionDomain(
+	id, name string) (*siotypes.ProtectionDomain, error) {
+	if id != "" {
+		domain, err := d.client.GetProtectionDomainByID(id)
+		if d.isReauthNeeded(err) {
+			domain, err = d.client.GetProtectionDomainByID(id)
+		}
+		return domain, err
+	} else if name != "" {
+		domain, err := d.client.GetProtectionDomainByName(name)
+		if d.isReauthNeeded(err) {
+			domain, err = d.client.GetProtectionDomainByName(name)
+		}
+		return domain, err
+	}
+	return nil, goof.New("missing id or name")
+}
+
 func (d *driver) getStoragePoolIDs() (
 	map[string]*siotypes.StoragePool, error) {
-	storagePools, err := d.client.GetStoragePool("")
+	storagePools, err := d.client.GetStoragePools()
+	if d.isReauthNeeded(err) {
+		storagePools, err = d.client.GetStoragePools()
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -622,7 +644,10 @@ func (d *driver) getStoragePoolIDs() (
 
 func (d *driver) getProtectionDomainIDs() (
 	map[string]*siotypes.ProtectionDomain, error) {
-	protectionDomains, err := d.system.GetProtectionDomain("")
+	protectionDomains, err := d.client.GetProtectionDomains()
+	if d.isReauthNeeded(err) {
+		protectionDomains, err = d.client.GetProtectionDomains()
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -635,21 +660,42 @@ func (d *driver) getProtectionDomainIDs() (
 	return mapProtectionDomainID, nil
 }
 
-func (d *driver) getVolume(
+func (d *driver) findVolumes(
 	volumeID, volumeName string, getSnapshots bool) (
 	[]*siotypes.Volume, error) {
-
 	volumeName = shrink(volumeName)
 
-	volumes, err := d.client.GetVolume("", volumeID, "", volumeName, getSnapshots)
+	if volumeID != "" {
+		vol, err := d.client.GetVolumeByID(volumeID)
+		if d.isReauthNeeded(err) {
+			vol, err = d.client.GetVolumeByID(volumeID)
+		}
+		if err != nil {
+			return nil, err
+		}
+		// return snapshot only
+		if getSnapshots && vol.AncestorVolumeID == "" {
+			return nil, nil
+		}
+		return []*siotypes.Volume{vol}, nil
+	}
+
+	var filtered []*siotypes.Volume
+	volumes, err := d.getVolumes()
 	if err != nil {
 		return nil, err
 	}
-	return volumes, nil
+	for _, vol := range volumes {
+		if (vol.Name == volumeName) &&
+			(getSnapshots == (vol.AncestorVolumeID != "")) {
+			filtered = append(filtered, vol)
+		}
+	}
+	return filtered, nil
 }
 
 func (d *driver) createVolume(ctx types.Context, volumeName string,
-	vol *types.Volume) (*siotypes.VolumeResp, error) {
+	vol *types.Volume) (string, error) {
 
 	volumeName = shrink(volumeName)
 
@@ -663,22 +709,26 @@ func (d *driver) createVolume(ctx types.Context, volumeName string,
 	})
 
 	volumeParam := &siotypes.VolumeParam{
+		StoragePoolID:  d.storagePool.ID,
 		Name:           volumeName,
 		VolumeSizeInKb: strconv.Itoa(int(vol.Size) * 1024 * 1024),
 		VolumeType:     d.thinOrThick(),
 	}
 
 	if vol.Type == "" {
-		vol.Type = d.storagePool.StoragePool.Name
+		vol.Type = d.storagePool.Name
 		fields["volumeType"] = vol.Type
 	}
 
-	volumeResp, err := d.client.CreateVolume(volumeParam, vol.Type)
+	volID, err := d.client.CreateVolume(volumeParam)
+	if d.isReauthNeeded(err) {
+		volID, err = d.client.CreateVolume(volumeParam)
+	}
 	if err != nil {
-		return nil, goof.WithFieldsE(fields, "error creating volume", err)
+		return "", goof.WithFieldsE(fields, "error creating volume", err)
 	}
 
-	return volumeResp, nil
+	return volID, nil
 }
 
 //TODO change provider to be dynamic...
@@ -694,39 +744,6 @@ func eff(fields goof.Fields) map[string]interface{} {
 	}
 	return errFields
 }
-
-// func (d *driver) GetVolumeAttach(
-// 	ctx types.Context, volumeID, instanceID string,
-// 	opts *drivers.VolumeInspectOpts) ([]*types.VolumeAttachment, error) {
-//
-// 	fields := eff(map[string]interface{}{
-// 		"volumeId":   volumeID,
-// 		"instanceId": instanceID,
-// 	})
-//
-// 	if volumeID == "" {
-// 		return []*types.VolumeAttachment{},
-// 			goof.WithFields(fields, "volumeId is required")
-// 	}
-// 	volume, err := d.VolumeInspect(ctx, volumeID, opts)
-// 	if err != nil {
-// 		return []*types.VolumeAttachment{},
-// 			goof.WithFieldsE(fields, "error getting volume", err)
-// 	}
-//
-// 	if instanceID != "" {
-// 		var attached bool
-// 		for _, volumeAttachment := range volume.Attachments {
-// 			if volumeAttachment.InstanceID.ID == instanceID {
-// 				return volume.Attachments, nil
-// 			}
-// 		}
-// 		if !attached {
-// 			return []*types.VolumeAttachment{}, nil
-// 		}
-// 	}
-// 	return volume.Attachments, nil
-// }
 
 ///////////////////////////////////////////////////////////////////////
 //////                  CONFIG HELPER STUFF                   /////////
