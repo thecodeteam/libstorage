@@ -11,6 +11,7 @@ import (
 	_ "github.com/codedellemc/libstorage/drivers/storage/fittedcloud/executor"
 	_ "github.com/codedellemc/libstorage/drivers/storage/gcepd/executor"
 	_ "github.com/codedellemc/libstorage/drivers/storage/isilon/executor"
+	_ "github.com/codedellemc/libstorage/drivers/storage/openstack/executor"
 	_ "github.com/codedellemc/libstorage/drivers/storage/rbd/executor"
 	_ "github.com/codedellemc/libstorage/drivers/storage/s3fs/executor"
 	_ "github.com/codedellemc/libstorage/drivers/storage/scaleio/executor"

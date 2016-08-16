@@ -1208,3 +1208,55 @@ libstorage:
 - Snapshot and create volume from volume functionality is not available yet
   with this driver.
 - The driver supports VirtualBox 5.0.10+
+
+## OpenStack
+The OpenStack driver registers a storage driver named `openstack` with the
+`libStorage` driver manager and is used to connect and manage storage on OpenStack
+instances.
+
+### Configuration
+The following is an example configuration of the OpenStack driver.
+
+```yaml
+openstack:
+    authURL:              https://domain.com/openstack
+    userID:               0
+    userName:             myusername
+    password:             mypassword
+    tenantID:             0
+    tenantName:           customer
+    domainID:             0
+    domainName:           corp
+    regionName:           USNW
+    availabilityZoneName: Gold
+```
+
+#### Configuration Notes
+- `regionName` is optional, it should be empty if you only have one region.
+- `availabilityZoneName` is optional, the volume will be created in the default
+availability zone if not specified.
+
+For information on the equivalent environment variable and CLI flag names
+please see the section on how non top-level configuration properties are
+[transformed](./config.md#configuration-properties).
+
+### Activating the Driver
+To activate the OpenStack driver please follow the instructions for
+[activating storage drivers](./config.md#storage-drivers),
+using `openstack` as the driver name.
+
+### Examples
+Below is a full `config.yml` file that works with OpenStack.
+
+```yaml
+libstorage:
+  server:
+    services:
+      openstack:
+        driver: openstack
+        openstack:
+          authUrl: https://keystoneHost:35357/v2.0/
+          username: username
+          password: password
+          tenantName: tenantName
+```
