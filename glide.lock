@@ -1,5 +1,5 @@
-hash: 794f4ee740f0eae62a42d92104f210d1a46f4727bbd4543fc3f41dde41fde517
-updated: 2016-07-01T13:54:05.201343222-07:00
+hash: ae1ed8deed20a90d87b50459a2634689908dc2e350a0b9e9b97d3d3dacaea781
+updated: 2016-08-21T20:41:06.386727996-04:00
 imports:
 - name: github.com/akutz/gofig
   version: 697c16916338166671910eeaccc50f21e3c10726
@@ -19,6 +19,28 @@ imports:
   version: df81827fdd59d8b4fb93d8910b286ab7a3919520
 - name: github.com/aws/aws-sdk-go
   version: caee6e866bf437a6bef0777a3bf141cdd3aa022d
+  repo: https://github.com/aws/aws-sdk-go
+  subpackages:
+  - aws
+  - aws/awserr
+  - aws/credentials
+  - aws/credentials/ec2rolecreds
+  - aws/ec2metadata
+  - aws/session
+  - service/efs
+  - aws/client
+  - aws/client/metadata
+  - aws/request
+  - aws/corehandlers
+  - aws/defaults
+  - private/endpoints
+  - aws/awsutil
+  - aws/signer/v4
+  - private/protocol
+  - private/protocol/restjson
+  - private/protocol/rest
+  - private/protocol/jsonrpc
+  - private/protocol/json/jsonutil
 - name: github.com/BurntSushi/toml
   version: f0aeabca5a127c4078abb8c8d64298b147264b55
 - name: github.com/cesanta/ucl
@@ -36,10 +58,12 @@ imports:
   subpackages:
   - api/v1
 - name: github.com/emccode/goscaleio
-  version: 9d95003c0069b1949a0fb46832870799caa5c360
-  repo: https://github.com/emccode/goscaleio
+  version: 0a0847888970ea577a2b9c96fcd5463dffbf7717
+  repo: https://github.com/vladimirvivien/goscaleio.git
   subpackages:
   - types/v1
+- name: github.com/go-ini/ini
+  version: a2610b3a793cfa7fdf0b07038068af5ddc12aba1
 - name: github.com/go-yaml/yaml
   version: b4a9f8c4b84c6c4256d669c649837f1441e4b050
   repo: https://github.com/akutz/yaml.git
@@ -47,11 +71,13 @@ imports:
   version: aed02d124ae4a0e94fea4541c8effd05bf0c8296
 - name: github.com/gorilla/mux
   version: 9fa818a44c2bf1396a17f9d5a3c0f6dd39d2ff8e
+- name: github.com/jmespath/go-jmespath
+  version: bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d
 - name: github.com/jteeuwen/go-bindata
   version: 1dd44b25b79c4d9060e582e90798e4d72537818c
   repo: https://github.com/akutz/go-bindata
 - name: github.com/kardianos/osext
-  version: 29ae4ffbc9a6fe9fb2bc5029050ce6996ea1d3bc
+  version: c2c54e542fb797ad986b31721e1baedf214ca413
   repo: https://github.com/kardianos/osext.git
   vcs: git
 - name: github.com/kr/pretty
