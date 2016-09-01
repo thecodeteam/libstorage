@@ -1,5 +1,3 @@
-// +build mock
-
 package mock
 
 import (
@@ -103,8 +101,11 @@ func (d *driver) NextDeviceInfo(
 func (d *driver) InstanceInspect(
 	ctx types.Context,
 	opts types.Store) (*types.Instance, error) {
-	iid, _ := d.InstanceID(ctx, opts)
-	return &types.Instance{Name: "mockInstance", InstanceID: iid}, nil
+	iid := context.MustInstanceID(ctx)
+	if iid.ID != "" {
+		return &types.Instance{Name: "mockInstance", InstanceID: iid}, nil
+	}
+	return nil, goof.New("missing instanceID in mock")
 }
 
 func (d *driver) Volumes(
