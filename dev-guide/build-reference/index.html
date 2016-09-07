@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://github.com/emccode/libstorage/dev-guide/build-reference/">
+        <link rel="shortcut icon" href="../../favicon.ico">
+        
+
+	<title>Build Reference - libStorage</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/emccode-font.css" rel="stylesheet">
+        <link href="../../css/hX.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+
+        <!-- scroll fix -->
+        <script>
+            //var shiftWindow = function() { scrollBy(0, -40) };
+            //if (location.hash) shiftWindow();
+            //window.addEventListener("hashchange", shiftWindow);
+        </script>
+
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">
+                <i class="fa icon-libstorage-logo"></i>
+                libStorage
+            </a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">Home</a>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../../user-guide/config/">Configuration</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../user-guide/storage-providers/">Storage Providers</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../user-guide/schedulers/">Schedulers</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <!--
+                smart menus
+                <li><a href="#">User Guide <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    
+                    
+                        <li >
+                            <a href="../../user-guide/config/">Configuration</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../user-guide/storage-providers/">Storage Providers</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../user-guide/schedulers/">Schedulers</a>
+                        </li>
+                    
+                    
+                    </ul>
+                </li>
+                -->
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Developers Guide <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../project-guidelines/">Project Guidelines</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="./">Build Reference</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../release-process/">Release Process</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <!--
+                smart menus
+                <li><a href="#">Developers Guide <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    
+                    
+                        <li >
+                            <a href="../project-guidelines/">Project Guidelines</a>
+                        </li>
+                    
+                    
+                    
+                        <li class="active">
+                            <a href="./">Build Reference</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../release-process/">Release Process</a>
+                        </li>
+                    
+                    
+                    </ul>
+                </li>
+                -->
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../../about/contributing/">Contributing</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../about/license/">License</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../about/release-notes/">Release Notes</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <!--
+                smart menus
+                <li><a href="#">About <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    
+                    
+                        <li >
+                            <a href="../../about/contributing/">Contributing</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../about/license/">License</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../about/release-notes/">Release Notes</a>
+                        </li>
+                    
+                    
+                    </ul>
+                </li>
+                -->
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li >
+                    <a rel="next" href="../project-guidelines/">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../release-process/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/emccode/libstorage.git">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://emccode.github.io">
+                        <i class="fa icon-emccode-logo"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+        <div class="container ">
+            <div class="col-md-3"><div id="sidenav" class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#build-reference">Build Reference</a></li>
+        
+            <li><a href="#build-requirements">Build Requirements</a>
+            
+            </li>
+        
+            <li><a href="#cross-compilation">Cross-Compilation</a>
+            
+            </li>
+        
+            <li><a href="#basic-build">Basic Build</a>
+            
+            </li>
+        
+            <li><a href="#version-file">Version File</a>
+            
+            </li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="build-reference">Build Reference</h1>
+<p>How to build libStorage</p>
+<hr />
+<h2 id="build-requirements">Build Requirements</h2>
+<p>This project has very few build requirements, but there are still one or two
+items of which to be aware. Also, please note that this are the requirements to
+<em>build</em> <code>libStorage</code>, not run it.</p>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Operating System</td>
+<td>Linux, OS X</td>
+</tr>
+<tr>
+<td><a href="https://golang.org/">Go</a></td>
+<td>&gt;=1.6</td>
+</tr>
+<tr>
+<td><a href="https://www.gnu.org/software/make/">GNU Make</a></td>
+<td>&gt;=3.80</td>
+</tr>
+<tr>
+<td><a href="https://glide.sh/">Glide</a></td>
+<td>&gt;=0.10</td>
+</tr>
+<tr>
+<td><a href="https://developer.apple.com/library/ios/technotes/tn2339/_index.html">X-Code Command Line Tools (OS X only)</a></td>
+<td>&gt;= OS X 10.9</td>
+</tr>
+<tr>
+<td>Linux Kernel Headers (Linux only)</td>
+<td>&gt;=Linux Kernel 3.13</td>
+</tr>
+<tr>
+<td><a href="https://gcc.gnu.org/">GNU C Compiler</a> (Linux only)</td>
+<td>&gt;= 4.8</td>
+</tr>
+</tbody>
+</table>
+<p>OS X ships with a very old version of GNU Make, and a package manager like
+<a href="http://brew.sh/">Homebrew</a> can be used to install the required version.</p>
+<p>It's also possible to use GCC as the Cgo compiler for OS X or to use Clang on
+Linux, but by default Clang is used on OS X and GCC on Linux.</p>
+<h2 id="cross-compilation">Cross-Compilation</h2>
+<p>This project's
+<a href="https://github.com/emccode/libstorage/blob/master/Makefile"><code>Makefile</code></a>
+is configured by default to cross-compile certain project components for both
+Linux x86_64 and Darwin (OS X) x86_64. Therefore the build process will fail if
+the local Go environment is not configured for cross-compilation. Please take a
+minute to read this
+<a href="http://dave.cheney.net/2015/08/22/cross-compilation-with-go-1-5">blog post</a>
+regarding cross-compilation with Go &gt;=1.5.</p>
+<p>While <em>some</em> of this project's components are cross-compiled as part of a
+standard build, the project as a whole is not. This is because the project
+has key components that are dependent upon the Cgo compiler, and most build
+systems do not possess the capability to cross-compile against the C stdlib
+tool-chain.</p>
+<h2 id="basic-build">Basic Build</h2>
+<p>Building from source should be fairly straight-forward as the most basic build
+can be achieved by executing <code>make</code> from the project's root directory.</p>
+<pre><code class="sh">$ make
+make deps
+make[1]: Entering directory './github.com/emccode/libstorage'
+glide up &amp;&amp; touch glide.lock.d
+[INFO] Downloading dependencies. Please wait...
+[INFO] Fetching updates for github.com/Sirupsen/logrus.
+[INFO] Fetching updates for github.com/stretchr/testify.
+[INFO] Fetching updates for github.com/akutz/golf.
+[INFO] Fetching updates for github.com/akutz/gofig.
+[INFO] Fetching updates for github.com/appropriate/go-virtualboxclient.
+[INFO] Fetching updates for github.com/jteeuwen/go-bindata.
+[INFO] Fetching updates for github.com/emccode/goisilon.
+[INFO] Fetching updates for github.com/blang/semver.
+[INFO] Fetching updates for github.com/cesanta/validate-json.
+[INFO] Fetching updates for github.com/akutz/goof.
+[INFO] Fetching updates for github.com/emccode/goscaleio.
+[INFO] Fetching updates for github.com/akutz/gotil.
+[INFO] Setting version for github.com/Sirupsen/logrus to feature/logrus-aware-types.
+[INFO] Setting version for github.com/blang/semver to v3.0.1.
+[INFO] Setting version for github.com/jteeuwen/go-bindata to feature/md5checksum.
+[INFO] Setting version for github.com/emccode/goscaleio to 53ea76f52205380ab52b9c1f4ad89321c286bb95.
+[INFO] Setting version for github.com/emccode/goisilon to f9b53f0aaadb12a26b134830142fc537f492cb13.
+[INFO] Setting version for github.com/appropriate/go-virtualboxclient to e0978ab2ed407095400a69d5933958dd260058cd.
+[INFO] Resolving imports
+[INFO] Setting version for github.com/akutz/goof to master.
+[INFO] Setting version for github.com/akutz/gotil to master.
+[INFO] Fetching updates for github.com/spf13/pflag.
+[INFO] Setting version for github.com/spf13/pflag to b084184666e02084b8ccb9b704bf0d79c466eb1d.
+[INFO] Fetching updates for github.com/spf13/viper.
+[INFO] Setting version for github.com/spf13/viper to support/rexray.
+[INFO] Fetching updates for gopkg.in/yaml.v2.
+[INFO] Setting version for gopkg.in/yaml.v2 to b4a9f8c4b84c6c4256d669c649837f1441e4b050.
+[INFO] Fetching updates for golang.org/x/sys.
+[INFO] Fetching updates for github.com/kardianos/osext.
+[INFO] Setting version for github.com/kardianos/osext to master.
+[INFO] Fetching updates for golang.org/x/net.
+[INFO] Found Godeps.json file in vendor/github.com/stretchr/testify
+[INFO] Fetching updates for github.com/davecgh/go-spew.
+[INFO] Setting version for github.com/davecgh/go-spew to 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d.
+[INFO] Fetching updates for github.com/pmezard/go-difflib.
+[INFO] Setting version for github.com/pmezard/go-difflib to d8ed2627bdf02c080bf22230dbb337003b7aba2d.
+[INFO] Fetching updates for github.com/asaskevich/govalidator.
+[INFO] Fetching updates for github.com/BurntSushi/toml.
+[INFO] Fetching updates for github.com/kr/pretty.
+[INFO] Fetching updates for github.com/magiconair/properties.
+[INFO] Fetching updates for github.com/mitchellh/mapstructure.
+[INFO] Fetching updates for github.com/spf13/cast.
+[INFO] Fetching updates for github.com/spf13/jwalterweatherman.
+[INFO] Fetching updates for gopkg.in/fsnotify.v1.
+[INFO] Fetching updates for github.com/kr/text.
+[INFO] Downloading dependencies. Please wait...
+[INFO] Fetching updates for github.com/gorilla/mux.
+[INFO] Fetching updates for github.com/cesanta/ucl.
+[INFO] Fetching updates for github.com/gorilla/context.
+[INFO] Setting references for remaining imports
+[INFO] Project relies on 32 dependencies.
+go install github.com/emccode/libstorage/vendor/github.com/jteeuwen/go-bindata/go-bindata
+make[1]: Leaving directory './github.com/emccode/libstorage'
+make build
+make[1]: Entering directory './github.com/emccode/libstorage'
+gcc -Wall -pedantic -std=c99 cli/semaphores/open.c -o cli/semaphores/open -lpthread
+gcc -Wall -pedantic -std=c99 cli/semaphores/wait.c -o cli/semaphores/wait -lpthread
+gcc -Wall -pedantic -std=c99 cli/semaphores/signal.c -o cli/semaphores/signal -lpthread
+gcc -Wall -pedantic -std=c99 cli/semaphores/unlink.c -o cli/semaphores/unlink -lpthread
+go install ./api/types
+go install ./api/context
+go install ./api/utils
+go install ./api/registry
+go install ./api/utils/schema
+go install ./api/server/services
+go install ./api/server/httputils
+go install ./api/server/handlers
+go install ./api/utils/paths
+go install ./api/utils/config
+go install ./api/utils/semaphore
+go install ./drivers/storage/isilon
+go install ./drivers/storage/isilon/storage
+go install ./drivers/storage/scaleio
+go install ./drivers/storage/scaleio/storage
+go install ./drivers/storage/vbox
+go install ./drivers/storage/vbox/storage
+go install ./drivers/storage/vfs
+go install ./drivers/storage/vfs/storage
+go install ./imports/remote
+env GOOS=linux GOARCH=amd64 make -j $GOPATH/bin/linux_amd64/lsx-linux
+make[2]: Entering directory './github.com/emccode/libstorage'
+go install ./api/types
+go install ./drivers/storage/isilon
+go install ./api/context
+go install ./api/utils
+go install ./api/registry
+go install ./api/utils/config
+go install ./drivers/storage/isilon/executor
+go install ./drivers/storage/scaleio/executor
+go install ./drivers/storage/vbox/executor
+go install ./drivers/storage/vfs/executor
+go install ./imports/executors
+go install ./cli/lsx
+go install ./cli/lsx/lsx-linux
+make[2]: Leaving directory './github.com/emccode/libstorage'
+go install ./imports/config
+go install ./drivers/storage/isilon/executor
+go install ./drivers/storage/scaleio/executor
+go install ./drivers/storage/vbox/executor
+go install ./drivers/storage/vfs/executor
+go install ./imports/executors
+go install ./cli/lsx
+go install ./cli/lsx/lsx-darwin
+go install github.com/emccode/libstorage/vendor/github.com/jteeuwen/go-bindata/go-bindata
+$GOPATH/bin/go-bindata -md5checksum -pkg executors -prefix api/server/executors/bin -o api/server/executors/executors_generated.go api/server/executors/bin/...
+go install ./api/server/executors
+go install ./api/server/router/executor
+go install ./api/server/router/root
+go install ./api/server/router/service
+go install ./api/utils/filters
+go install ./api/server/router/volume
+go install ./api/server/router/snapshot
+go install ./api/server/router/tasks
+go install ./imports/routers
+go install ./api/server
+go install ./drivers/integration/docker
+go install ./drivers/os/darwin
+go install ./drivers/os/linux
+go install ./api/client
+go install ./drivers/storage/libstorage
+go install ./drivers/storage/vfs/client
+go install ./imports/local
+go install ./client
+go install .
+go install ./api
+go install ./api/server/router
+go install ./api/tests
+go install ./cli/lss
+go install ./cli/lss/lss-darwin
+go install ./drivers/storage/vbox/client
+make -j libstor-c libstor-s
+make[2]: Entering directory './github.com/emccode/libstorage'
+go build -buildmode=c-shared -o $GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/libstor-c.so ./c/libstor-c
+go install ./drivers/storage/isilon/storage
+go install github.com/emccode/libstorage/vendor/github.com/jteeuwen/go-bindata/go-bindata
+go build -buildmode=c-shared -o $GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/libstor-s.so ./c/libstor-s
+gcc -Wall -pedantic -std=c99 -I$GOPATH/src/github.com/emccode/libstorage/c/libstor-c \
+          -I$GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/ \
+          -L$GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/ \
+          -o $GOPATH/bin/libstor-c \
+          ./c/libstor-c.c \
+          -lstor-c
+gcc -Wall -pedantic -std=c99 -I$GOPATH/src/github.com/emccode/libstorage/c \
+          -I$GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/ \
+          -L$GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/ \
+          -o $GOPATH/bin/libstor-s \
+          ./c/libstor-s.c \
+          -lstor-s
+make[2]: Leaving directory './github.com/emccode/libstorage'
+make build-lss
+make[2]: Entering directory './github.com/emccode/libstorage'
+go install ./drivers/storage/isilon/storage
+go install github.com/emccode/libstorage/vendor/github.com/jteeuwen/go-bindata/go-bindata
+make[2]: Leaving directory './github.com/emccode/libstorage'
+make[1]: Leaving directory './github.com/emccode/libstorage'
+</code></pre>
+
+<h2 id="version-file">Version File</h2>
+<p>There is a file at the root of the project named <code>VERSION</code>. The file contains
+a single line with the <em>target</em> version of the project in the file. The version
+follows the format:</p>
+<p><code>(?&lt;major&gt;\d+)\.(?&lt;minor&gt;\d+)\.(?&lt;patch&gt;\d+)(-rc\d+)?</code></p>
+<p>For example, during active development of version <code>0.1.0</code> the file would
+contain the version <code>0.1.0</code>. When it's time to create <code>0.1.0</code>'s first
+release candidate the version in the file will be changed to <code>0.1.0-rc1</code>. And
+when it's time to release <code>0.1.0</code> the version is changed back to <code>0.1.0</code>.</p>
+<p>So what's the point of the file if it's basically duplicating the utility of a
+tag? Well, the <code>VERSION</code> file in fact has two purposes:</p>
+<ol>
+<li>
+<p>First and foremost updating the <code>VERSION</code> file with the same value as that
+     of the tag used to create a release provides a single, contextual reason to
+     push a commit and tag. Otherwise some random commit off of <code>master</code> would
+     be tagged as a release candidate or release. Always using the commit that
+     is related to updating the <code>VERSION</code> file is much cleaner.</p>
+</li>
+<li>
+<p>The contents of the <code>VERSION</code> file are also used during the build process
+     as a means of overriding the output of a <code>git describe</code>. This enables the
+     semantic version injected into the produced binary to be created using
+     the <em>targeted</em> version of the next release and not just the value of the
+     last, tagged commit.</p>
+</li>
+</ol></div>
+        </div>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script src="../../js/base.js"></script>
+        <!--
+        <script src="../../.themes/yeti/js/base.js"></script>
+        <script src="../../.themes/yeti/js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../.themes/yeti/js/highlight.pack.js"></script>
+        <script src="../../.themes/yeti/js/jquery-1.10.2.min.js"></script>
+        -->
+    </body>
+
+</html>

@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://github.com/emccode/libstorage/user-guide/storage-providers/">
+        <link rel="shortcut icon" href="../../favicon.ico">
+        
+
+	<title>Storage Providers - libStorage</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/emccode-font.css" rel="stylesheet">
+        <link href="../../css/hX.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+
+        <!-- scroll fix -->
+        <script>
+            //var shiftWindow = function() { scrollBy(0, -40) };
+            //if (location.hash) shiftWindow();
+            //window.addEventListener("hashchange", shiftWindow);
+        </script>
+
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">
+                <i class="fa icon-libstorage-logo"></i>
+                libStorage
+            </a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">Home</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../config/">Configuration</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="./">Storage Providers</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../schedulers/">Schedulers</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <!--
+                smart menus
+                <li><a href="#">User Guide <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    
+                    
+                        <li >
+                            <a href="../config/">Configuration</a>
+                        </li>
+                    
+                    
+                    
+                        <li class="active">
+                            <a href="./">Storage Providers</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../schedulers/">Schedulers</a>
+                        </li>
+                    
+                    
+                    </ul>
+                </li>
+                -->
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Developers Guide <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../../dev-guide/project-guidelines/">Project Guidelines</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../dev-guide/build-reference/">Build Reference</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../dev-guide/release-process/">Release Process</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <!--
+                smart menus
+                <li><a href="#">Developers Guide <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    
+                    
+                        <li >
+                            <a href="../../dev-guide/project-guidelines/">Project Guidelines</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../dev-guide/build-reference/">Build Reference</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../dev-guide/release-process/">Release Process</a>
+                        </li>
+                    
+                    
+                    </ul>
+                </li>
+                -->
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../../about/contributing/">Contributing</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../about/license/">License</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../about/release-notes/">Release Notes</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <!--
+                smart menus
+                <li><a href="#">About <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    
+                    
+                        <li >
+                            <a href="../../about/contributing/">Contributing</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../about/license/">License</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../about/release-notes/">Release Notes</a>
+                        </li>
+                    
+                    
+                    </ul>
+                </li>
+                -->
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li >
+                    <a rel="next" href="../config/">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../schedulers/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/emccode/libstorage.git">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://emccode.github.io">
+                        <i class="fa icon-emccode-logo"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+        <div class="container ">
+            <div class="col-md-3"><div id="sidenav" class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#storage-providers">Storage Providers</a></li>
+        
+            <li><a href="#overview">Overview</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#clientserver-configuration">Client/Server Configuration</a><!--
+                -->
+                </li>
+                
+                </ul>
+            
+            </li>
+        
+            <li><a href="#isilon">Isilon</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#configuration">Configuration</a><!--
+                -->
+                </li>
+                
+                <li><a href="#extra-parameters">Extra Parameters</a><!--
+                -->
+                </li>
+                
+                <li><a href="#optional-parameters">Optional Parameters</a><!--
+                -->
+                </li>
+                
+                <li><a href="#activating-the-driver">Activating the Driver</a><!--
+                -->
+                </li>
+                
+                <li><a href="#examples">Examples</a><!--
+                -->
+                </li>
+                
+                <li><a href="#instructions">Instructions</a><!--
+                -->
+                </li>
+                
+                <li><a href="#caveats">Caveats</a><!--
+                -->
+                </li>
+                
+                </ul>
+            
+            </li>
+        
+            <li><a href="#scaleio">ScaleIO</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#requirements">Requirements</a><!--
+                -->
+                </li>
+                
+                <li><a href="#configuration_1">Configuration</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#configuration-notes">Configuration Notes</a></li>
+                    
+                </ul>
+                -->
+                </li>
+                
+                <li><a href="#runtime-behavior">Runtime Behavior</a><!--
+                -->
+                </li>
+                
+                <li><a href="#configuring-the-gateway">Configuring the Gateway</a><!--
+                -->
+                </li>
+                
+                <li><a href="#activating-the-driver_1">Activating the Driver</a><!--
+                -->
+                </li>
+                
+                <li><a href="#troubleshooting">Troubleshooting</a><!--
+                -->
+                </li>
+                
+                <li><a href="#examples_1">Examples</a><!--
+                -->
+                </li>
+                
+                </ul>
+            
+            </li>
+        
+            <li><a href="#virtualbox">VirtualBox</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#prerequisites">Prerequisites</a><!--
+                -->
+                </li>
+                
+                <li><a href="#configuration_2">Configuration</a><!--
+                -->
+                </li>
+                
+                <li><a href="#activating-the-driver_2">Activating the Driver</a><!--
+                -->
+                </li>
+                
+                <li><a href="#examples_2">Examples</a><!--
+                -->
+                </li>
+                
+                <li><a href="#caveats_1">Caveats</a><!--
+                -->
+                </li>
+                
+                </ul>
+            
+            </li>
+        
+            <li><a href="#aws-efs">AWS EFS</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#requirements_1">Requirements</a><!--
+                -->
+                </li>
+                
+                <li><a href="#configuration_3">Configuration</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#configuration-notes_1">Configuration Notes</a></li>
+                    
+                </ul>
+                -->
+                </li>
+                
+                <li><a href="#runtime-behavior_1">Runtime Behavior</a><!--
+                -->
+                </li>
+                
+                <li><a href="#activating-the-driver_3">Activating the Driver</a><!--
+                -->
+                </li>
+                
+                <li><a href="#troubleshooting_1">Troubleshooting</a><!--
+                -->
+                </li>
+                
+                <li><a href="#examples_3">Examples</a><!--
+                -->
+                </li>
+                
+                </ul>
+            
+            </li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="storage-providers">Storage Providers</h1>
+<p>Connecting storage and platforms...</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This page reviews the storage providers and platforms supported by <code>libStorage</code>.</p>
+<h3 id="clientserver-configuration">Client/Server Configuration</h3>
+<p>Regarding the examples below, please
+<a href="../config/#clientserver-configuration">read the provision</a> about
+client/server configurations before proceeding.</p>
+<h2 id="isilon">Isilon</h2>
+<p>The Isilon driver registers a storage driver named <code>isilon</code> with the
+<code>libStorage</code> driver manager and is used to connect and manage Isilon NAS
+storage. The driver creates logical volumes in directories on the Isilon
+cluster. Volumes are exported via NFS and restricted to a single client at a
+time. Quotas can also be used to ensure that a volume directory doesn't exceed
+a specified size.</p>
+<h3 id="configuration">Configuration</h3>
+<p>The following is an example configuration of the Isilon driver.</p>
+<pre><code class="yaml">isilon:
+  endpoint: https://endpoint:8080
+  insecure: true
+  username: username
+  group: groupname
+  password: password
+  volumePath: /libstorage
+  nfsHost: nfsHost
+  dataSubnet: subnet
+  quotas: true
+</code></pre>
+
+<p>For information on the equivalent environment variable and CLI flag names
+please see the section on how configuration properties are
+<a href="../config/#configuration-properties">transformed</a>.</p>
+<h3 id="extra-parameters">Extra Parameters</h3>
+<p>The following items are configurable specific to this driver.</p>
+<ul>
+<li><code>volumePath</code> represents the location under <code>/ifs/volumes</code> to allow volumes to
+   be created and removed.</li>
+<li><code>nfsHost</code> is the configurable host used when mounting exports</li>
+<li><code>dataSubnet</code> is the subnet the REX-Ray driver is running on</li>
+</ul>
+<h3 id="optional-parameters">Optional Parameters</h3>
+<p>The following items are not required, but available to this driver.</p>
+<ul>
+<li><code>insecure</code> defaults to <code>false</code>.</li>
+<li><code>group</code> defaults to the group of the user specified in the configuration.
+   Only use this option if you need volumes to be created with a different
+   group.</li>
+<li><code>volumePath</code> defaults to "". This will have all new volumes created directly
+   under <code>/ifs/volumes</code>.</li>
+<li><code>quotas</code> defaults to <code>false</code>. Set to <code>true</code> if you have a SmartQuotas
+   license enabled.</li>
+</ul>
+<h3 id="activating-the-driver">Activating the Driver</h3>
+<p>To activate the Isilon driver please follow the instructions for
+<a href="../config/#storage-drivers">activating storage drivers</a>,
+using <code>isilon</code> as the driver name.</p>
+<h3 id="examples">Examples</h3>
+<p>Below is a full <code>config.yml</code> file that works with Isilon.</p>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      isilon:
+        driver: isilon
+        isilon:
+          endpoint: https://endpoint:8080
+          insecure: true
+          username: username
+          password: password
+          volumePath: /libstorage
+          nfsHost: nfsHost
+          dataSubnet: subnet
+          quotas: true
+</code></pre>
+
+<h3 id="instructions">Instructions</h3>
+<p>It is expected that the <code>volumePath</code> exists already within the Isilon system.
+This example would reflect a directory create under <code>/ifs/volumes/libstorage</code>
+for created volumes. It is not necessary to export this volume. The <code>dataSubnet</code>
+parameter is required so the Isilon driver can restrict access to attached
+volumes to the host that REX-Ray is running on.</p>
+<p>If <code>quotas</code> are enabled, a SmartQuotas license must also be enabled on the
+Isilon cluster for the capacity size functionality of <code>libStorage</code> to work.</p>
+<p>A SnapshotIQ license must be enabled on the Isilon cluster for the snapshot
+functionality of <code>libStorage</code> to work.</p>
+<h3 id="caveats">Caveats</h3>
+<p>The Isilon driver is not without its caveats:</p>
+<ul>
+<li>The account used to access the Isilon cluster must be in a role with the
+  following privileges:<ul>
+<li>Namespace Access (ISI_PRIV_NS_IFS_ACCESS)</li>
+<li>Platform API (ISI_PRIV_LOGIN_PAPI)</li>
+<li>NFS (ISI_PRIV_NFS)</li>
+<li>Restore (ISI_PRIV_IFS_RESTORE)</li>
+<li>Quota (ISI_PRIV_QUOTA)          (if <code>quotas</code> are enabled)</li>
+<li>Snapshot (ISI_PRIV_SNAPSHOT)    (if snapshots are used)</li>
+</ul>
+</li>
+</ul>
+<h2 id="scaleio">ScaleIO</h2>
+<p>The ScaleIO driver registers a storage driver named <code>scaleio</code> with the
+<code>libStorage</code> driver manager and is used to connect and manage ScaleIO storage.</p>
+<h3 id="requirements">Requirements</h3>
+<ul>
+<li>The ScaleIO <code>REST Gateway</code> is required for the driver to function.</li>
+<li>The <code>libStorage</code> client or application that embeds the <code>libStorage</code> client
+   must reside on a host that has the SDC client installed. The command
+   <code>/opt/emc/scaleio/sdc/bin/drv_cfg --query_guid</code> should be executable and
+   should return the local SDC GUID.</li>
+<li>The <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">official</a>
+   Oracle Java Runtime Environment (JRE) is required. During testing, use of the
+   Open Java Development Kit (JDK) resulted in unexpected errors.</li>
+</ul>
+<h3 id="configuration_1">Configuration</h3>
+<p>The following is an example with all possible fields configured.  For a running
+example see the <code>Examples</code> section.</p>
+<pre><code class="yaml">scaleio:
+  endpoint:             https://host_ip/api
+  apiVersion:           &quot;2.0&quot;
+  insecure:             false
+  useCerts:             true
+  userName:             admin
+  password:             mypassword
+  systemID:             0
+  systemName:           sysv
+  protectionDomainID:   0
+  protectionDomainName: corp
+  storagePoolID:        0
+  storagePoolName:      gold
+  thinOrThick:          ThinProvisioned
+</code></pre>
+
+<h4 id="configuration-notes">Configuration Notes</h4>
+<ul>
+<li>The <code>apiVersion</code> can optionally be set here to force certain API behavior.
+The default is to retrieve the endpoint API, and pass this version during calls.</li>
+<li><code>insecure</code> should be set to <code>true</code> if you have not loaded the SSL
+certificates on the host.  A successful wget or curl should be possible without
+SSL errors to the API <code>endpoint</code> in this case.</li>
+<li><code>useCerts</code> should only be set if you want to leverage the internal SSL
+certificates.  This would be useful if you are deploying the REX-Ray binary
+on a host that does not have any certificates installed.</li>
+<li><code>systemID</code> takes priority over <code>systemName</code>.</li>
+<li><code>protectionDomainID</code> takes priority over <code>protectionDomainName</code>.</li>
+<li><code>storagePoolID</code> takes priority over <code>storagePoolName</code>.</li>
+<li><code>thinkOrThick</code> determines whether to provision as the default
+<code>ThinProvisioned</code>, or <code>ThickProvisioned</code>.</li>
+</ul>
+<p>For information on the equivalent environment variable and CLI flag names
+please see the section on how non top-level configuration properties are
+<a href="../config/#configuration-properties">transformed</a>.</p>
+<h3 id="runtime-behavior">Runtime Behavior</h3>
+<p>The <code>storageType</code> field that is configured per volume is considered the
+ScaleIO Storage Pool.  This can be configured by default with the <code>storagePool</code>
+setting.  It is important that you create unique names for your Storage Pools
+on the same ScaleIO platform.  Otherwise, when specifying <code>storageType</code> it
+may choose at random which <code>protectionDomain</code> the pool comes from.</p>
+<p>The <code>availabilityZone</code> field represents the ScaleIO Protection Domain.</p>
+<h3 id="configuring-the-gateway">Configuring the Gateway</h3>
+<ul>
+<li>Install the <code>EMC-ScaleIO-gateway</code> package.</li>
+<li>Edit the
+<code>/opt/emc/scaleio/gateway/webapps/ROOT/WEB-INF/classes/gatewayUser.properties</code>
+file and append the proper MDM IP addresses to the following <code>mdm.ip.addresses=</code>
+parameter.</li>
+<li>By default the password is the same as your administrative MDM password.</li>
+<li>Start the gateway <code>service scaleio-gateway start</code>.</li>
+<li>With 1.32 we have noticed a restart of the gateway may be necessary as well
+after an initial install with <code>service scaleio-gateway restart</code>.</li>
+</ul>
+<h3 id="activating-the-driver_1">Activating the Driver</h3>
+<p>To activate the ScaleIO driver please follow the instructions for
+<a href="../config/#storage-drivers">activating storage drivers</a>,
+using <code>scaleio</code> as the driver name.</p>
+<h3 id="troubleshooting">Troubleshooting</h3>
+<ul>
+<li>Verify your parameters for <code>system</code>, <code>protectionDomain</code>, and
+<code>storagePool</code> are correct.</li>
+<li>Verify that have the ScaleIO SDC service installed with
+<code>rpm -qa EMC-ScaleIO-sdc</code></li>
+<li>Verify that the following command returns the local SDC GUID
+<code>/opt/emc/scaleio/sdc/bin/drv_cfg --query_guid</code>.</li>
+<li>Ensure that you are able to open a TCP connection to the gateway with the
+address that you will be supplying below in the <code>gateway_ip</code> parameter.  For
+example <code>telnet gateway_ip 443</code> should open a successful connection.  Removing
+the <code>EMC-ScaleIO-gateway</code> package and reinstalling can force re-creation of
+self-signed certs which may help resolve gateway problems.  Also try restarting
+the gateway with <code>service scaleio-gateway restart</code>.</li>
+<li>Ensure that you have the correct authentication credentials for the gateway.
+This can be done with a curl login. You should receive an authentication
+token in return.
+<code>curl --insecure --user admin:XScaleio123 https://gw_ip:443/api/login</code></li>
+<li>Please review the gateway log at
+<code>/opt/emc/scaleio/gateway/logs/catalina.out</code> for errors.</li>
+</ul>
+<h3 id="examples_1">Examples</h3>
+<p>Below is a full <code>config.yml</code> file that works with ScaleIO.</p>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      scaleio:
+        driver: scaleio
+        scaleio:
+          endpoint: https://gateway_ip/api
+          insecure: true
+          userName: username
+          password: password
+          systemName: tenantName
+          protectionDomainName: protectionDomainName
+          storagePoolName: storagePoolName
+</code></pre>
+
+<h2 id="virtualbox">VirtualBox</h2>
+<p>The VirtualBox driver registers a storage driver named <code>virtualbox</code> with the
+<code>libStorage</code> driver manager and is used by VirtualBox's VMs to connect and
+manage volumes provided by VirtualBox.</p>
+<h3 id="prerequisites">Prerequisites</h3>
+<p>In order to leverage the <code>virtualbox</code> driver, the <code>libStorage</code> client or must
+be located on each VM that you wish to be able to consume external volumes.
+The driver leverages the <code>vboxwebserv</code> HTTP SOAP API which is a process that
+must be started from the VirtualBox <em>host</em> (ie OS X) using
+<code>vboxwebsrv -H 0.0.0.0 -v</code> or additionally with <code>-b</code> for running in the
+background. This allows the VMs running <code>libStorage</code> to remotely make calls to
+the underlying VirtualBox application. A test for connectivity can be done with
+<code>telnet virtualboxip 18083</code> from the VM. The <code>virtualboxip</code> is what you
+would put in the <code>endpoint</code> value.</p>
+<p>Leveraging authentication for the VirtualBox webserver is optiona.. The HTTP
+SOAP API can have authentication disabled by running
+<code>VBoxManage setproperty websrvauthlibrary null</code>.</p>
+<p>Hot-Plugging is required, which limits the usefulness of this driver to <code>SATA</code>
+only.  Ensure that your VM has <em>pre-created</em> this controller and it is
+named <code>SATA</code>.  Otherwise the <code>controllerName</code> field must be populated
+with the name of the controller you wish to use.  The port count must be set
+manually as it cannot be increased when the VMs are on.  A count of <code>30</code>
+is suggested.</p>
+<p>VirtualBox 5.0.10+ must be used.</p>
+<h3 id="configuration_2">Configuration</h3>
+<p>The following is an example configuration of the VirtualBox driver.<br />
+The <code>localMachineNameOrId</code> parameter is for development use where you force
+<code>libStorage</code> to use a specific VM identity.  Choose a <code>volumePath</code> to store the
+volume files or virtual disks.  This path should be created ahead of time.</p>
+<pre><code class="yaml">virtualbox:
+  endpoint: http://virtualboxhost:18083
+  userName: optional
+  password: optional
+  tls: false
+  volumePath: $HOME/VirtualBox/Volumes
+  controllerName: name
+  localMachineNameOrId: forDevelopmentUse
+</code></pre>
+
+<p>For information on the equivalent environment variable and CLI flag names
+please see the section on how non top-level configuration properties are
+<a href="../config/#configuration-properties">transformed</a>.</p>
+<h3 id="activating-the-driver_2">Activating the Driver</h3>
+<p>To activate the VirtualBox driver please follow the instructions for
+<a href="../config/#storage-drivers">activating storage drivers</a>,
+using <code>virtualbox</code> as the driver name.</p>
+<h3 id="examples_2">Examples</h3>
+<p>Below is a working <code>config.yml</code> file that works with VirtualBox.</p>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      virtualbox:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes
+          controllerName: SATA
+</code></pre>
+
+<h3 id="caveats_1">Caveats</h3>
+<ul>
+<li>Snapshot and create volume from volume functionality is not available yet
+  with this driver.</li>
+<li>The driver supports VirtualBox 5.0.10+</li>
+</ul>
+<h2 id="aws-efs">AWS EFS</h2>
+<p>The AWS EFS driver registers a storage driver named <code>efs</code> with the
+<code>libStorage</code> driver manager and is used to connect and manage AWS Elastic File
+Systems.</p>
+<h3 id="requirements_1">Requirements</h3>
+<ul>
+<li>AWS account</li>
+<li>VPC - EFS can be accessed within VPC</li>
+<li>AWS Credentials</li>
+</ul>
+<h3 id="configuration_3">Configuration</h3>
+<p>The following is an example with all possible fields configured.  For a running
+example see the <code>Examples</code> section.</p>
+<pre><code class="yaml">efs:
+  accessKey:      XXXXXXXXXX
+  secretKey:      XXXXXXXXXX
+  securityGroups: sg-XXXXXXX,sg-XXXXXX0,sg-XXXXXX1
+  region:         us-east-1
+  tag:            test
+</code></pre>
+
+<h4 id="configuration-notes_1">Configuration Notes</h4>
+<ul>
+<li>The <code>accessKey</code> and <code>secretKey</code> configuration parameters are optional and should
+be used when explicit AWS credentials configuration needs to be provided. EFS driver
+uses official golang AWS SDK library and supports all other ways of providing
+access credentials, like environment variables or instance profile IAM permissions.</li>
+<li><code>region</code> represents AWS region where should be EFS provisioned. See official AWS
+documentation for list of supported regions.</li>
+<li><code>securityGroups</code> list of security groups attached to <code>MountPoint</code> instances.
+If no security groups are provided the default VPC security group is used.</li>
+<li><code>tag</code> is used to partition multiple services within single AWS account and is
+used as prefix for EFS names in format <code>[tagprefix]/volumeName</code>.</li>
+</ul>
+<p>For information on the equivalent environment variable and CLI flag names
+please see the section on how non top-level configuration properties are
+<a href="../config/#configuration-properties">transformed</a>.</p>
+<h3 id="runtime-behavior_1">Runtime Behavior</h3>
+<p>AWS EFS storage driver creates one EFS FileSystem per volume and provides root
+of the filesystem as NFS mount point. Volumes aren't attached to instances
+directly but rather exposed to each subnet by creating <code>MountPoint</code> in each VPC
+subnet. When detaching volume from instance no action is taken as there isn't
+good way to figure out if there are other instances in same subnet using
+<code>MountPoint</code> that is being detached. There is no charge for <code>MountPoint</code>
+so they are removed only once whole volume is deleted.</p>
+<p>By default all EFS instances are provisioned as <code>generalPurpose</code> performance mode.
+<code>maxIO</code> EFS type can be provisioned by providing <code>maxIO</code> flag as <code>volumetype</code>.</p>
+<p>Its possible to mount same volume to multiple container on a single EC2 instance
+as well as use single volume across multiple EC2 instances at the same time.</p>
+<p><strong>NOTE</strong>: Each EFS FileSystem can be accessed only from single VPC at the time.</p>
+<h3 id="activating-the-driver_3">Activating the Driver</h3>
+<p>To activate the AWS EFS driver please follow the instructions for
+<a href="../config/#storage-drivers">activating storage drivers</a>,
+using <code>efs</code> as the driver name.</p>
+<h3 id="troubleshooting_1">Troubleshooting</h3>
+<ul>
+<li>Make sure that AWS credentials (user or role) has following AWS permissions on
+  <code>libStorage</code> server instance that will be making calls to AWS API:</li>
+<li><code>elasticfilesystem:CreateFileSystem</code></li>
+<li><code>elasticfilesystem:CreateMountTarget</code></li>
+<li><code>ec2:DescribeSubnets</code></li>
+<li><code>ec2:DescribeNetworkInterfaces</code></li>
+<li><code>ec2:CreateNetworkInterface</code></li>
+<li><code>elasticfilesystem:CreateTags</code></li>
+<li><code>elasticfilesystem:DeleteFileSystem</code></li>
+<li><code>elasticfilesystem:DeleteMountTarget</code></li>
+<li><code>ec2:DeleteNetworkInterface</code></li>
+<li><code>elasticfilesystem:DescribeFileSystems</code></li>
+<li><code>elasticfilesystem:DescribeMountTargets</code></li>
+</ul>
+<h3 id="examples_3">Examples</h3>
+<p>Below is a working <code>config.yml</code> file that works with AWS EFS.</p>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      efs:
+        driver: efs
+        efs:
+          accessKey:      XXXXXXXXXX
+          secretKey:      XXXXXXXXXX
+          securityGroups: sg-XXXXXXX,sg-XXXXXX0,sg-XXXXXX1
+          region:         us-east-1
+          tag:            test
+</code></pre></div>
+        </div>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script src="../../js/base.js"></script>
+        <!--
+        <script src="../../.themes/yeti/js/base.js"></script>
+        <script src="../../.themes/yeti/js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../.themes/yeti/js/highlight.pack.js"></script>
+        <script src="../../.themes/yeti/js/jquery-1.10.2.min.js"></script>
+        -->
+    </body>
+
+</html>

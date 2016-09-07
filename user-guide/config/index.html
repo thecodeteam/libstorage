@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://github.com/emccode/libstorage/user-guide/config/">
+        <link rel="shortcut icon" href="../../favicon.ico">
+        
+
+	<title>Configuration - libStorage</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/emccode-font.css" rel="stylesheet">
+        <link href="../../css/hX.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+
+        <!-- scroll fix -->
+        <script>
+            //var shiftWindow = function() { scrollBy(0, -40) };
+            //if (location.hash) shiftWindow();
+            //window.addEventListener("hashchange", shiftWindow);
+        </script>
+
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">
+                <i class="fa icon-libstorage-logo"></i>
+                libStorage
+            </a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">Home</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li class="active">
+                            <a href="./">Configuration</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../storage-providers/">Storage Providers</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../schedulers/">Schedulers</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <!--
+                smart menus
+                <li><a href="#">User Guide <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    
+                    
+                        <li class="active">
+                            <a href="./">Configuration</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../storage-providers/">Storage Providers</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../schedulers/">Schedulers</a>
+                        </li>
+                    
+                    
+                    </ul>
+                </li>
+                -->
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Developers Guide <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../../dev-guide/project-guidelines/">Project Guidelines</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../dev-guide/build-reference/">Build Reference</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../dev-guide/release-process/">Release Process</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <!--
+                smart menus
+                <li><a href="#">Developers Guide <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    
+                    
+                        <li >
+                            <a href="../../dev-guide/project-guidelines/">Project Guidelines</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../dev-guide/build-reference/">Build Reference</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../dev-guide/release-process/">Release Process</a>
+                        </li>
+                    
+                    
+                    </ul>
+                </li>
+                -->
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../../about/contributing/">Contributing</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../about/license/">License</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../about/release-notes/">Release Notes</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <!--
+                smart menus
+                <li><a href="#">About <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    
+                    
+                        <li >
+                            <a href="../../about/contributing/">Contributing</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../about/license/">License</a>
+                        </li>
+                    
+                    
+                    
+                        <li >
+                            <a href="../../about/release-notes/">Release Notes</a>
+                        </li>
+                    
+                    
+                    </ul>
+                </li>
+                -->
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li >
+                    <a rel="next" href="../..">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../storage-providers/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/emccode/libstorage.git">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://emccode.github.io">
+                        <i class="fa icon-emccode-logo"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+        <div class="container ">
+            <div class="col-md-3"><div id="sidenav" class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#configuring-libstorage">Configuring libStorage</a></li>
+        
+            <li><a href="#overview">Overview</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#clientserver-configuration">Client/Server Configuration</a><!--
+                -->
+                </li>
+                
+                </ul>
+            
+            </li>
+        
+            <li><a href="#basic-configuration">Basic Configuration</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#simple">Simple</a><!--
+                -->
+                </li>
+                
+                <li><a href="#tcp">TCP</a><!--
+                -->
+                </li>
+                
+                <li><a href="#tcptls">TCP+TLS</a><!--
+                -->
+                </li>
+                
+                <li><a href="#unix-socket">UNIX Socket</a><!--
+                -->
+                </li>
+                
+                <li><a href="#multiple-endpoints">Multiple Endpoints</a><!--
+                -->
+                </li>
+                
+                <li><a href="#multiple-services">Multiple Services</a><!--
+                -->
+                </li>
+                
+                <li><a href="#logging">Logging</a><!--
+                -->
+                </li>
+                
+                </ul>
+            
+            </li>
+        
+            <li><a href="#advanced-configuration">Advanced Configuration</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#embedded-configuration">Embedded Configuration</a><!--
+                -->
+                </li>
+                
+                <li><a href="#data-directories">Data Directories</a><!--
+                -->
+                </li>
+                
+                <li><a href="#configuration-methods">Configuration Methods</a><!--
+                -->
+                </li>
+                
+                <li><a href="#configuration-files">Configuration Files</a><!--
+                -->
+                </li>
+                
+                <li><a href="#configuration-properties">Configuration Properties</a><!--
+                -->
+                </li>
+                
+                <li><a href="#inherited-properties">Inherited Properties</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#overriding-inherited-properties">Overriding Inherited Properties</a></li>
+                    
+                </ul>
+                -->
+                </li>
+                
+                <li><a href="#logging-configuration">Logging Configuration</a><!--
+                -->
+                </li>
+                
+                <li><a href="#tasks-configuration">Tasks Configuration</a><!--
+                -->
+                </li>
+                
+                <li><a href="#driver-configuration">Driver Configuration</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#os-drivers">OS Drivers</a></li>
+                    
+                    <li><a href="#storage-drivers">Storage Drivers</a></li>
+                    
+                    <li><a href="#integration-drivers">Integration Drivers</a></li>
+                    
+                </ul>
+                -->
+                </li>
+                
+                <li><a href="#volume-configuration">Volume Configuration</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#volume-properties">Volume Properties</a></li>
+                    
+                    <li><a href="#disable-create">Disable Create</a></li>
+                    
+                    <li><a href="#disable-remove">Disable Remove</a></li>
+                    
+                    <li><a href="#preemption">Preemption</a></li>
+                    
+                    <li><a href="#ignore-used-count">Ignore Used Count</a></li>
+                    
+                    <li><a href="#volume-path-cache">Volume Path Cache</a></li>
+                    
+                    <li><a href="#volume-root-path">Volume Root Path</a></li>
+                    
+                </ul>
+                -->
+                </li>
+                
+                </ul>
+            
+            </li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="configuring-libstorage">Configuring libStorage</h1>
+<p>Tweak this, turn that, peek behind the curtain...</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This page reviews how to configure <code>libStorage</code> to suit any environment,
+beginning with the the most common use cases, exploring recommended guidelines,
+and finally, delving into the details of more advanced settings.</p>
+<h3 id="clientserver-configuration">Client/Server Configuration</h3>
+<p>Except when specified otherwise, the configuration examples below assume the
+<code>libStorage</code> client and server exist on the same host. However, that is not at
+all a requirement. It is fully possible, and in fact the entire purpose of
+<code>libStorage</code>, that the client and server be able to function on different
+systems. One <code>libStorage</code> server should be able to support hundreds of clients.
+Yet for the sake of completeness, the examples below show both configurations
+merged.</p>
+<p>When configuring a <code>libStorage</code> client and server for different systems, there
+will be a few differences from the examples below:</p>
+<ul>
+<li>
+<p>The examples show <code>libStorage</code> configured with its server component hosted
+    on a UNIX socket. This is ideal for when the client/server exist on the same
+    host as it reduces security risks. However, in most real-world scenarios
+    the client and server are <em>not</em> residing on the same host, the
+    <code>libStorage</code>  server should use a TCP endpoint so it can be accessed
+    remotely.</p>
+</li>
+<li>
+<p>In a distributed configuration the actual driver configuration sections
+    need only occur on the server-side. The entire purpose of <code>libStorage</code>'s
+    distributed nature is to enable clients without any knowledge of how to
+    access a storage platform the ability to connect to a remote server that
+    maintains that storage platform access information.</p>
+</li>
+</ul>
+<h2 id="basic-configuration">Basic Configuration</h2>
+<p>This section outlines the most common configuration scenarios encountered by
+<code>libStorage</code>'s users.</p>
+<h3 id="simple">Simple</h3>
+<p>The first example is a simple <code>libStorage</code> configuration with the VirtualBox
+storage driver. The below example omits the host property, but the configuration
+is still valid. If the <code>libstorage.host</code> property is not found, the server is
+hosted via a temporary UNIX socket file in <code>/var/run/libstorage</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>Please remember to replace the placeholders in the following examples
+with values valid for the systems on which the examples are executed.</p>
+<p>The example below specifies the <code>volumePath</code> property as
+<code>$HOME/VirtualBox/Volumes</code>. While the text <code>$HOME</code> will be replaced with
+the actual value for that environment variable at runtime, the path may
+still be invalid. The <code>volumePath</code> property should reflect a path on the
+system on which the VirtualBox server is running, and that is not always
+the same system on which the <code>libStorage</code> server is running.</p>
+<p>So please, make sure to update the <code>volumePath</code> property for the VirtualBox
+driver to a path valid on the system on which the VirtualBox server is
+running.</p>
+<p>The same goes for VirtualBox property <code>endpoint</code> as the VirtualBox
+web service is not always available at <code>10.0.2.2:18083</code>.</p>
+</div>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      virtualbox:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes
+          controllerName: SATA
+</code></pre>
+
+<h3 id="tcp">TCP</h3>
+<p>The following example illustrates how to configure a <code>libStorage</code> client and
+server running on the same host. The server has one endpoint on which it is
+accessible - a single TCP port, 7979, bound to the localhost network interface.</p>
+<pre><code class="yaml">libstorage:
+  host: tcp://127.0.0.1:7979
+  server:
+    services:
+      virtualbox:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes
+          controllerName: SATA
+</code></pre>
+
+<h3 id="tcptls">TCP+TLS</h3>
+<p>The following example illustrates how to configure a <code>libStorage</code> client and
+server running on the same host. The server has one endpoint on which it is
+accessible - a single TCP port, 7979, bound to all of the host's network
+interfaces. This means that the server is accessible via external clients, not
+just those running on the same host.</p>
+<p>Because of the public nature of this <code>libStorage</code> server, it is a good idea to
+encrypt communications between client and server.</p>
+<pre><code class="yaml">libstorage:
+  host: tcp://127.0.0.1:7979
+  client:
+    tls:
+      certFile: $HOME/.libstorage/libstorage-client.crt
+      keyFile: $HOME/.libstorage/libstorage-client.key
+      trustedCertsFile: $HOME/.libstorage/trusted-certs.crt
+  server:
+    tls:
+      certFile: /etc/libstorage/libstorage-server.crt
+      keyFile: /etc/libstorage/libstorage-server.key
+      trustedCertsFile: /etc/libstorage/trusted-certs.crt
+      clientCertRequired: true
+    services:
+      virtualbox:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes
+          controllerName: SATA
+</code></pre>
+
+<p>Please note that in the above example the property <code>libstorage.client</code> has been
+introduced. This property is always present, even if not explicitly specified.
+It exists to override <code>libStorage</code> properties for the client only, such as TLS
+settings, logging, etc.</p>
+<h3 id="unix-socket">UNIX Socket</h3>
+<p>For the security conscious, there is no safer way to run a client/server setup
+on a single system than the option to use a UNIX socket. The socket offloads
+authentication and relies on the file system file access to ensure authorized
+users can use the <code>libStorage</code> API.</p>
+<pre><code class="yaml">libstorage:
+  host: unix:///var/run/libstorage/localhost.sock
+  server:
+    services:
+      virtualbox:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes
+          controllerName: SATA
+</code></pre>
+
+<p>It is possible to apply TLS to the UNIX socket. Refer to the TCP+TLS section
+for applying TLS to the UNIX sockets.</p>
+<h3 id="multiple-endpoints">Multiple Endpoints</h3>
+<p>There may be occasions when it is desirable to provide multiple ingress vectors
+for the <code>libStorage</code> API. In these situations, configuring multiple endpoints
+is the solution. The below example illustrates how to configure three endpoints:</p>
+<table>
+<thead>
+<tr>
+<th>endpoint</th>
+<th>protocol</th>
+<th>address</th>
+<th>tls</th>
+<th>localhost only</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sock</td>
+<td>unix socket</td>
+<td>/var/run/libstorage/localhost.sock</td>
+<td>no</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>private</td>
+<td>tcp</td>
+<td>127.0.0.1:7979</td>
+<td>no</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>public</td>
+<td>tcp</td>
+<td>*:7980</td>
+<td>yes</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="yaml">libstorage:
+  host: unix:///var/run/libstorage/localhost.sock
+  server:
+    services:
+      virtualbox:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes
+          controllerName: SATA
+    endpoints:
+      sock:
+        address: unix:///var/run/libstorage/localhost.sock
+      private:
+        address: tcp://127.0.0.1:7979
+      public:
+        address: tcp://:7980
+        tls:
+          certFile: /etc/libstorage/libstorage-server.crt
+          keyFile: /etc/libstorage/libstorage-server.key
+          trustedCertsFile: /etc/libstorage/trusted-certs.crt
+          clientCertRequired: true
+</code></pre>
+
+<p>With all three endpoints defined explicitly in the above example, why leave the
+property <code>libstorage.host</code> in the configuration at all? When there are no
+endpoints defined, the <code>libStorage</code> server will attempt to create a default
+endpoint using the value from the property <code>libstorage.host</code>. However, even
+when there's at least one explicitly defined endpoint, the <code>libstorage.host</code>
+property still serves a very important function -- it is the property used
+by the <code>libStorage</code> client to determine which to which endpoint to connect.</p>
+<h3 id="multiple-services">Multiple Services</h3>
+<p>All of the previous examples have used the VirtualBox storage driver as the
+sole measure of how to configure a <code>libStorage</code> service. However, it is possible
+to configure many services at the same time in order to provide access to
+multiple storage drivers of different types, or even different configurations
+of the same driver.</p>
+<p>The following example demonstrates how to configure three <code>libStorage</code> services:</p>
+<table>
+<thead>
+<tr>
+<th>service</th>
+<th>driver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>virtualbox-00</td>
+<td>virtualbox</td>
+</tr>
+<tr>
+<td>virtualbox-01</td>
+<td>virtualbox</td>
+</tr>
+<tr>
+<td>scaleio</td>
+<td>scaleio</td>
+</tr>
+</tbody>
+</table>
+<p>Notice how the <code>virtualbox-01</code> service includes an added <code>integration</code> section.
+The integration definition refers to the integration interface and parameters
+specific to incoming requests through this layer. In this case we defined
+<code>libstorage.server.services.virtualbox-01</code> with the
+<code>integration.volume.operations.create.default.size</code> parameter set. This enables all
+create requests that come in through <code>virtualbox-01</code> to have a default size of
+1GB. So although it is technically the same platform below the covers,
+<code>virtualbox-00</code> requests may have different default values than those defined
+in <code>virtualbox-01</code>.</p>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      virtualbox-00:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes-00
+          controllerName: SATA
+      virtualbox-01:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes-01
+          controllerName: SATA
+        integration:
+          volume:
+            operations:
+              create:
+                default:
+                  size: 1 # GB
+      scaleio:
+        driver: scaleio
+        scaleio:
+          endpoint: https://gateway_ip/api
+          insecure: true
+          userName: username
+          password: password
+          systemName: tenantName
+          protectionDomainName: protectionDomainName
+          storagePoolName: storagePoolName
+</code></pre>
+
+<p>A very important point to make about the relationship between services and
+endpoints is that all configured services are available on all endpoints. In
+the future this may change, and <code>libStorage</code> may support endpoint-specific
+service definitions, but for now if a service is configured, it is accessible
+via any of the available endpoint addresses.</p>
+<p>Between the three services above, clearly one major difference is that two
+services host one driver, VirtualBox, and the third service hosts ScaleIO.
+However, why two services for one driver, in this case, VirtualBox? Because,
+in addition to services being configured to host different types of drivers,
+services can also host different driver configurations. In service
+<code>virtualbox-00</code>, the volume path is <code>$HOME/VirtualBox/Volumes-00</code>,
+whereas for service <code>virtualbox-01</code>, the volume path is
+<code>$HOME/VirtualBox/Volumes-01</code>.</p>
+<h3 id="logging">Logging</h3>
+<p>Sometimes it helps to see a little more, or maybe even a little less,
+information in the logs. Configuring logging is quite straight-forward:</p>
+<pre><code class="yaml">libstorage:
+  logging:
+    level: warn
+  server:
+    logging:
+      level: info
+    services:
+      virtualbox:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes
+          controllerName: SATA
+</code></pre>
+
+<p>The <code>libStorage</code> configuration shown above uses a global log level of <code>warn</code>,
+and a more verbose, <code>info</code> log level for just the server.</p>
+<h2 id="advanced-configuration">Advanced Configuration</h2>
+<p>The following sections detail every last aspect of how <code>libStorage</code> works and can
+be configured.</p>
+<h3 id="embedded-configuration">Embedded Configuration</h3>
+<p>If <code>libStorage</code> is embedded into another application, such as
+<a href="https://github.com/emccode/rexray"><code>REX-Ray</code></a>, then that application may
+manage its own configuration and supply the embedded <code>libStorage</code> instance
+directly with a configuration object. In this scenario, the <code>libStorage</code>
+configuration files are ignored in deference to the embedding application.</p>
+<h3 id="data-directories">Data Directories</h3>
+<p>The first time <code>libStorage</code> is executed it will create several directories if
+they do not already exist:</p>
+<ul>
+<li><code>/etc/libstorage</code></li>
+<li><code>/var/log/libstorage</code></li>
+<li><code>/var/run/libstorage</code></li>
+<li><code>/var/lib/libstorage</code></li>
+</ul>
+<p>The above directories will contain configuration files, logs, PID files, and
+mounted volumes. However, the location of these directories can also be
+influenced with the environment variable <code>LIBSTORAGE_HOME</code>. All of the above
+data directories will be placed in their same paths, but prefixed by the path
+specified via <code>LIBSTORAGE_HOME</code>, if <code>LIBSTORAGE_HOME</code> is in fact specified.</p>
+<h3 id="configuration-methods">Configuration Methods</h3>
+<p>There are three ways to configure <code>libStorage</code>:</p>
+<ul>
+<li>Command line options</li>
+<li>Environment variables</li>
+<li>Configuration files</li>
+</ul>
+<p>The order of the items above is also the order of precedence when considering
+options set in multiple locations that may override one another. Values set
+via CLI flags have the highest order of precedence, followed by values set by
+environment variables, followed, finally, by values set in configuration files.</p>
+<h3 id="configuration-files">Configuration Files</h3>
+<p>There are two <code>libStorage</code> configuration files - global and user:</p>
+<ul>
+<li><code>/etc/libstorage/config.yml</code></li>
+<li><code>$HOME/.libstorage/config.yml</code></li>
+</ul>
+<p>Please note that while the user configuration file is located inside the user's
+home directory, this is the directory of the user that starts <code>libStorage</code>. And
+if <code>libStorage</code> is being started as a service, then <code>sudo</code> is likely being used,
+which means that <code>$HOME/.libstorage/config.yml</code> won't point to <em>your</em> home
+directory, but rather <code>/root/.libstorage/config.yml</code>.</p>
+<h3 id="configuration-properties">Configuration Properties</h3>
+<p>The section <a href="#configuration-methods">Configuration Methods</a> mentions there are
+three ways to configure libStorage: config files, environment variables, and the
+command line. However, this section will illuminate the relationship between the
+names of the configuration file properties, environment variables, and CLI
+flags.</p>
+<p>Below is a simple configuration file that tells the <code>libStorage</code> client where
+the <code>libStorage</code> server is hosted:</p>
+<pre><code class="yaml">libstorage:
+  host: tcp://192.168.0.20:7979
+</code></pre>
+
+<p>The property <code>libstorage.host</code> is a string. This value can also be set via
+environment variables or the command line, but to do so requires knowing the
+names of the environment variables or CLI flags to use. Luckily those are very
+easy to figure out just by knowing the property names.</p>
+<p>All properties that might appear in the <code>libStorage</code> configuration file
+fall under some type of heading. For example, take the default configuration
+above.</p>
+<p>The rule for environment variables is as follows:</p>
+<ul>
+<li>Each nested level becomes a part of the environment variable name followed
+    by an underscore <code>_</code> except for the terminating part.</li>
+<li>The entire environment variable name is uppercase.</li>
+</ul>
+<p>Nested properties follow these rules for CLI flags:</p>
+<ul>
+<li>The root level's first character is lower-cased with the rest of the root
+    level's text left unaltered.</li>
+<li>The remaining levels' first characters are all upper-cased with the the
+    remaining text of that level left unaltered.</li>
+<li>All levels are then concatenated together.</li>
+</ul>
+<p>The following example builds on the previous. In this case we have added logging
+directives to the client instance and reference how their transformation in
+the table below the example.</p>
+<pre><code class="yaml">  libstorage:
+    host: tcp://192.168.0.20:7979
+    logging:
+      level: warn
+      stdout:
+      stderr:
+      httpRequests: false
+      httpResponses: false
+</code></pre>
+
+<p>The following table illustrates the transformations:</p>
+<table>
+<thead>
+<tr>
+<th>Property Name</th>
+<th>Environment Variable</th>
+<th>CLI Flag</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>libstorage.host</code></td>
+<td><code>LIBSTORAGE_HOST</code></td>
+<td><code>--libstorageHost</code></td>
+</tr>
+<tr>
+<td><code>libstorage.logging.level</code></td>
+<td><code>LIBSTORAGE_LOGGING_LEVEL</code></td>
+<td><code>--libstorageLoggingLevel</code></td>
+</tr>
+<tr>
+<td><code>libstorage.logging.stdout</code></td>
+<td><code>LIBSTORAGE_LOGGING_STDOUT</code></td>
+<td><code>--libstorageLoggingStdout</code></td>
+</tr>
+<tr>
+<td><code>libstorage.logging.stderr</code></td>
+<td><code>LIBSTORAGE_LOGGING_STDERR</code></td>
+<td><code>--libstorageLoggingStderr</code></td>
+</tr>
+<tr>
+<td><code>libstorage.logging.httpRequests</code></td>
+<td><code>LIBSTORAGE_LOGGING_HTTPREQUESTS</code></td>
+<td><code>--libstorageLoggingHttpRequests</code></td>
+</tr>
+<tr>
+<td><code>libstorage.logging.httpResponses</code></td>
+<td><code>LIBSTORAGE_LOGGING_HTTPRESPONSES</code></td>
+<td><code>--libstorageLoggingHttpResponses</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="inherited-properties">Inherited Properties</h3>
+<p>Referring to the section on defining
+<a href="./#multiple-services">Multiple Services</a>, there is also another way
+to define the TLS settings for the external TCP endpoint. The same configuration
+can be rewritten and simplified in the process:</p>
+<pre><code class="yaml">libstorage:
+  integration:
+    volume:
+      operations:
+        create:
+          default:
+            size: 1 # GB
+  server:
+    virtualbox:
+      endpoint:       http://10.0.2.2:18083
+      tls:            false
+      controllerName: SATA
+    services:
+      virtualbox-00:
+        driver: virtualbox
+        virtualbox:
+          volumePath: $HOME/VirtualBox/Volumes-00
+      virtualbox-01:
+        driver: virtualbox
+        virtualbox:
+          volumePath: $HOME/VirtualBox/Volumes-01
+</code></pre>
+
+<p>The above example may look different than the previous one, but it's actually
+the same with a minor tweak in order to simplify configuration.</p>
+<p>While there are still two VirtualBox services defined, <code>virtualbox-00</code> and
+<code>virtualbox-01</code>, neither service contains configuration information about the
+VirtualBox driver other than the <code>volumePath</code> property. This is because the
+change affected above is to take advantage of inherited properties.</p>
+<p>When a property is omitted, <code>libStorage</code> traverses the configuration instance
+upwards, checking certain, predefined levels known as "scopes" to see if the
+property value exists there. All configured services represent a valid
+configuration scope as does <code>libstorage.server</code>.</p>
+<p>Thus when the VirtualBox driver is initialized and it checks for its properties,
+while the driver may only find the <code>volumePath</code> property defined under the
+configured service scope, the property access attempt travels up the
+configuration stack until it hits the <code>libstorage.server</code> scope where the
+remainder of the VirtualBox driver's properties <em>are</em> defined.</p>
+<h4 id="overriding-inherited-properties">Overriding Inherited Properties</h4>
+<p>It's also possible to override inherited properties as is demonstrated in the
+<a href="#logging">Logging configuration example</a> above:</p>
+<pre><code class="yaml">libstorage:
+  logging:
+    level: warn
+  integration:
+    volume:
+      operations:
+        create:
+          default:
+            size: 1 # GB
+  server:
+    logging:
+      level: info
+    services:
+      virtualbox:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes
+          controllerName: SATA
+</code></pre>
+
+<p>Note that while the log level is defined at the root of the config, it's also
+defined at <code>libstorage.server.logging.level</code>. The latter value of <code>info</code>
+overrides the former value of <code>warn</code>. Also please remember that even had the
+latter, server-specific value of <code>info</code> not been defined, an attempt by to
+access the log level by the server would be perfectly valid since the attempt
+would traverse up the configuration data until it found the log level defined
+at the root of the configuration.</p>
+<h3 id="logging-configuration">Logging Configuration</h3>
+<p>The <code>libStorage</code> log level determines the level of verbosity emitted by the
+internal logger. The default level is <code>warn</code>, but there are three other levels
+as well:</p>
+<table>
+<thead>
+<tr>
+<th>Log Level</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>error</code></td>
+<td>Log only errors</td>
+</tr>
+<tr>
+<td><code>warn</code></td>
+<td>Log errors and anything out of place</td>
+</tr>
+<tr>
+<td><code>info</code></td>
+<td>Log errors, warnings, and workflow messages</td>
+</tr>
+<tr>
+<td><code>debug</code></td>
+<td>Log everything</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tasks-configuration">Tasks Configuration</h3>
+<p>All operations received by the libStorage API are immediately enqueued into a
+Task Service in order to divorce the business objective from the scope of the
+HTTP request that delivered it. If a task completes before the HTTP request
+times out, the result of the task is written to the HTTP response and sent to
+the client. However, if the operation is long-lived and continues to execute
+after the original HTTP request has timed out, the goroutine running the
+operation will finish regardless.</p>
+<p>In the case of such a timeout event, the client receives an HTTP status 408 -
+Request Timeout. The HTTP response body also includes the task ID which can
+be used to monitor the state of the remote call. The following resource URI can
+be used to retrieve information about a task:</p>
+<pre><code>GET /tasks/${taskID}
+</code></pre>
+
+<p>For systems that experience heavy loads the task system can also be a source of
+potential resource issues. Because tasks are kept indefinitely at this point in
+time, too many tasks over a long period of time can result in a massive memory
+consumption, with reports of up to 50GB and more.</p>
+<p>That's why the configuration property <code>libstorage.server.tasks.logTimeout</code> is
+available to adjust how long a task is logged before it is removed from memory.
+The default value is <code>0</code> -- that is, do not log the task in memory at all.</p>
+<p>While this is in contradiction to the task retrieval example above --
+obviously a task cannot be retrieved if it is not retained -- testing and
+benchmarks have shown it is too dangerous to enable task retention by default.
+Instead tasks are removed immediately upon completion.</p>
+<p>The follow configuration example illustrates a libStorage server that keeps
+tasks logged for 10 minutes before purging them from memory:</p>
+<pre><code class="yaml">libstorage:
+  server:
+    tasks:
+      logTimeout: 10m
+</code></pre>
+
+<p>The <code>libstorage.server.tasks.logTimeout</code> property can be set to any value that
+is parseable by the Golang
+<a href="https://golang.org/pkg/time/#ParseDuration">time.ParseDuration</a> function. For
+example, <code>1000ms</code>, <code>10s</code>, <code>5m</code>, and <code>1h</code> are all valid values.</p>
+<h3 id="driver-configuration">Driver Configuration</h3>
+<p>There are three types of drivers:</p>
+<ol>
+<li>OS Drivers</li>
+<li>Storage Drivers</li>
+<li>Integration Drivers</li>
+</ol>
+<h4 id="os-drivers">OS Drivers</h4>
+<p>Operating system (OS) drivers enable <code>libStorage</code> to manage storage on
+the underlying OS. Currently the following OS drivers are supported:</p>
+<table>
+<thead>
+<tr>
+<th>Driver</th>
+<th>Driver Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux</td>
+<td>linux</td>
+</tr>
+</tbody>
+</table>
+<p>The OS driver <code>linux</code> is automatically activated when <code>libStorage</code> is running on
+the Linux OS.</p>
+<h4 id="storage-drivers">Storage Drivers</h4>
+<p>Storage drivers enable <code>libStorage</code> to communicate with direct-attached or
+remote storage systems. Currently the following storage drivers are supported:</p>
+<table>
+<thead>
+<tr>
+<th>Driver</th>
+<th>Driver Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../storage-providers/#isilon">Isilon</a></td>
+<td>isilon</td>
+</tr>
+<tr>
+<td><a href="../storage-providers/#scaleio">ScaleIO</a></td>
+<td>scaleio</td>
+</tr>
+<tr>
+<td><a href="../storage-providers/#virtualbox">VirtualBox</a></td>
+<td>virtualbox</td>
+</tr>
+<tr>
+<td>..more coming</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>libstorage.server.libstorage.storage.driver</code> property can be used to
+activate a storage drivers. That is not a typo; the <code>libstorage</code> key is repeated
+beneath <code>libstorage.server</code>. This is because configuration property paths are
+absolute, and when nested under an architectural component, such as
+<code>libstorage.server</code>, the entire key path must be replicated.</p>
+<p>That said, and this may seem to contradict the last point, the storage driver
+property is valid <em>only</em> on the server. Well, not really. Internally the
+<code>libStorage</code> client uses the same configuration property to denote its own
+storage driver. This internal storage driver is actually how the <code>libStorage</code>
+client communicates with the <code>libStorage</code> server.</p>
+<h4 id="integration-drivers">Integration Drivers</h4>
+<p>Integration drivers enable <code>libStorage</code> to integrate with schedulers and other
+storage consumers, such as <code>Docker</code> or <code>Mesos</code>. Currently the following
+integration drivers are supported:</p>
+<table>
+<thead>
+<tr>
+<th>Driver</th>
+<th>Driver Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docker</td>
+<td>docker</td>
+</tr>
+</tbody>
+</table>
+<p>The integration driver <code>docker</code> provides necessary functionality to enable
+most consuming platforms to work with storage volumes.</p>
+<h3 id="volume-configuration">Volume Configuration</h3>
+<p>This section describes various global configuration options related to an
+integration driver's volume operations, such as mounting and unmounting volumes.</p>
+<h4 id="volume-properties">Volume Properties</h4>
+<p>The properties listed below are the global properties valid for an integration
+driver's volume-related properties.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>libstorage.integration.volume.operations.mount.preempt</code></td>
+<td>Forcefully take control of volumes when requested</td>
+</tr>
+<tr>
+<td><code>libstorage.integration.volume.operations.mount.path</code></td>
+<td>The default host path for mounting volumes</td>
+</tr>
+<tr>
+<td><code>libstorage.integration.volume.operations.mount.rootPath</code></td>
+<td>The path within the volume to return to the integrator (ex. <code>/data</code>)</td>
+</tr>
+<tr>
+<td><code>libstorage.integration.volume.operations.create.disable</code></td>
+<td>Disable the ability for a volume to be created</td>
+</tr>
+<tr>
+<td><code>libstorage.integration.volume.operations.remove.disable</code></td>
+<td>Disable the ability for a volume to be removed</td>
+</tr>
+</tbody>
+</table>
+<p>The properties in the next table are the configurable parameters that affect
+the default values for volume creation requests.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>libstorage.integration.volume.operations.create.default.size</code></td>
+<td>Size in GB</td>
+</tr>
+<tr>
+<td><code>libstorage.integration.volume.operations.create.default.iops</code></td>
+<td>IOPS</td>
+</tr>
+<tr>
+<td><code>libstorage.integration.volume.operations.create.default.type</code></td>
+<td>Type of Volume or Storage Pool</td>
+</tr>
+<tr>
+<td><code>libstorage.integration.volume.operations.create.default.fsType</code></td>
+<td>Type of filesystem for new volumes (ext4/xfs)</td>
+</tr>
+<tr>
+<td><code>libstorage.integration.volume.operations.create.default.availabilityZone</code></td>
+<td>Extensible parameter per storage driver</td>
+</tr>
+</tbody>
+</table>
+<h4 id="disable-create">Disable Create</h4>
+<p>The disable create feature enables you to disallow any volume creation activity.
+Any requests will be returned in a successful manner, but the create will not
+get passed to the backend storage platform.</p>
+<pre><code class="yaml">libstorage:
+  integration:
+    volume:
+      operations:
+        create:
+          disable: true
+</code></pre>
+
+<h4 id="disable-remove">Disable Remove</h4>
+<p>The disable remove feature enables you to disallow any volume removal activity.
+Any requests will be returned in a successful manner, but the remove will not
+get passed to the backend storage platform.</p>
+<pre><code class="yaml">libstorage:
+  integration:
+    volume:
+      operations:
+        remove:
+          disable: true
+</code></pre>
+
+<h4 id="preemption">Preemption</h4>
+<p>There is a capability to preemptively detach any existing attachments to other
+instances before attempting a mount.  This will enable use cases for
+availability where another instance must be able to take control of a volume
+without the current owner instance being involved.  The operation is considered
+equivalent to a power off of the existing instance for the device.</p>
+<p>Example configuration file follows:</p>
+<pre><code class="yaml">libstorage:
+  integration:
+    volume:
+      operations:
+        mount:
+          preempt: true
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Driver</th>
+<th>Supported</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Isilon</td>
+<td>Not yet</td>
+</tr>
+<tr>
+<td>ScaleIO</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>VirtualBox</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<h4 id="ignore-used-count">Ignore Used Count</h4>
+<p>By default accounting takes place during operations that are performed
+on <code>Mount</code>, <code>Unmount</code>, and other operations.  This only has impact when running
+as a service through the HTTP/JSON interface since the counts are persisted
+in memory.  The purpose of respecting the <code>Used Count</code> is to ensure that a
+volume is not unmounted until the unmount requests have equaled the mount
+requests.  </p>
+<p>In the <code>Docker</code> use case if there are multiple containers sharing a volume
+on the same host, the the volume will not be unmounted until the last container
+is stopped.  </p>
+<p>The following setting should only be used if you wish to <em>disable</em> this
+functionality.  This would make sense if the accounting is being done from
+higher layers and all unmount operations should proceed without control.</p>
+<pre><code class="yaml">libstorage:
+  integration:
+    volume:
+      operations:
+        unmount:
+          ignoreUsedCount: true
+</code></pre>
+
+<p>Currently a reset of the service will cause the counts to be reset.  This
+will cause issues if <em>multiple containers</em> are sharing a volume.  If you are
+sharing volumes, it is recommended that you reset the service along with the
+accompanying container runtime (if this setting is false) to ensure they are
+synchronized.  </p>
+<h4 id="volume-path-cache">Volume Path Cache</h4>
+<p>In order to optimize <code>Path</code> requests, the paths of actively mounted volumes
+returned as the result of a <code>List</code> request are cached. Subsequent <code>Path</code>
+requests for unmounted volumes will not dirty the cache. Only once a volume
+has been mounted will the cache be marked dirty and the volume's path retrieved
+and cached once more.</p>
+<p>The following configuration example illustrates the two path cache properties:</p>
+<pre><code class="yaml">libstorage:
+  integration:
+    volume:
+      operations:
+        path:
+          cache:
+            enabled: true
+            async:   true
+</code></pre>
+
+<p>Volume path caching is enabled and asynchronous by default, so it's possible to
+entirely omit the above configuration excerpt from a production deployment, and
+the system will still use asynchronous caching. Setting the <code>async</code> property to
+<code>false</code> simply means that the initial population of the cache will be handled
+synchronously, slowing down the program's startup time.</p>
+<h4 id="volume-root-path">Volume Root Path</h4>
+<p>When volumes are mounted there can be an additional path that is specified to
+be created and passed as the valid mount point.  This is required for certain
+applications that do not want to place data from the root of a mount point.</p>
+<p>The default is the <code>/data</code> path.  If a value is set by
+<code>linux.integration.volume.operations.mount.rootPath</code>, then the default will be
+overwritten.</p>
+<pre><code class="yaml">libstorage:
+  integration:
+    volume:
+      operations:
+        mount:
+          rootPath: /data
+</code></pre></div>
+        </div>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script src="../../js/base.js"></script>
+        <!--
+        <script src="../../.themes/yeti/js/base.js"></script>
+        <script src="../../.themes/yeti/js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../.themes/yeti/js/highlight.pack.js"></script>
+        <script src="../../.themes/yeti/js/jquery-1.10.2.min.js"></script>
+        -->
+    </body>
+
+</html>
