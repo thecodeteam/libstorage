@@ -11,14 +11,13 @@ import (
 	"github.com/codedellemc/libstorage/api/types"
 	openstackdriver "github.com/codedellemc/libstorage/drivers/storage/openstack"
 
-	"github.com/rackspace/gophercloud"
-	"github.com/rackspace/gophercloud/openstack"
-	"github.com/rackspace/gophercloud/openstack/blockstorage/v1/snapshots"
-	"github.com/rackspace/gophercloud/openstack/blockstorage/v2/extensions/volumeactions"
-	"github.com/rackspace/gophercloud/openstack/blockstorage/v2/volumes"
-	"github.com/rackspace/gophercloud/openstack/compute/v2/extensions/volumeattach"
-	"github.com/rackspace/gophercloud/openstack/identity/v3/extensions/trust"
-	token3 "github.com/rackspace/gophercloud/openstack/identity/v3/tokens"
+	"github.com/gophercloud/gophercloud"
+	"github.com/gophercloud/gophercloud/openstack"
+	"github.com/gophercloud/gophercloud/openstack/blockstorage/extensions/volumeactions"
+	"github.com/gophercloud/gophercloud/openstack/blockstorage/v1/snapshots"
+	"github.com/gophercloud/gophercloud/openstack/blockstorage/v2/volumes"
+	"github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/volumeattach"
+	"github.com/gophercloud/gophercloud/openstack/identity/v3/extensions/trusts"
 )
 
 type driver struct {
@@ -101,11 +100,11 @@ func (d *driver) Init(context types.Context, config gofig.Config) error {
 	}
 
 	if trustID != "" {
-		authOptionsExt := trust.AuthOptionsExt{
-			TrustID:     trustID,
-			AuthOptions: token3.AuthOptions{AuthOptions: authOpts},
+		authOptionsExt := trusts.AuthOptsExt{
+			TrustID:            trustID,
+			AuthOptionsBuilder: &authOpts,
 		}
-		err = trust.AuthenticateV3Trust(d.provider, authOptionsExt)
+		err = openstack.AuthenticateV3(d.provider, authOptionsExt, endpointOpts)
 	} else {
 		err = openstack.Authenticate(d.provider, authOpts)
 	}
@@ -208,9 +207,9 @@ func translateVolume(volume *volumes.Volume, includeAttachments bool) *types.Vol
 	if includeAttachments {
 		for _, attachment := range volume.Attachments {
 			libstorageAttachment := &types.VolumeAttachment{
-				VolumeID:   attachment["volume_id"].(string),
-				InstanceID: &types.InstanceID{ID: attachment["server_id"].(string), Driver: openstackdriver.Name},
-				DeviceName: attachment["device"].(string),
+				VolumeID:   attachment.VolumeID,
+				InstanceID: &types.InstanceID{ID: attachment.ServerID, Driver: openstackdriver.Name},
+				DeviceName: attachment.Device,
 				Status:     "",
 			}
 			attachments = append(attachments, libstorageAttachment)
@@ -270,17 +269,12 @@ func (d *driver) Snapshots(
 }
 
 func translateSnapshot(snapshot *snapshots.Snapshot) *types.Snapshot {
-	createAtEpoch := int64(0)
-	createdAt, err := time.Parse(time.RFC3339Nano, snapshot.CreatedAt)
-	if err == nil {
-		createAtEpoch = createdAt.Unix()
-	}
 	return &types.Snapshot{
 		Name:        snapshot.Name,
 		VolumeID:    snapshot.VolumeID,
 		ID:          snapshot.ID,
 		VolumeSize:  int64(snapshot.Size),
-		StartTime:   createAtEpoch,
+		StartTime:   time.Time(snapshot.CreatedAt).Unix(),
 		Description: snapshot.Description,
 		Status:      snapshot.Status,
 	}
@@ -510,7 +504,7 @@ func (d *driver) VolumeDetach(
 	}
 
 	if opts.Force {
-		resp := volumeactions.Detach(d.clientBlockStoragev2, volumeID)
+		resp := volumeactions.Detach(d.clientBlockStoragev2, volumeID, volumeactions.DetachOpts{})
 
 		if resp.Err != nil {
 			return nil, goof.WithFieldsE(fields, "error force detaching volume", resp.Err)

@@ -117,6 +117,21 @@ imports:
   - query
 - name: github.com/googleapis/gax-go
   version: da06d194a00e19ce00d9011a13931c3f6f6887c7
+- name: github.com/gophercloud/gophercloud
+  version: d5eda9707e146108e4d424062b602fd97a71c2e6
+  subpackages:
+  - openstack
+  - openstack/blockstorage/extensions/volumeactions
+  - openstack/blockstorage/v1/snapshots
+  - openstack/blockstorage/v1/volumes
+  - openstack/blockstorage/v2/volumes
+  - openstack/compute/v2/extensions/volumeattach
+  - openstack/identity/v3/extensions/trusts
+  - openstack/identity/v2/tokens
+  - openstack/identity/v3/tokens
+  - openstack/utils
+  - pagination
+  - openstack/identity/v2/tenants
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux

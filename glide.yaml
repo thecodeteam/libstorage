@@ -92,6 +92,10 @@ import:
     ref:     96a0db67ea8209453cfa694bdf03de202d6dd8f8
     repo:    https://github.com/codenrhoden/go-vhd
 
+### OpenStack
+  - package: github.com/gophercloud/gophercloud
+    ref:     d5eda9707e146108e4d424062b602fd97a71c2e6
+
 
 ################################################################################
 ##                             Build System Tools                             ##
