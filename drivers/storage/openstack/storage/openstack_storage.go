@@ -15,6 +15,7 @@ import (
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/gophercloud/openstack/blockstorage/extensions/volumeactions"
 	"github.com/gophercloud/gophercloud/openstack/blockstorage/v1/snapshots"
+	volumesv1 "github.com/gophercloud/gophercloud/openstack/blockstorage/v1/volumes"
 	"github.com/gophercloud/gophercloud/openstack/blockstorage/v2/volumes"
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/volumeattach"
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/extensions/trusts"
@@ -120,8 +121,11 @@ func (d *driver) Init(context types.Context, config gofig.Config) error {
 		return goof.WithFieldsE(fields, "error getting newBlockStorageV1", err)
 	}
 
-	if d.clientBlockStoragev2, err = openstack.NewBlockStorageV2(d.provider, endpointOpts); err != nil {
-		return goof.WithFieldsE(fields, "error getting newBlockStorageV2", err)
+	d.clientBlockStoragev2, err = openstack.NewBlockStorageV2(d.provider, endpointOpts)
+	if err != nil {
+		// fallback to volume v1
+		context.WithFields(fields).Info("BlockStorage API V2 not available, fallback to V1")
+		d.clientBlockStoragev2 = nil
 	}
 
 	context.WithFields(fields).Info("storage driver initialized")
@@ -160,12 +164,32 @@ func (d *driver) Volumes(
 	ctx types.Context,
 	opts *types.VolumesOpts) ([]*types.Volume, error) {
 
-	allPages, err := volumes.List(d.clientBlockStoragev2, nil).AllPages()
+	if d.clientBlockStoragev2 != nil {
+		allPages, err := volumes.List(d.clientBlockStoragev2, nil).AllPages()
+		if err != nil {
+			return nil,
+				goof.WithError("error listing volumes", err)
+		}
+		volumesOS, err := volumes.ExtractVolumes(allPages)
+		if err != nil {
+			return nil,
+				goof.WithError("error listing volumes", err)
+		}
+
+		var volumesRet []*types.Volume
+		for _, volumeOS := range volumesOS {
+			volumesRet = append(volumesRet, translateVolume(&volumeOS, true))
+		}
+
+		return volumesRet, nil
+	}
+
+	allPages, err := volumesv1.List(d.clientBlockStorage, nil).AllPages()
 	if err != nil {
 		return nil,
 			goof.WithError("error listing volumes", err)
 	}
-	volumesOS, err := volumes.ExtractVolumes(allPages)
+	volumesOS, err := volumesv1.ExtractVolumes(allPages)
 	if err != nil {
 		return nil,
 			goof.WithError("error listing volumes", err)
@@ -173,7 +197,7 @@ func (d *driver) Volumes(
 
 	var volumesRet []*types.Volume
 	for _, volumeOS := range volumesOS {
-		volumesRet = append(volumesRet, translateVolume(&volumeOS, true))
+		volumesRet = append(volumesRet, translateVolumeV1(&volumeOS, true))
 	}
 
 	return volumesRet, nil
@@ -192,14 +216,51 @@ func (d *driver) VolumeInspect(
 		return nil, goof.New("no volumeID specified")
 	}
 
-	volume, err := volumes.Get(d.clientBlockStoragev2, volumeID).Extract()
+	if d.clientBlockStoragev2 != nil {
+		volume, err := volumes.Get(d.clientBlockStoragev2, volumeID).Extract()
+
+		if err != nil {
+			return nil,
+				goof.WithFieldsE(fields, "error getting volume", err)
+		}
+
+		return translateVolume(volume, opts.Attachments), nil
+	}
+
+	volume, err := volumesv1.Get(d.clientBlockStorage, volumeID).Extract()
 
 	if err != nil {
 		return nil,
 			goof.WithFieldsE(fields, "error getting volume", err)
 	}
 
-	return translateVolume(volume, opts.Attachments), nil
+	return translateVolumeV1(volume, opts.Attachments), nil
+}
+
+func translateVolumeV1(volume *volumesv1.Volume, includeAttachments bool) *types.Volume {
+	var attachments []*types.VolumeAttachment
+	if includeAttachments {
+		for _, attachment := range volume.Attachments {
+			libstorageAttachment := &types.VolumeAttachment{
+				VolumeID:   attachment["volume_id"].(string),
+				InstanceID: &types.InstanceID{ID: attachment["server_id"].(string), Driver: openstackdriver.Name},
+				DeviceName: attachment["device"].(string),
+				Status:     "",
+			}
+			attachments = append(attachments, libstorageAttachment)
+		}
+	}
+
+	return &types.Volume{
+		Name:             volume.Name,
+		ID:               volume.ID,
+		AvailabilityZone: volume.AvailabilityZone,
+		Status:           volume.Status,
+		Type:             volume.VolumeType,
+		IOPS:             0,
+		Size:             int64(volume.Size),
+		Attachments:      attachments,
+	}
 }
 
 func translateVolume(volume *volumes.Volume, includeAttachments bool) *types.Volume {
@@ -366,34 +427,57 @@ func (d *driver) createVolume(
 	volumeSourceID string,
 	snapshotID string,
 	opts *types.VolumeCreateOpts) (*types.Volume, error) {
-	volumeType := *opts.Type
-	IOPS := *opts.IOPS
-	size := *opts.Size
-	availabilityZone := *opts.AvailabilityZone
+
+	options := &volumes.CreateOpts{
+		Name:             volumeName,
+		SnapshotID:       snapshotID,
+		SourceReplica:    volumeSourceID,
+	}
+
+	if opts.Type != nil {
+		options.VolumeType = *opts.Type
+	}
+	if opts.Size != nil {
+		options.Size = int(*opts.Size)
+	}
+	if opts.AvailabilityZone != nil {
+		options.AvailabilityZone = *opts.AvailabilityZone
+	}
+
+	if options.AvailabilityZone == "" {
+		options.AvailabilityZone = d.availabilityZone
+	}
 
 	fields := eff(map[string]interface{}{
 		"volumeName":       volumeName,
 		"snapshotId":       snapshotID,
 		"volumeSourceId":   volumeSourceID,
-		"volumeType":       volumeType,
-		"iops":             IOPS,
-		"size":             size,
-		"availabilityZone": availabilityZone,
+		"volumeType":       options.VolumeType,
+		"size":             options.Size,
+		"availabilityZone": options.AvailabilityZone,
 	})
 
-	if availabilityZone == "" {
-		availabilityZone = d.availabilityZone
+	if d.clientBlockStoragev2 != nil {
+		volume, err := volumes.Create(d.clientBlockStoragev2, options).Extract()
+		if err != nil {
+			return nil,
+				goof.WithFieldsE(fields, "error creating volume", err)
+		}
+
+		fields["volumeId"] = volume.ID
+
+		ctx.WithFields(fields).Info("waiting for volume creation to complete")
+		err = volumes.WaitForStatus(d.clientBlockStoragev2, volume.ID, "available", int(d.volumeCreateTimeout().Seconds()))
+		if err != nil {
+			return nil,
+				goof.WithFieldsE(fields,
+					"error waiting for volume creation to complete", err)
+		}
+
+		return translateVolume(volume, true), nil
 	}
 
-	options := &volumes.CreateOpts{
-		Name:             volumeName,
-		Size:             int(size),
-		SnapshotID:       snapshotID,
-		VolumeType:       volumeType,
-		AvailabilityZone: availabilityZone,
-		SourceReplica:    volumeSourceID,
-	}
-	volume, err := volumes.Create(d.clientBlockStoragev2, options).Extract()
+	volume, err := volumesv1.Create(d.clientBlockStorage, options).Extract()
 	if err != nil {
 		return nil,
 			goof.WithFieldsE(fields, "error creating volume", err)
@@ -402,29 +486,37 @@ func (d *driver) createVolume(
 	fields["volumeId"] = volume.ID
 
 	ctx.WithFields(fields).Info("waiting for volume creation to complete")
-	err = volumes.WaitForStatus(d.clientBlockStoragev2, volume.ID, "available", int(d.volumeCreateTimeout().Seconds()))
+	err = volumesv1.WaitForStatus(d.clientBlockStorage, volume.ID, "available", int(d.volumeCreateTimeout().Seconds()))
 	if err != nil {
 		return nil,
 			goof.WithFieldsE(fields,
 				"error waiting for volume creation to complete", err)
 	}
 
-	return translateVolume(volume, true), nil
+	return translateVolumeV1(volume, true), nil
 }
 
 func (d *driver) VolumeRemove(
 	ctx types.Context,
 	volumeID string,
-	opts types.Store) error {
+	opts *types.VolumeRemoveOpts) error {
 	fields := eff(map[string]interface{}{
 		"volumeId": volumeID,
 	})
 	if volumeID == "" {
 		return goof.WithFields(fields, "volumeId is required")
 	}
-	res := volumes.Delete(d.clientBlockStoragev2, volumeID)
-	if res.Err != nil {
-		return goof.WithFieldsE(fields, "error removing volume", res.Err)
+
+	if d.clientBlockStoragev2 != nil {
+		res := volumes.Delete(d.clientBlockStoragev2, volumeID)
+		if res.Err != nil {
+			return goof.WithFieldsE(fields, "error removing volume", res.Err)
+		}
+	} else {
+		res := volumesv1.Delete(d.clientBlockStorage, volumeID)
+		if res.Err != nil {
+			return goof.WithFieldsE(fields, "error removing volume", res.Err)
+		}
 	}
 
 	return nil
@@ -503,7 +595,7 @@ func (d *driver) VolumeDetach(
 		return volume, nil
 	}
 
-	if opts.Force {
+	if opts.Force && d.clientBlockStoragev2 != nil {
 		resp := volumeactions.Detach(d.clientBlockStoragev2, volumeID, volumeactions.DetachOpts{})
 
 		if resp.Err != nil {
