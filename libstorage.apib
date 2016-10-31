@@ -548,8 +548,8 @@ services.
         Value | Description
         ------|------------
         0 | No attachment information is requested. This is the default value and the same as omitting this parameter altogether.
-        1 | Attachment information is requested. This value indicates attachment information should be provided for all volumes.
-        2 | _My_ attachment information is requested. This value indicates attachment information should be provided for volumes attached to the instance specified in the [instance ID](#def-instance-id) request header should be returned. If this bit is set then the instance ID header is required.
+        1 | Attachment information is requested. This value indicates attachment information should be returned for all volumes.
+        2 | _My_ attachment information is requested. This value indicates attachment information should be returned for volumes attached to the instance specified in the [instance ID request header](#def-instance-id). If this bit is set then the instance ID header is required.
         4 | Attempt to map devices provided via the [local devices](#def-local-devices) request header to the appropriate attachment information. If this bit is set then the instance ID and local device headers are required.
         8 | Return only volumes with attachment information.
         <br/><br/>
@@ -825,8 +825,8 @@ service.
         Value | Description
         ------|------------
         0 | No attachment information is requested. This is the default value and the same as omitting this parameter altogether.
-        1 | Attachment information is requested. This value indicates attachment information should be provided for all volumes.
-        2 | _My_ attachment information is requested. This value indicates attachment information should be provided for volumes attached to the instance specified in the [instance ID](#def-instance-id) request header should be returned. If this bit is set then the instance ID header is required.
+        1 | Attachment information is requested. This value indicates attachment information should be returned for all volumes.
+        2 | _My_ attachment information is requested. This value indicates attachment information should be returned for volumes attached to the instance specified in the [instance ID request header](#def-instance-id). If this bit is set then the instance ID header is required.
         4 | Attempt to map devices provided via the [local devices](#def-local-devices) request header to the appropriate attachment information. If this bit is set then the instance ID and local device headers are required.
         8 | Return only volumes with attachment information.
         <br/><br/>
@@ -1132,8 +1132,8 @@ API, a Volume resource represents a storage volume.
         Value | Description
         ------|------------
         0 | No attachment information is requested. This is the default value and the same as omitting this parameter altogether.
-        1 | Attachment information is requested. This value indicates attachment information should be provided for all volumes.
-        2 | _My_ attachment information is requested. This value indicates attachment information should be provided for volumes attached to the instance specified in the [instance ID](#def-instance-id) request header should be returned. If this bit is set then the instance ID header is required.
+        1 | Attachment information is requested. This value indicates attachment information should be returned for all volumes.
+        2 | _My_ attachment information is requested. This value indicates attachment information should be returned for volumes attached to the instance specified in the [instance ID request header](#def-instance-id). If this bit is set then the instance ID header is required.
         4 | Attempt to map devices provided via the [local devices](#def-local-devices) request header to the appropriate attachment information. If this bit is set then the instance ID and local device headers are required.
         8 | Return only volumes with attachment information.
         <br/><br/>
