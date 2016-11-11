@@ -186,8 +186,14 @@ func (d *driver) Mount(
 		return "", nil, goof.New("no volume returned or created")
 	}
 
+	ma, err := d.localAttachmentOfVolume(ctx, vol)
+	if err != nil {
+		return "", nil, goof.New("problem getting local attachment of volume")
+	}
+
 	client := context.MustClient(ctx)
-	if len(vol.Attachments) == 0 || opts.Preempt {
+
+	if ma == nil || opts.Preempt {
 		mp, err := d.getVolumeMountPath(vol.Name)
 		if err != nil {
 			return "", nil, err
@@ -231,24 +237,13 @@ func (d *driver) Mount(
 
 	}
 
-	if len(vol.Attachments) == 0 {
-		return "", nil, goof.New("volume did not attach")
-	}
-
-	inst, err := client.Storage().InstanceInspect(ctx, utils.NewStore())
+	ma, err = d.localAttachmentOfVolume(ctx, vol)
 	if err != nil {
-		return "", nil, goof.New("problem getting instance ID")
-	}
-	var ma *types.VolumeAttachment
-	for _, att := range vol.Attachments {
-		if att.InstanceID.ID == inst.InstanceID.ID {
-			ma = att
-			break
-		}
+		return "", nil, goof.New("problem getting local attachment of volume")
 	}
 
 	if ma == nil {
-		return "", nil, goof.New("no local attachment found")
+		return "", nil, goof.New("volume did not attach")
 	}
 
 	if ma.DeviceName == "" {
@@ -332,27 +327,20 @@ func (d *driver) Unmount(
 		return nil
 	}
 
-	client := context.MustClient(ctx)
-
-	inst, err := client.Storage().InstanceInspect(ctx, utils.NewStore())
+	ma, err := d.localAttachmentOfVolume(ctx, vol)
 	if err != nil {
-		return goof.New("problem getting instance ID")
-	}
-	var ma *types.VolumeAttachment
-	for _, att := range vol.Attachments {
-		if att.InstanceID.ID == inst.InstanceID.ID {
-			ma = att
-			break
-		}
+		return goof.New("problem getting local attachment of volume")
 	}
 
 	if ma == nil {
-		return goof.New("no attachment found for instance")
+		return goof.New("no local attachment found for instance")
 	}
 
 	if ma.DeviceName == "" {
 		return goof.New("no device name found for attachment")
 	}
+
+	client := context.MustClient(ctx)
 
 	mounts, err := client.OS().Mounts(
 		ctx, ma.DeviceName, "", opts)
@@ -546,6 +534,23 @@ func (d *driver) NetworkName(
 	volumeName string,
 	opts types.Store) (string, error) {
 	return "", nil
+}
+
+func (d *driver) localAttachmentOfVolume(
+	ctx types.Context,
+	vol *types.Volume) (*types.VolumeAttachment, error) {
+	client := context.MustClient(ctx)
+	inst, err := client.Storage().InstanceInspect(ctx, utils.NewStore())
+	if err != nil {
+		return nil, goof.New("problem getting instance ID")
+	}
+
+	for _, att := range vol.Attachments {
+		if att.InstanceID.ID == inst.InstanceID.ID {
+			return att, nil
+		}
+	}
+	return nil, nil
 }
 
 func (d *driver) volumeRootPath() string {
