@@ -178,7 +178,8 @@ func (d *driver) Volumes(
 
 		var volumesRet []*types.Volume
 		for _, volumeOS := range volumesOS {
-			volumesRet = append(volumesRet, translateVolume(&volumeOS, true))
+			volumesRet = append(volumesRet, translateVolume(
+				&volumeOS, opts.Attachments))
 		}
 
 		return volumesRet, nil
@@ -197,7 +198,8 @@ func (d *driver) Volumes(
 
 	var volumesRet []*types.Volume
 	for _, volumeOS := range volumesOS {
-		volumesRet = append(volumesRet, translateVolumeV1(&volumeOS, true))
+		volumesRet = append(volumesRet, translateVolumeV1(
+			&volumeOS, opts.Attachments))
 	}
 
 	return volumesRet, nil
@@ -237,9 +239,12 @@ func (d *driver) VolumeInspect(
 	return translateVolumeV1(volume, opts.Attachments), nil
 }
 
-func translateVolumeV1(volume *volumesv1.Volume, includeAttachments bool) *types.Volume {
+func translateVolumeV1(
+	volume *volumesv1.Volume,
+	includeAttachments types.VolumeAttachmentsTypes) *types.Volume {
+
 	var attachments []*types.VolumeAttachment
-	if includeAttachments {
+	if includeAttachments.Requested() {
 		for _, attachment := range volume.Attachments {
 			libstorageAttachment := &types.VolumeAttachment{
 				VolumeID:   attachment["volume_id"].(string),
@@ -263,9 +268,12 @@ func translateVolumeV1(volume *volumesv1.Volume, includeAttachments bool) *types
 	}
 }
 
-func translateVolume(volume *volumes.Volume, includeAttachments bool) *types.Volume {
+func translateVolume(
+	volume *volumes.Volume,
+	includeAttachments types.VolumeAttachmentsTypes) *types.Volume {
+
 	var attachments []*types.VolumeAttachment
-	if includeAttachments {
+	if includeAttachments.Requested() {
 		for _, attachment := range volume.Attachments {
 			libstorageAttachment := &types.VolumeAttachment{
 				VolumeID:   attachment.VolumeID,
@@ -474,7 +482,7 @@ func (d *driver) createVolume(
 					"error waiting for volume creation to complete", err)
 		}
 
-		return translateVolume(volume, true), nil
+		return translateVolume(volume, types.VolumeAttachmentsRequested), nil
 	}
 
 	volume, err := volumesv1.Create(d.clientBlockStorage, options).Extract()
@@ -493,7 +501,7 @@ func (d *driver) createVolume(
 				"error waiting for volume creation to complete", err)
 	}
 
-	return translateVolumeV1(volume, true), nil
+	return translateVolumeV1(volume, types.VolumeAttachmentsRequested), nil
 }
 
 func (d *driver) VolumeRemove(
@@ -614,7 +622,9 @@ func (d *driver) VolumeDetach(
 	return nil, goof.WithFields(fields, "unexpected error when detaching")
 }
 
-func (d *driver) waitVolumeAttachStatus(ctx types.Context, volumeID string, attachmentNeeded bool, timeout time.Duration) (*types.Volume, error) {
+func (d *driver) waitVolumeAttachStatus(
+	ctx types.Context, volumeID string,
+	attachmentNeeded bool, timeout time.Duration) (*types.Volume, error) {
 
 	fields := eff(map[string]interface{}{
 		"volumeId": volumeID,
@@ -625,7 +635,9 @@ func (d *driver) waitVolumeAttachStatus(ctx types.Context, volumeID string, atta
 	}
 	begin := time.Now()
 	for time.Now().Sub(begin) < timeout {
-		volume, err := d.VolumeInspect(ctx, volumeID, &types.VolumeInspectOpts{Attachments: true})
+		volume, err := d.VolumeInspect(
+			ctx, volumeID, &types.VolumeInspectOpts{
+				Attachments: types.VolumeAttachmentsRequested})
 		if err != nil {
 			return nil, goof.WithFieldsE(fields, "error getting volume when waiting", err)
 		}
