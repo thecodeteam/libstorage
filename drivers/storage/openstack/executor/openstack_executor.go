@@ -1,3 +1,5 @@
+// +build !libstorage_storage_executor libstorage_storage_executor_openstack
+
 package executor
 
 import (
@@ -36,6 +38,13 @@ func (d *driver) Init(ctx types.Context, config gofig.Config) error {
 
 func (d *driver) Name() string {
 	return openstack.Name
+}
+
+// InstanceID returns the local instance ID for the test
+func InstanceID(config gofig.Config) (*types.InstanceID, error) {
+	d := newDriver()
+	d.Init(nil, config)
+	return d.InstanceID(nil, nil)
 }
 
 func (d *driver) InstanceID(

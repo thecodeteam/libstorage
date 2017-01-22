@@ -8,8 +8,10 @@ BUILD_TAGS :=   gofig \
 ifneq (true,$(TRAVIS))
 BUILD_TAGS +=   libstorage_storage_driver \
 				libstorage_storage_driver_vfs \
+				libstorage_storage_driver_openstack \
 				libstorage_storage_executor \
-				libstorage_storage_executor_vfs
+				libstorage_storage_executor_vfs \
+				libstorage_storage_executor_openstack
 endif
 endif
 

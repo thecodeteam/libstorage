@@ -1,3 +1,5 @@
+// +build !libstorage_storage_driver libstorage_storage_driver_openstack
+
 package openstack
 
 import (
@@ -5,16 +7,10 @@ import (
 	gofig "github.com/akutz/gofig/types"
 )
 
-const (
-	// Name is the provider's name.
-	Name = "openstack"
-)
+// Name is the provider's name.
+const Name string = "openstack"
 
 func init() {
-	registerConfig()
-}
-
-func registerConfig() {
 	r := gofigCore.NewRegistration("OpenStack")
 	r.Key(gofig.String, "", "", "", "openstack.authURL")
 	r.Key(gofig.String, "", "", "", "openstack.userID")
