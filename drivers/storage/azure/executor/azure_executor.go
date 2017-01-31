@@ -70,7 +70,7 @@ var availLetters = []string{
 func (d *driver) NextDevice(
 	ctx types.Context,
 	opts types.Store) (string, error) {
-	// All possible device paths on Linux instances are /dev/sd[c-p]
+	// All possible device paths on Linux instances are /dev/sd[c-z]
 
 	// Find which letters are used for local devices
 	localDeviceNames := make(map[string]bool)

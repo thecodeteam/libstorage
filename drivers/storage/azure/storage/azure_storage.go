@@ -687,7 +687,7 @@ func (d *driver) tag() string {
   return d.config.GetString("azure.rexrayTag")
 }*/
 
-var errGetLocDevs = goof.New("error getting local devices from context")
+// var errGetLocDevs = goof.New("error getting local devices from context")
 
 func (d *driver) toTypesVolume(
 	ctx types.Context,
@@ -815,7 +815,8 @@ func (d *driver) getVM(ctx types.Context, name string) (
 			"provider": d.Name(),
 			"vmName":   name,
 		}
-		return nil, goof.WithFieldsE(fields, "failed to get virtual machine", err)
+		return nil, goof.WithFieldsE(
+			fields, "failed to get virtual machine", err)
 	}
 
 	return &vm, nil
