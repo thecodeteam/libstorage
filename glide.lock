@@ -1,5 +1,5 @@
-hash: bfed9a1798d05ab23243875113ae9bc97fdb346ac25be707c05d31e2e00c0915
-updated: 2016-11-17T13:57:46.85843333-06:00
+hash: 58aff2a029a3480931605546a48804c49d2ea0864699b8fdddb2c3fd7abfc66e
+updated: 2016-12-26T21:46:13.587827666+03:00
 imports:
 - name: github.com/akutz/gofig
   version: 862741cad5edced279c57d1981e8e3e9fa54e8d5
@@ -52,6 +52,21 @@ imports:
   - service/ec2
   - service/efs
   - service/sts
+- name: github.com/Azure/azure-sdk-for-go
+  version: 0984e0641ae43b89283223034574d6465be93bf4
+  repo: https://github.com/Azure/azure-sdk-for-go.git
+  subpackages:
+  - arm/compute
+  - storage
+- name: github.com/Azure/go-autorest
+  version: 8a25372bbfec739b8719a9e3987400d15ef9e179
+  repo: https://github.com/Azure/go-autorest.git
+  subpackages:
+  - autorest/azure
+  - autorest
+  - autorest/date
+  - autorest/to
+  - autorest/validation
 - name: github.com/cesanta/ucl
   version: 97c016fce90e6af1b14558563ac46852167e6a76
 - name: github.com/cesanta/validate-json
@@ -79,6 +94,8 @@ imports:
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
   subpackages:
   - spew
+- name: github.com/dgrijalva/jwt-go
+  version: 9ed569b5d1ac936e6494082958d63a6aa4fff99a
 - name: github.com/fsnotify/fsnotify
   version: fd9ec7deca8bf46ecd2a795baaacf2b3a9be1197
 - name: github.com/go-ini/ini
@@ -140,6 +157,11 @@ imports:
   - pagination
   - testhelper
   - testhelper/client
+- name: github.com/rubiojr/go-vhd
+  version: 0bfd3b39853cdde5762efda92289f14b0ac0491b
+  repo: https://github.com/rubiojr/go-vhd.git
+  subpackages:
+  - vhd
 - name: github.com/Sirupsen/logrus
   version: 5f376aa629ac60c3215cc368e674bd996093a01a
   repo: https://github.com/akutz/logrus
