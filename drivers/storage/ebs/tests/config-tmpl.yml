@@ -1,0 +1,18 @@
+rexray:
+  logLevel: warn
+  modules:
+    rexray:
+      type: docker
+      libstorage:
+        service: ebs
+      host: unix:///run/docker/plugins/rexray.sock
+libstorage:
+  service: ebs
+  integration:
+    volume:
+      operations:
+        mount:
+          preempt: true
+ebs:
+  accessKey: [ACCESS_KEY]
+  secretKey: [SECRET_KEY]
