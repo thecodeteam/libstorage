@@ -1,6 +1,9 @@
 package registry
 
-import "github.com/codedellemc/libstorage/api/types"
+import (
+	"github.com/codedellemc/libstorage/api/context"
+	"github.com/codedellemc/libstorage/api/types"
+)
 
 type sdm struct {
 	types.StorageDriver
@@ -77,6 +80,21 @@ func (d *sdm) VolumeCreate(
 	name string,
 	opts *types.VolumeCreateOpts) (*types.Volume, error) {
 
+	// see if we should use the executor?
+	if client, ok := context.Client(ctx); ok {
+		if _, ok := context.ServiceName(ctx); ok {
+			if client.Executor() != nil {
+				lsxSO, err := client.Executor().Supported(ctx, opts.Opts)
+				if err != nil {
+					return nil, err
+				}
+				if lsxSO.VolumeCreate() {
+					return client.Executor().LSXVolumeCreate(ctx, name, opts)
+				}
+			}
+		}
+	}
+
 	return d.StorageDriver.VolumeCreate(ctx.Join(d.Context), name, opts)
 }
 
@@ -115,6 +133,22 @@ func (d *sdm) VolumeRemove(
 	volumeID string,
 	opts *types.VolumeRemoveOpts) error {
 
+	// see if we should use the executor?
+	if client, ok := context.Client(ctx); ok {
+		if _, ok := context.ServiceName(ctx); ok {
+			if client.Executor() != nil {
+				lsxSO, err := client.Executor().Supported(ctx, opts.Opts)
+				if err != nil {
+					return err
+				}
+				if lsxSO.VolumeRemove() {
+					return client.Executor().LSXVolumeRemove(
+						ctx, volumeID, opts)
+				}
+			}
+		}
+	}
+
 	return d.StorageDriver.VolumeRemove(
 		ctx.Join(d.Context), volumeID, opts)
 }
@@ -124,6 +158,22 @@ func (d *sdm) VolumeAttach(
 	volumeID string,
 	opts *types.VolumeAttachOpts) (*types.Volume, string, error) {
 
+	// see if we should use the executor?
+	if client, ok := context.Client(ctx); ok {
+		if _, ok := context.ServiceName(ctx); ok {
+			if client.Executor() != nil {
+				lsxSO, err := client.Executor().Supported(ctx, opts.Opts)
+				if err != nil {
+					return nil, "", err
+				}
+				if lsxSO.VolumeAttach() {
+					return client.Executor().LSXVolumeAttach(
+						ctx, volumeID, opts)
+				}
+			}
+		}
+	}
+
 	return d.StorageDriver.VolumeAttach(
 		ctx.Join(d.Context), volumeID, opts)
 }
@@ -132,6 +182,22 @@ func (d *sdm) VolumeDetach(
 	ctx types.Context,
 	volumeID string,
 	opts *types.VolumeDetachOpts) (*types.Volume, error) {
+
+	// see if we should use the executor?
+	if client, ok := context.Client(ctx); ok {
+		if _, ok := context.ServiceName(ctx); ok {
+			if client.Executor() != nil {
+				lsxSO, err := client.Executor().Supported(ctx, opts.Opts)
+				if err != nil {
+					return nil, err
+				}
+				if lsxSO.VolumeDetach() {
+					return client.Executor().LSXVolumeDetach(
+						ctx, volumeID, opts)
+				}
+			}
+		}
+	}
 
 	return d.StorageDriver.VolumeDetach(
 		ctx.Join(d.Context), volumeID, opts)

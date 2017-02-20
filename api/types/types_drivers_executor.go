@@ -46,6 +46,18 @@ const (
 
 	// LSXCmdMounts is the command for getting a list of mount info objects.
 	LSXCmdMounts = "mounts"
+
+	// LSXCmdVolumeCreate is the command for creating a volume.
+	LSXCmdVolumeCreate = "volumeCreate"
+
+	// LSXCmdVolumeRemove is the command for removing a volume
+	LSXCmdVolumeRemove = "volumeRemove"
+
+	// LSXCmdVolumeAttach is the command for attaching a volume.
+	LSXCmdVolumeAttach = "volumeAttach"
+
+	// LSXCmdVolumeDetach is the command for detaching a volume.
+	LSXCmdVolumeDetach = "volumeDetach"
 )
 
 const (
@@ -128,6 +140,7 @@ type StorageExecutor interface {
 // StorageExecutorFunctions is the collection of functions that are required of
 // a StorageExecutor.
 type StorageExecutorFunctions interface {
+
 	// InstanceID returns the local system's InstanceID.
 	InstanceID(
 		ctx Context,
@@ -191,10 +204,63 @@ type StorageExecutorWithUnmount interface {
 		opts Store) error
 }
 
+// StorageExecutorWithVolumeCreate is an interface that executor implementations
+// may use to become part of create workflow.
+type StorageExecutorWithVolumeCreate interface {
+
+	// VolumeCreate creates a new volume.
+	VolumeCreate(
+		ctx Context,
+		name string,
+		opts *VolumeCreateOpts) (*Volume, error)
+}
+
+// StorageExecutorWithVolumeRemove is an interface that executor implementations
+// may use to become part of remove workflow.
+type StorageExecutorWithVolumeRemove interface {
+
+	// VolumeRemove removes a volume.
+	VolumeRemove(
+		ctx Context,
+		volumeID string,
+		opts *VolumeRemoveOpts) error
+}
+
+// StorageExecutorWithVolumeAttach will attach a volume based on volumeName to
+// the instance of instanceID.
+type StorageExecutorWithVolumeAttach interface {
+
+	// VolumeAttach attaches a volume and provides a token clients can use
+	// to validate that device has appeared locally.
+	VolumeAttach(
+		ctx Context,
+		volumeID string,
+		opts *VolumeAttachOpts) (*Volume, string, error)
+}
+
+// StorageExecutorWithVolumeDetach will detach a volume based on volumeName to
+// the instance of instanceID.
+type StorageExecutorWithVolumeDetach interface {
+
+	// VolumeDetach detaches a volume.
+	VolumeDetach(
+		ctx Context,
+		volumeID string,
+		opts *VolumeDetachOpts) (*Volume, error)
+}
+
 // ProvidesStorageExecutorCLI is a type that provides the StorageExecutorCLI.
 type ProvidesStorageExecutorCLI interface {
+
 	// XCLI returns the StorageExecutorCLI.
 	XCLI() StorageExecutorCLI
+}
+
+// LSXVolumeAttachResult is the object type used to marshal the possible tuple
+// returned from the VolumeAttach call.
+type LSXVolumeAttachResult struct {
+	Volume *Volume `json:"volume,omitempty"`
+	Token  string  `json:"token,omitempty"`
 }
 
 // StorageExecutorCLI provides a way to interact with the CLI tool built with
@@ -221,6 +287,31 @@ type StorageExecutorCLI interface {
 	Supported(
 		ctx Context,
 		opts Store) (LSXSupportedOp, error)
+
+	// LSXVolumeCreate creates a new volume.
+	LSXVolumeCreate(
+		ctx Context,
+		name string,
+		opts *VolumeCreateOpts) (*Volume, error)
+
+	// LSXVolumeRemove removes a volume.
+	LSXVolumeRemove(
+		ctx Context,
+		volumeID string,
+		opts *VolumeRemoveOpts) error
+
+	// LSXVolumeAttach attaches a volume and provides a token clients can use
+	// to validate that device has appeared locally.
+	LSXVolumeAttach(
+		ctx Context,
+		volumeID string,
+		opts *VolumeAttachOpts) (*Volume, string, error)
+
+	// LSXVolumeDetach detaches a volume.
+	LSXVolumeDetach(
+		ctx Context,
+		volumeID string,
+		opts *VolumeDetachOpts) (*Volume, error)
 }
 
 // LSXSupportedOp is a bit for the mask returned from an executor's Supported
@@ -249,24 +340,29 @@ const (
 
 	// LSXSOpMounts indicates an executor supports "Mounts".
 	LSXSOpMounts
+
+	// LSXSOpVolumeCreate indicates an executor supports "VolumeCreate".
+	LSXSOpVolumeCreate
+
+	// LSXSOpVolumeRemove indicates an executor supports "VolumeRemove".
+	LSXSOpVolumeRemove
+
+	// LSXSOpVolumeAttach indicates an executor supports "VolumeAttach".
+	LSXSOpVolumeAttach
+
+	// LSXSOpVolumeDetach indicates an executor supports "VolumeDetach".
+	LSXSOpVolumeDetach
 )
 
 const (
 	// LSXSOpNone indicates the executor is not supported for the platform.
 	LSXSOpNone LSXSupportedOp = 0
 
-	// LSXOpAll indicates the executor supports all operations.
-	LSXOpAll LSXSupportedOp = LSXSOpInstanceID |
-		LSXSOpNextDevice |
+	// LSXOpClassic indicates the classic executor support.
+	LSXOpClassic = LSXSOpInstanceID |
 		LSXSOpLocalDevices |
-		LSXSOpWaitForDevice |
-		LSXSOpMount |
-		LSXSOpUmount |
-		LSXSOpMounts
-
-	// LSXOpAllNoMount indicates the executor supports all operations except
-	// mount and unmount.
-	LSXOpAllNoMount = LSXOpAll & ^LSXSOpMount & ^LSXSOpUmount & ^LSXSOpMounts
+		LSXSOpNextDevice |
+		LSXSOpWaitForDevice
 )
 
 // InstanceID returns a flag that indicates whether the LSXSOpInstanceID bit
@@ -309,6 +405,30 @@ func (v LSXSupportedOp) Umount() bool {
 // is set.
 func (v LSXSupportedOp) Mounts() bool {
 	return v.bitSet(LSXSOpMounts)
+}
+
+// VolumeCreate returns a flag that indicates whether the LSXSOpVolumeCreate bit
+// is set.
+func (v LSXSupportedOp) VolumeCreate() bool {
+	return v.bitSet(LSXSOpVolumeCreate)
+}
+
+// VolumeRemove returns a flag that indicates whether the LSXSOpVolumeRemove bit
+// is set.
+func (v LSXSupportedOp) VolumeRemove() bool {
+	return v.bitSet(LSXSOpVolumeRemove)
+}
+
+// VolumeAttach returns a flag that indicates whether the LSXSOpVolumeAttach bit
+// is set.
+func (v LSXSupportedOp) VolumeAttach() bool {
+	return v.bitSet(LSXSOpVolumeAttach)
+}
+
+// VolumeDetach returns a flag that indicates whether the LSXSOpVolumeDetach bit
+// is set.
+func (v LSXSupportedOp) VolumeDetach() bool {
+	return v.bitSet(LSXSOpVolumeDetach)
 }
 
 func (v LSXSupportedOp) bitSet(b LSXSupportedOp) bool {

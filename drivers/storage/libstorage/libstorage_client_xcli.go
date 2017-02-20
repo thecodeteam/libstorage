@@ -3,6 +3,7 @@ package libstorage
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/exec"
 	"strconv"
@@ -51,9 +52,9 @@ func (c *client) Supported(
 		if err == types.ErrNotImplemented {
 			ctx.WithField("serviceDriver", driverName).Warn(
 				"supported cmd not implemented")
-			c.supportedCache.Set(driverName, types.LSXOpAllNoMount)
+			c.supportedCache.Set(driverName, types.LSXOpClassic)
 			ctx.WithField("supported", true).Debug("cached supported flag")
-			return types.LSXOpAllNoMount, nil
+			return types.LSXOpClassic, nil
 		}
 		return 0, err
 	}
@@ -402,6 +403,223 @@ func (c *client) Unmount(
 
 	ctx.Debug("xli umount success")
 	return nil
+}
+
+// LSXVolumeCreate creates a new volume.
+func (c *client) LSXVolumeCreate(
+	ctx types.Context,
+	name string,
+	opts *types.VolumeCreateOpts) (*types.Volume, error) {
+
+	if c.isController() {
+		return nil, utils.NewUnsupportedForClientTypeError(
+			c.clientType, "VolumeCreate")
+	}
+
+	if lsxSO, _ := c.Supported(ctx, opts.Opts); !lsxSO.VolumeCreate() {
+		return nil, errExecutorNotSupported
+	}
+
+	ctx = context.RequireTX(ctx.Join(c.ctx))
+
+	serviceName, ok := context.ServiceName(ctx)
+	if !ok {
+		return nil, goof.New("missing service name")
+	}
+
+	si, err := c.getServiceInfo(serviceName)
+	if err != nil {
+		return nil, err
+	}
+	driverName := si.Driver.Name
+
+	args := []string{
+		fmt.Sprintf("%s:%s", driverName, serviceName),
+		types.LSXCmdVolumeCreate,
+		name,
+	}
+	if opts.AvailabilityZone != nil {
+		args = append(args, "-z", *opts.AvailabilityZone)
+	}
+	if opts.Encrypted != nil && *opts.Encrypted {
+		args = append(args, "-e")
+	}
+	if opts.EncryptionKey != nil {
+		args = append(args, "-k", *opts.EncryptionKey)
+	}
+	if opts.IOPS != nil {
+		args = append(args, "-i", fmt.Sprintf("%d", *opts.IOPS))
+	}
+	if opts.Size != nil {
+		args = append(args, "-s", fmt.Sprintf("%d", *opts.Size))
+	}
+	if opts.Type != nil {
+		args = append(args, "-t", *opts.Type)
+	}
+
+	var out []byte
+	if out, err = c.runExecutor(ctx, args...); err != nil {
+		return nil, err
+	}
+
+	vol := &types.Volume{}
+	if err := json.Unmarshal(out, vol); err != nil {
+		return nil, err
+	}
+
+	ctx.Debug("xli volumeCreate success")
+	return vol, nil
+}
+
+// LSXVolumeRemove removes a volume.
+func (c *client) LSXVolumeRemove(
+	ctx types.Context,
+	volumeID string,
+	opts *types.VolumeRemoveOpts) error {
+
+	if c.isController() {
+		return utils.NewUnsupportedForClientTypeError(
+			c.clientType, "VolumeRemove")
+	}
+
+	if lsxSO, _ := c.Supported(ctx, opts.Opts); !lsxSO.VolumeRemove() {
+		return errExecutorNotSupported
+	}
+
+	ctx = context.RequireTX(ctx.Join(c.ctx))
+
+	serviceName, ok := context.ServiceName(ctx)
+	if !ok {
+		return goof.New("missing service name")
+	}
+
+	si, err := c.getServiceInfo(serviceName)
+	if err != nil {
+		return err
+	}
+	driverName := si.Driver.Name
+
+	args := []string{
+		fmt.Sprintf("%s:%s", driverName, serviceName),
+		types.LSXCmdVolumeRemove,
+		volumeID,
+	}
+	if opts.Force {
+		args = append(args, "-f")
+	}
+
+	if _, err = c.runExecutor(ctx, args...); err != nil {
+		return err
+	}
+
+	ctx.Debug("xli volumeRemove success")
+	return nil
+}
+
+// LSXVolumeAttach attaches a volume and provides a token clients can use
+// to validate that device has appeared locally.
+func (c *client) LSXVolumeAttach(
+	ctx types.Context,
+	volumeID string,
+	opts *types.VolumeAttachOpts) (*types.Volume, string, error) {
+
+	if c.isController() {
+		return nil, "", utils.NewUnsupportedForClientTypeError(
+			c.clientType, "VolumeAttach")
+	}
+
+	if lsxSO, _ := c.Supported(ctx, opts.Opts); !lsxSO.VolumeAttach() {
+		return nil, "", errExecutorNotSupported
+	}
+
+	ctx = context.RequireTX(ctx.Join(c.ctx))
+
+	serviceName, ok := context.ServiceName(ctx)
+	if !ok {
+		return nil, "", goof.New("missing service name")
+	}
+
+	si, err := c.getServiceInfo(serviceName)
+	if err != nil {
+		return nil, "", err
+	}
+	driverName := si.Driver.Name
+
+	args := []string{
+		fmt.Sprintf("%s:%s", driverName, serviceName),
+		types.LSXCmdVolumeAttach,
+		volumeID,
+	}
+	if opts.Force {
+		args = append(args, "-f")
+	}
+	if opts.NextDevice != nil {
+		args = append(args, "-n", *opts.NextDevice)
+	}
+
+	var out []byte
+	if out, err = c.runExecutor(ctx, args...); err != nil {
+		return nil, "", err
+	}
+
+	result := &types.LSXVolumeAttachResult{}
+	if err := json.Unmarshal(out, result); err != nil {
+		return nil, "", err
+	}
+
+	ctx.Debug("xli volumeAttach success")
+	return result.Volume, result.Token, nil
+}
+
+// LSXVolumeDetach detaches a volume.
+func (c *client) LSXVolumeDetach(
+	ctx types.Context,
+	volumeID string,
+	opts *types.VolumeDetachOpts) (*types.Volume, error) {
+
+	if c.isController() {
+		return nil, utils.NewUnsupportedForClientTypeError(
+			c.clientType, "VolumeDetach")
+	}
+
+	if lsxSO, _ := c.Supported(ctx, opts.Opts); !lsxSO.VolumeDetach() {
+		return nil, errExecutorNotSupported
+	}
+
+	ctx = context.RequireTX(ctx.Join(c.ctx))
+
+	serviceName, ok := context.ServiceName(ctx)
+	if !ok {
+		return nil, goof.New("missing service name")
+	}
+
+	si, err := c.getServiceInfo(serviceName)
+	if err != nil {
+		return nil, err
+	}
+	driverName := si.Driver.Name
+
+	args := []string{
+		fmt.Sprintf("%s:%s", driverName, serviceName),
+		types.LSXCmdVolumeDetach,
+		volumeID,
+	}
+	if opts.Force {
+		args = append(args, "-f")
+	}
+
+	var out []byte
+	if out, err = c.runExecutor(ctx, args...); err != nil {
+		return nil, err
+	}
+
+	vol := &types.Volume{}
+	if err := json.Unmarshal(out, vol); err != nil {
+		return nil, err
+	}
+
+	ctx.Debug("xli volumeDetach success")
+	return vol, nil
 }
 
 func unmarshalLocalDevices(
