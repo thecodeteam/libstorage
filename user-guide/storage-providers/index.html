@@ -6,8 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://github.com/emccode/libstorage/user-guide/storage-providers/">
-        <link rel="shortcut icon" href="../../favicon.ico">
+        <link rel="canonical" href="https://github.com/codedellemc/libstorage/user-guide/storage-providers/">
+        <link rel="shortcut icon" href="favicon.ico">
         
 
 	<title>Storage Providers - libStorage</title>
@@ -16,6 +16,7 @@
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
         <link rel="stylesheet" href="../../css/highlight.css">
         <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/emccode.css" rel="stylesheet">
         <link href="../../css/emccode-font.css" rel="stylesheet">
         <link href="../../css/hX.css" rel="stylesheet">
 
@@ -226,7 +227,7 @@
                 </li>
                 
                 <li>
-                    <a href="https://github.com/emccode/libstorage.git">
+                    <a href="https://github.com/codedellemc/libstorage.git">
                         
                             <i class="fa fa-github"></i>
                         
@@ -261,35 +262,67 @@
             
             </li>
         
-            <li><a href="#isilon">Isilon</a>
+            <li><a href="#amazon">Amazon</a>
             
                 <ul class="nav nav-stacked">
                 
-                <li><a href="#configuration">Configuration</a><!--
+                <li><a href="#elastic-block-storage">Elastic Block Storage</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#requirements">Requirements</a></li>
+                    
+                    <li><a href="#configuration">Configuration</a></li>
+                    
+                    <li><a href="#activating-the-driver">Activating the Driver</a></li>
+                    
+                    <li><a href="#troubleshooting">Troubleshooting</a></li>
+                    
+                    <li><a href="#examples">Examples</a></li>
+                    
+                </ul>
                 -->
                 </li>
                 
-                <li><a href="#extra-parameters">Extra Parameters</a><!--
+                <li><a href="#elastic-file-system">Elastic File System</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#requirements_1">Requirements</a></li>
+                    
+                    <li><a href="#configuration_1">Configuration</a></li>
+                    
+                    <li><a href="#runtime-behavior">Runtime Behavior</a></li>
+                    
+                    <li><a href="#activating-the-driver_1">Activating the Driver</a></li>
+                    
+                    <li><a href="#troubleshooting_1">Troubleshooting</a></li>
+                    
+                    <li><a href="#examples_1">Examples</a></li>
+                    
+                </ul>
                 -->
                 </li>
                 
-                <li><a href="#optional-parameters">Optional Parameters</a><!--
-                -->
-                </li>
+                <li><a href="#simple-storage-service">Simple Storage Service</a><!--
                 
-                <li><a href="#activating-the-driver">Activating the Driver</a><!--
-                -->
-                </li>
-                
-                <li><a href="#examples">Examples</a><!--
-                -->
-                </li>
-                
-                <li><a href="#instructions">Instructions</a><!--
-                -->
-                </li>
-                
-                <li><a href="#caveats">Caveats</a><!--
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#requirements_2">Requirements</a></li>
+                    
+                    <li><a href="#configuration_2">Configuration</a></li>
+                    
+                    <li><a href="#server-side-configuration">Server-Side Configuration</a></li>
+                    
+                    <li><a href="#client-side-configuration">Client-Side Configuration</a></li>
+                    
+                    <li><a href="#runtime-behavior_1">Runtime Behavior</a></li>
+                    
+                    <li><a href="#activating-the-driver_2">Activating the Driver</a></li>
+                    
+                    <li><a href="#examples_2">Examples</a></li>
+                    
+                </ul>
                 -->
                 </li>
                 
@@ -297,41 +330,185 @@
             
             </li>
         
-            <li><a href="#scaleio">ScaleIO</a>
+            <li><a href="#ceph">Ceph</a>
             
                 <ul class="nav nav-stacked">
                 
-                <li><a href="#requirements">Requirements</a><!--
-                -->
-                </li>
-                
-                <li><a href="#configuration_1">Configuration</a><!--
+                <li><a href="#rados-block-device">RADOS Block Device</a><!--
                 
                 <ul class="nav nav-stacked">
                     
-                    <li><a href="#configuration-notes">Configuration Notes</a></li>
+                    <li><a href="#requirements_3">Requirements</a></li>
+                    
+                    <li><a href="#configuration_3">Configuration</a></li>
+                    
+                    <li><a href="#runtime-behavior_2">Runtime behavior</a></li>
+                    
+                    <li><a href="#activating-the-driver_3">Activating the Driver</a></li>
+                    
+                    <li><a href="#troubleshooting_2">Troubleshooting</a></li>
+                    
+                    <li><a href="#examples_3">Examples</a></li>
+                    
+                    <li><a href="#caveats">Caveats</a></li>
                     
                 </ul>
                 -->
                 </li>
                 
-                <li><a href="#runtime-behavior">Runtime Behavior</a><!--
+                </ul>
+            
+            </li>
+        
+            <li><a href="#dell-emc">Dell EMC</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#isilon">Isilon</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#configuration_4">Configuration</a></li>
+                    
+                    <li><a href="#extra-parameters">Extra Parameters</a></li>
+                    
+                    <li><a href="#optional-parameters">Optional Parameters</a></li>
+                    
+                    <li><a href="#activating-the-driver_4">Activating the Driver</a></li>
+                    
+                    <li><a href="#examples_4">Examples</a></li>
+                    
+                    <li><a href="#instructions">Instructions</a></li>
+                    
+                    <li><a href="#caveats_1">Caveats</a></li>
+                    
+                </ul>
                 -->
                 </li>
                 
-                <li><a href="#configuring-the-gateway">Configuring the Gateway</a><!--
+                <li><a href="#scaleio">ScaleIO</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#requirements_4">Requirements</a></li>
+                    
+                    <li><a href="#configuration_5">Configuration</a></li>
+                    
+                    <li><a href="#runtime-behavior_3">Runtime Behavior</a></li>
+                    
+                    <li><a href="#configuring-the-gateway">Configuring the Gateway</a></li>
+                    
+                    <li><a href="#activating-the-driver_5">Activating the Driver</a></li>
+                    
+                    <li><a href="#troubleshooting_3">Troubleshooting</a></li>
+                    
+                    <li><a href="#examples_5">Examples</a></li>
+                    
+                </ul>
                 -->
                 </li>
                 
-                <li><a href="#activating-the-driver_1">Activating the Driver</a><!--
+                </ul>
+            
+            </li>
+        
+            <li><a href="#digitalocean">DigitalOcean</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#do-block-storage">DO Block Storage</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#requirements_5">Requirements</a></li>
+                    
+                    <li><a href="#configuration_6">Configuration</a></li>
+                    
+                </ul>
                 -->
                 </li>
                 
-                <li><a href="#troubleshooting">Troubleshooting</a><!--
+                </ul>
+            
+            </li>
+        
+            <li><a href="#fittedcloud">FittedCloud</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#ebs-optimizer">EBS Optimizer</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#requirements_6">Requirements</a></li>
+                    
+                    <li><a href="#getting-started">Getting Started</a></li>
+                    
+                    <li><a href="#configuration_7">Configuration</a></li>
+                    
+                    <li><a href="#examples_6">Examples</a></li>
+                    
+                </ul>
                 -->
                 </li>
                 
-                <li><a href="#examples_1">Examples</a><!--
+                </ul>
+            
+            </li>
+        
+            <li><a href="#google">Google</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#gce-persistent-disk">GCE Persistent Disk</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#requirements_7">Requirements</a></li>
+                    
+                    <li><a href="#configuration_8">Configuration</a></li>
+                    
+                    <li><a href="#runtime-behavior_4">Runtime behavior</a></li>
+                    
+                    <li><a href="#activating-the-driver_6">Activating the Driver</a></li>
+                    
+                    <li><a href="#troubleshooting_4">Troubleshooting</a></li>
+                    
+                    <li><a href="#examples_7">Examples</a></li>
+                    
+                    <li><a href="#caveats_2">Caveats</a></li>
+                    
+                </ul>
+                -->
+                </li>
+                
+                </ul>
+            
+            </li>
+        
+            <li><a href="#microsoft">Microsoft</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#azure-unmanaged-disk">Azure Unmanaged Disk</a><!--
+                
+                <ul class="nav nav-stacked">
+                    
+                    <li><a href="#requirements_8">Requirements</a></li>
+                    
+                    <li><a href="#configuration_9">Configuration</a></li>
+                    
+                    <li><a href="#runtime-behavior_5">Runtime Behavior</a></li>
+                    
+                    <li><a href="#activating-the-driver_7">Activating the Driver</a></li>
+                    
+                    <li><a href="#troubleshooting_5">Troubleshooting</a></li>
+                    
+                    <li><a href="#examples_8">Examples</a></li>
+                    
+                    <li><a href="#caveats_3">Caveats</a></li>
+                    
+                </ul>
                 -->
                 </li>
                 
@@ -347,57 +524,19 @@
                 -->
                 </li>
                 
-                <li><a href="#configuration_2">Configuration</a><!--
+                <li><a href="#configuration_10">Configuration</a><!--
                 -->
                 </li>
                 
-                <li><a href="#activating-the-driver_2">Activating the Driver</a><!--
+                <li><a href="#activating-the-driver_8">Activating the Driver</a><!--
                 -->
                 </li>
                 
-                <li><a href="#examples_2">Examples</a><!--
+                <li><a href="#examples_9">Examples</a><!--
                 -->
                 </li>
                 
-                <li><a href="#caveats_1">Caveats</a><!--
-                -->
-                </li>
-                
-                </ul>
-            
-            </li>
-        
-            <li><a href="#aws-efs">AWS EFS</a>
-            
-                <ul class="nav nav-stacked">
-                
-                <li><a href="#requirements_1">Requirements</a><!--
-                -->
-                </li>
-                
-                <li><a href="#configuration_3">Configuration</a><!--
-                
-                <ul class="nav nav-stacked">
-                    
-                    <li><a href="#configuration-notes_1">Configuration Notes</a></li>
-                    
-                </ul>
-                -->
-                </li>
-                
-                <li><a href="#runtime-behavior_1">Runtime Behavior</a><!--
-                -->
-                </li>
-                
-                <li><a href="#activating-the-driver_3">Activating the Driver</a><!--
-                -->
-                </li>
-                
-                <li><a href="#troubleshooting_1">Troubleshooting</a><!--
-                -->
-                </li>
-                
-                <li><a href="#examples_3">Examples</a><!--
+                <li><a href="#caveats_4">Caveats</a><!--
                 -->
                 </li>
                 
@@ -410,23 +549,407 @@
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="storage-providers">Storage Providers</h1>
+<h1 id="storage-providers">Storage Providers<a class="headerlink" href="#storage-providers" title="Permanent link">&para;</a></h1>
 <p>Connecting storage and platforms...</p>
 <hr />
-<h2 id="overview">Overview</h2>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>This page reviews the storage providers and platforms supported by <code>libStorage</code>.</p>
-<h3 id="clientserver-configuration">Client/Server Configuration</h3>
+<h3 id="clientserver-configuration">Client/Server Configuration<a class="headerlink" href="#clientserver-configuration" title="Permanent link">&para;</a></h3>
 <p>Regarding the examples below, please
 <a href="../config/#clientserver-configuration">read the provision</a> about
 client/server configurations before proceeding.</p>
-<h2 id="isilon">Isilon</h2>
+<h2 id="amazon">Amazon<a class="headerlink" href="#amazon" title="Permanent link">&para;</a></h2>
+<p>libStorage includes support for multiple Amazon Web Services (AWS) storage
+services.</p>
+<p><a class="headerlink hiddenanchor" name="aws-ebs"></a></p>
+<h3 id="elastic-block-storage">Elastic Block Storage<a class="headerlink" href="#elastic-block-storage" title="Permanent link">&para;</a></h3>
+<p>The AWS EBS driver registers a storage driver named <code>ebs</code> with the
+libStorage service registry and is used to connect and manage AWS Elastic Block
+Storage volumes for EC2 instances.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For backwards compatibility, the driver also registers a storage driver
+named <code>ec2</code>. The use of <code>ec2</code> in config files is deprecated but functional.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The EBS driver does not yet support snapshots or tags, as previously supported
+in Rex-Ray v0.3.3.</p>
+</div>
+<p>The EBS driver is made possible by the
+<a href="https://github.com/aws/aws-sdk-go.git">official Amazon Go AWS SDK</a>.</p>
+<h4 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h4>
+<ul>
+<li>AWS account</li>
+<li>VPC - EBS can be accessed within VPC</li>
+<li>AWS Credentials</li>
+</ul>
+<h4 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h4>
+<p>The following is an example with all possible fields configured.  For a running
+example see the <code>Examples</code> section.</p>
+<pre><code class="yaml">ebs:
+  accessKey:      XXXXXXXXXX
+  secretKey:      XXXXXXXXXX
+  region:         us-east-1
+  kmsKeyID:       arn:aws:kms:us-east-1:012345678910:key/abcd1234-a123-456a-a12b-a123b4cd56ef
+</code></pre>
+
+<h5 id="configuration-notes">Configuration Notes<a class="headerlink" href="#configuration-notes" title="Permanent link">&para;</a></h5>
+<ul>
+<li>The <code>accessKey</code> and <code>secretKey</code> configuration parameters are optional and should
+be used when explicit AWS credentials configuration needs to be provided. EBS driver
+uses official golang AWS SDK library and supports all other ways of providing
+access credentials, like environment variables or instance profile IAM permissions.</li>
+<li><code>region</code> represents AWS region where EBS volumes should be provisioned.
+See official AWS documentation for list of supported regions.
+<!-- - <code>tag</code> is used to partition multiple services within single AWS account and is
+used as prefix for EBS names in format <code>[tagprefix]/volumeName</code>. --></li>
+<li>If the <code>kmsKeyID</code> field is specified it will be used as the encryption key for
+all volumes that are created with a truthy encryption request field.</li>
+</ul>
+<p>For information on the equivalent environment variable and CLI flag names
+please see the section on how non top-level configuration properties are
+<a href="../config/#configuration-properties">transformed</a>.</p>
+<!--### Volume tagging (optional)
+By default, EBS driver has access to all volumes and snapshots defined in your
+AWS account. Volume tagging gives you the ability to only include management of
+volumes that have a specific `ec2 tag`. There is an optional `tag` key in
+`ebs` configuration section to limit the access to and tagging that happens
+for any new volumes or snapshots created. The objects will have a `ec2 tag`
+called `libstroageSet` with a value defined by the configurable `tag`.
+
+For example, if you had a set of hosts you can configure `libstorage` to tag them
+with `prod`, `testing` or `development` each with its own set of volumes and
+snapshots.
+
+Volumes and snapshots that are accessed directly from `volumeID` can still be
+controlled regardless of the `tag`. -->
+
+<h4 id="activating-the-driver">Activating the Driver<a class="headerlink" href="#activating-the-driver" title="Permanent link">&para;</a></h4>
+<p>To activate the AWS EBS driver please follow the instructions for
+<a href="../config/#storage-drivers">activating storage drivers</a>,
+using <code>ebs</code> as the driver name.</p>
+<h4 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Make sure that AWS credentials (user or role) has following AWS permissions on
+  <code>libStorage</code> server instance that will be making calls to AWS API:<ul>
+<li><code>ec2:AttachVolume</code>,</li>
+<li><code>ec2:CreateVolume</code>,</li>
+<li><code>ec2:CreateSnapshot</code>,</li>
+<li><code>ec2:CreateTags</code>,</li>
+<li><code>ec2:DeleteVolume</code>,</li>
+<li><code>ec2:DeleteSnapshot</code>,</li>
+<li><code>ec2:DescribeAvailabilityZones</code>,</li>
+<li><code>ec2:DescribeInstances</code>,</li>
+<li><code>ec2:DescribeVolumes</code>,</li>
+<li><code>ec2:DescribeVolumeAttribute</code>,</li>
+<li><code>ec2:DescribeVolumeStatus</code>,</li>
+<li><code>ec2:DescribeSnapshots</code>,</li>
+<li><code>ec2:CopySnapshot</code>,</li>
+<li><code>ec2:DescribeSnapshotAttribute</code>,</li>
+<li><code>ec2:DetachVolume</code>,</li>
+<li><code>ec2:ModifySnapshotAttribute</code>,</li>
+<li><code>ec2:ModifyVolumeAttribute</code>,</li>
+<li><code>ec2:DescribeTags</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h4>
+<p>Below is a working <code>config.yml</code> file that works with AWS EBS.</p>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      ebs:
+        driver: ebs
+        ebs:
+          accessKey:      XXXXXXXXXX
+          secretKey:      XXXXXXXXXX
+          region:         us-east-1
+</code></pre>
+
+<p><a class="headerlink hiddenanchor" name="aws-efs"></a></p>
+<h3 id="elastic-file-system">Elastic File System<a class="headerlink" href="#elastic-file-system" title="Permanent link">&para;</a></h3>
+<p>The AWS EFS driver registers a storage driver named <code>efs</code> with the
+libStorage service registry and is used to connect and manage AWS Elastic File
+Systems.</p>
+<h4 id="requirements_1">Requirements<a class="headerlink" href="#requirements_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>AWS account</li>
+<li>VPC - EFS can be accessed within VPC</li>
+<li>AWS Credentials</li>
+</ul>
+<h4 id="configuration_1">Configuration<a class="headerlink" href="#configuration_1" title="Permanent link">&para;</a></h4>
+<p>The following is an example with all possible fields configured.  For a running
+example see the <code>Examples</code> section.</p>
+<pre><code class="yaml">efs:
+  accessKey:      XXXXXXXXXX
+  secretKey:      XXXXXXXXXX
+  securityGroups:
+  - sg-XXXXXXX
+  - sg-XXXXXX0
+  - sg-XXXXXX1
+  region:              us-east-1
+  tag:                 test
+  disableSessionCache: false
+</code></pre>
+
+<h5 id="configuration-notes_1">Configuration Notes<a class="headerlink" href="#configuration-notes_1" title="Permanent link">&para;</a></h5>
+<ul>
+<li>The <code>accessKey</code> and <code>secretKey</code> configuration parameters are optional and should
+be used when explicit AWS credentials configuration needs to be provided. EFS driver
+uses official golang AWS SDK library and supports all other ways of providing
+access credentials, like environment variables or instance profile IAM permissions.</li>
+<li><code>region</code> represents AWS region where EFS should be provisioned. See official AWS
+documentation for list of supported regions.</li>
+<li><code>securityGroups</code> list of security groups attached to <code>MountPoint</code> instances.
+If no security groups are provided the default VPC security group is used.</li>
+<li><code>tag</code> is used to partition multiple services within single AWS account and is
+used as prefix for EFS names in format <code>[tagprefix]/volumeName</code>.</li>
+<li><code>disableSessionCache</code> is a flag that can be used to disable the session cache.
+If the session cache is disabled then a new AWS connection is established with
+every API call.</li>
+</ul>
+<p>For information on the equivalent environment variable and CLI flag names
+please see the section on how non top-level configuration properties are
+<a href="../config/#configuration-properties">transformed</a>.</p>
+<h4 id="runtime-behavior">Runtime Behavior<a class="headerlink" href="#runtime-behavior" title="Permanent link">&para;</a></h4>
+<p>AWS EFS storage driver creates one EFS FileSystem per volume and provides root
+of the filesystem as NFS mount point. Volumes aren't attached to instances
+directly but rather exposed to each subnet by creating <code>MountPoint</code> in each VPC
+subnet. When detaching volume from instance no action is taken as there isn't
+good way to figure out if there are other instances in same subnet using
+<code>MountPoint</code> that is being detached. There is no charge for <code>MountPoint</code>
+so they are removed only once whole volume is deleted.</p>
+<p>By default all EFS instances are provisioned as <code>generalPurpose</code> performance mode.
+<code>maxIO</code> EFS type can be provisioned by providing <code>maxIO</code> flag as <code>volumetype</code>.</p>
+<p>Its possible to mount same volume to multiple container on a single EC2 instance
+as well as use single volume across multiple EC2 instances at the same time.</p>
+<p><strong>NOTE</strong>: Each EFS FileSystem can be accessed only from single VPC at the time.</p>
+<h4 id="activating-the-driver_1">Activating the Driver<a class="headerlink" href="#activating-the-driver_1" title="Permanent link">&para;</a></h4>
+<p>To activate the AWS EFS driver please follow the instructions for
+<a href="../config/#storage-drivers">activating storage drivers</a>,
+using <code>efs</code> as the driver name.</p>
+<h4 id="troubleshooting_1">Troubleshooting<a class="headerlink" href="#troubleshooting_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Make sure that AWS credentials (user or role) has following AWS permissions on
+  <code>libStorage</code> server instance that will be making calls to AWS API:<ul>
+<li><code>elasticfilesystem:CreateFileSystem</code></li>
+<li><code>elasticfilesystem:CreateMountTarget</code></li>
+<li><code>ec2:DescribeSubnets</code></li>
+<li><code>ec2:DescribeNetworkInterfaces</code></li>
+<li><code>ec2:CreateNetworkInterface</code></li>
+<li><code>elasticfilesystem:CreateTags</code></li>
+<li><code>elasticfilesystem:DeleteFileSystem</code></li>
+<li><code>elasticfilesystem:DeleteMountTarget</code></li>
+<li><code>ec2:DeleteNetworkInterface</code></li>
+<li><code>elasticfilesystem:DescribeFileSystems</code></li>
+<li><code>elasticfilesystem:DescribeMountTargets</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="examples_1">Examples<a class="headerlink" href="#examples_1" title="Permanent link">&para;</a></h4>
+<p>Below is a working <code>config.yml</code> file that works with AWS EFS.</p>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      efs:
+        driver: efs
+        efs:
+          accessKey:      XXXXXXXXXX
+          secretKey:      XXXXXXXXXX
+          securityGroups:
+          - sg-XXXXXXX
+          - sg-XXXXXX0
+          - sg-XXXXXX1
+          region:         us-east-1
+          tag:            test
+</code></pre>
+
+<p><a class="headerlink hiddenanchor" name="aws-s3fs"></a></p>
+<h3 id="simple-storage-service">Simple Storage Service<a class="headerlink" href="#simple-storage-service" title="Permanent link">&para;</a></h3>
+<p>The AWS S3FS driver registers a storage driver named <code>s3fs</code> with the
+libStorage service registry and provides the ability to mount Amazon Simple
+Storage Service (S3) buckets as filesystems using the
+<a href="https://github.com/s3fs-fuse/s3fs-fuse"><code>s3fs</code></a> FUSE command.</p>
+<p>Unlike the other AWS-related drivers, the S3FS storage driver does not need
+to deployed or used by an EC2 instance. Any client can take advantage of
+Amazon's S3 buckets.</p>
+<h4 id="requirements_2">Requirements<a class="headerlink" href="#requirements_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li>AWS account</li>
+<li>The <a href="https://github.com/s3fs-fuse/s3fs-fuse"><code>s3fs</code></a> FUSE command must be
+present on client nodes.</li>
+</ul>
+<h4 id="configuration_2">Configuration<a class="headerlink" href="#configuration_2" title="Permanent link">&para;</a></h4>
+<p>The following is an example with all possible fields configured.  For a running
+example see the <code>Examples</code> section.</p>
+<h4 id="server-side-configuration">Server-Side Configuration<a class="headerlink" href="#server-side-configuration" title="Permanent link">&para;</a></h4>
+<pre><code class="yaml">s3fs:
+  region:           us-east-1
+  accessKey:        XXXXXXXXXX
+  secretKey:        XXXXXXXXXX
+  disablePathStyle: false
+</code></pre>
+
+<ul>
+<li>The <code>accessKey</code> and <code>secretKey</code> configuration parameters are optional and
+should be used when explicit AWS credentials configuration needs to be provided.
+The S3FS driver uses the official Golang AWS SDK library and supports all other
+ways of  providing access credentials, like environment variables or instance
+profile IAM permissions.</li>
+<li><code>region</code> represents AWS region where S3FS buckets should be provisioned.
+Please see the official AWS documentation for list of
+<a href="http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region">supported regions</a>.</li>
+<li>The <code>disablePathStyle</code> property disables the use of the path style for
+bucket endpoints. The path style is more stable with regards to regions
+than bucket URI FQDNs, but the path style is also less performant.</li>
+</ul>
+<h4 id="client-side-configuration">Client-Side Configuration<a class="headerlink" href="#client-side-configuration" title="Permanent link">&para;</a></h4>
+<pre><code class="yaml">s3fs:
+  cmd:            s3fs
+  options:
+  - XXXX
+  - XXXX
+  accessKey:      XXXXXXXXXX
+  secretKey:      XXXXXXXXXX
+</code></pre>
+
+<ul>
+<li>The <code>cmd</code> property defaults simply to <code>s3fs</code> with the assumption that the
+<code>s3fs</code> binary will be in the path. This value can also be the absolute path
+to the <code>s3fs</code> binary.</li>
+<li><code>options</code> is a list of options to pass to the <code>s3fs</code> command. Please see the
+<a href="https://github.com/s3fs-fuse/s3fs-fuse/wiki/Fuse-Over-Amazon">official</a>
+documentation for a full list of CLI options. The <code>-o</code> prefix should not be
+provided in the configuration file.</li>
+<li>The credential properties can be defined on the client via the configuration
+file and will be supplied to the <code>s3fs</code> process via environment variables.
+However, the <code>s3fs</code> command will also look in all the
+<a href="https://github.com/s3fs-fuse/s3fs-fuse/wiki/Fuse-Over-Amazon">usual places</a>
+for the credentials if they're not in this file.</li>
+</ul>
+<p>For information on the equivalent environment variable and CLI flag names
+please see the section on how non top-level configuration properties are
+<a href="../config/#configuration-properties">transformed</a>.</p>
+<h4 id="runtime-behavior_1">Runtime Behavior<a class="headerlink" href="#runtime-behavior_1" title="Permanent link">&para;</a></h4>
+<p>The AWS S3FS storage driver can create new buckets as well as remove existing
+ones. Buckets are mounted to clients as filesystems using the
+<a href="https://github.com/s3fs-fuse/s3fs-fuse"><code>s3fs</code></a> FUSE command. For clients
+to correctly mount and unmount S3 buckets the <code>s3fs</code> command should be in
+the path of the executor or configured via the <code>s3fs.cmd</code> property in the
+client-side REX-Ray configuration file.</p>
+<p>The client must also have access to the AWS credentials used for mounting and
+unmounting S3 buckets. These credentials can be stored in the client-side
+REX-Ray configuration file or via
+<a href="https://github.com/s3fs-fuse/s3fs-fuse/wiki/Fuse-Over-Amazon">any means avaialble</a>
+to the <code>s3fs</code> command.</p>
+<h4 id="activating-the-driver_2">Activating the Driver<a class="headerlink" href="#activating-the-driver_2" title="Permanent link">&para;</a></h4>
+<p>To activate the AWS S3FS driver please follow the instructions for
+<a href="../config/#storage-drivers">activating storage drivers</a>,
+using <code>s3fs</code> as the driver name.</p>
+<h4 id="examples_2">Examples<a class="headerlink" href="#examples_2" title="Permanent link">&para;</a></h4>
+<p>Below is a working <code>config.yml</code> file that works with AWS S3FS.</p>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      s3fs:
+        driver: s3fs
+        s3fs:
+          accessKey:      XXXXXXXXXX
+          secretKey:      XXXXXXXXXX
+</code></pre>
+
+<h2 id="ceph">Ceph<a class="headerlink" href="#ceph" title="Permanent link">&para;</a></h2>
+<p>libStorage includes support for the following Ceph storage technologies.</p>
+<p><a class="headerlink hiddenanchor" name="ceph-rbd"></a></p>
+<h3 id="rados-block-device">RADOS Block Device<a class="headerlink" href="#rados-block-device" title="Permanent link">&para;</a></h3>
+<p>The Ceph RBD driver registers a driver named <code>rbd</code> with the <code>libStorage</code> driver
+manager and is used to connect and mount RADOS Block Devices from a Ceph
+cluster.</p>
+<h4 id="requirements_3">Requirements<a class="headerlink" href="#requirements_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li>The <code>ceph</code> and <code>rbd</code> binary executables must be installed on the host</li>
+<li>The <code>rbd</code> kernel module must be installed</li>
+<li>A <code>ceph.conf</code> file must be present in its default location
+  (<code>/etc/ceph/ceph.conf</code>)</li>
+<li>The ceph <code>admin</code> key must be present in <code>/etc/ceph/</code></li>
+</ul>
+<h4 id="configuration_3">Configuration<a class="headerlink" href="#configuration_3" title="Permanent link">&para;</a></h4>
+<p>The following is an example with all possible fields configured. For a running
+example see the <code>Examples</code> section.</p>
+<pre><code class="yaml">rbd:
+  defaultPool: rbd
+</code></pre>
+
+<h5 id="configuration-notes_2">Configuration Notes<a class="headerlink" href="#configuration-notes_2" title="Permanent link">&para;</a></h5>
+<ul>
+<li>The <code>defaultPool</code> parameter is optional, and defaults to "rbd". When set, all
+  volume requests that do not reference a specific pool will use the
+  <code>defaultPool</code> value as the destination storage pool.</li>
+</ul>
+<h4 id="runtime-behavior_2">Runtime behavior<a class="headerlink" href="#runtime-behavior_2" title="Permanent link">&para;</a></h4>
+<p>The Ceph RBD driver only works when the client and server are on the same node.
+There is no way for a centralized <code>libStorage</code> server to attach volumes to
+clients, therefore the <code>libStorage</code> server must be running on each node that
+wishes to mount RBD volumes.</p>
+<p>The RBD driver uses the format of <code>&lt;pool&gt;.&lt;name&gt;</code> for the volume ID. This allows
+for the use of multiple pools by the driver. During a volume create, if the
+volume ID is given as <code>&lt;pool&gt;.&lt;name&gt;</code>, a volume named <em>name</em> will be created in
+the <em>pool</em> storage pool. If no pool is referenced, the <code>defaultPool</code> will be
+used.</p>
+<p>Both <em>pool</em> and <em>name</em> may only contain alphanumeric characters, underscores,
+and dashes.</p>
+<p>When querying volumes, the driver will return all RBDs present in all pools in
+the cluster, prefixing each volume with the appropriate <code>&lt;pool&gt;.</code> value.</p>
+<p>All RBD creates are done using the default 4MB object size, and using the
+"layering" feature bit to ensure greatest compatibility with the kernel clients.</p>
+<h4 id="activating-the-driver_3">Activating the Driver<a class="headerlink" href="#activating-the-driver_3" title="Permanent link">&para;</a></h4>
+<p>To activate the Ceph RBD driver please follow the instructions for
+<a href="../config/#storage-drivers">activating storage drivers</a>, using <code>rbd</code> as the
+driver name.</p>
+<h4 id="troubleshooting_2">Troubleshooting<a class="headerlink" href="#troubleshooting_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Make sure that <code>ceph</code> and <code>rbd</code> commands work without extra parameters for
+  ID, key, and monitors. All configuration must come from <code>ceph.conf</code>.</li>
+<li>Check status of the ceph cluster with <code>ceph -s</code> command.</li>
+</ul>
+<h4 id="examples_3">Examples<a class="headerlink" href="#examples_3" title="Permanent link">&para;</a></h4>
+<p>Below is a full <code>config.yml</code> that works with RBD</p>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      rbd:
+        driver: rbd
+        rbd:
+          defaultPool: rbd
+</code></pre>
+
+<h4 id="caveats">Caveats<a class="headerlink" href="#caveats" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Snapshot and copy functionality is not yet implemented</li>
+<li>libStorage Server must be running on each host to mount/attach RBD volumes</li>
+<li>There is not yet options for using non-admin cephx keys or changing RBD create
+  features</li>
+<li>Volume pre-emption is not supported. Ceph does not provide a method to
+  forcefully detach a volume from a remote host -- only a host can attach and
+  detach volumes from itself.</li>
+<li>RBD advisory locks are not yet in use. A volume is returned as "unavailable"
+  if it has a watcher other than the requesting client. Until advisory locks are
+  in place, it may be possible for a client to attach a volume that is already
+  attached to another node. Mounting and writing to such a volume could lead to
+  data corruption.</li>
+</ul>
+<h2 id="dell-emc">Dell EMC<a class="headerlink" href="#dell-emc" title="Permanent link">&para;</a></h2>
+<p>libStorage includes support for several Dell EMC storage platforms.</p>
+<p><a class="headerlink hiddenanchor" name="dell-emc-isilon"></a></p>
+<h3 id="isilon">Isilon<a class="headerlink" href="#isilon" title="Permanent link">&para;</a></h3>
 <p>The Isilon driver registers a storage driver named <code>isilon</code> with the
-<code>libStorage</code> driver manager and is used to connect and manage Isilon NAS
+libStorage service registry and is used to connect and manage Isilon NAS
 storage. The driver creates logical volumes in directories on the Isilon
 cluster. Volumes are exported via NFS and restricted to a single client at a
 time. Quotas can also be used to ensure that a volume directory doesn't exceed
 a specified size.</p>
-<h3 id="configuration">Configuration</h3>
+<h4 id="configuration_4">Configuration<a class="headerlink" href="#configuration_4" title="Permanent link">&para;</a></h4>
 <p>The following is an example configuration of the Isilon driver.</p>
 <pre><code class="yaml">isilon:
   endpoint: https://endpoint:8080
@@ -443,15 +966,17 @@ a specified size.</p>
 <p>For information on the equivalent environment variable and CLI flag names
 please see the section on how configuration properties are
 <a href="../config/#configuration-properties">transformed</a>.</p>
-<h3 id="extra-parameters">Extra Parameters</h3>
+<h4 id="extra-parameters">Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permanent link">&para;</a></h4>
 <p>The following items are configurable specific to this driver.</p>
 <ul>
 <li><code>volumePath</code> represents the location under <code>/ifs/volumes</code> to allow volumes to
    be created and removed.</li>
-<li><code>nfsHost</code> is the configurable host used when mounting exports</li>
-<li><code>dataSubnet</code> is the subnet the REX-Ray driver is running on</li>
+<li><code>nfsHost</code> is the configurable NFS server hostname or IP (often a
+   SmartConnect name) used when mounting exports</li>
+<li><code>dataSubnet</code> is the subnet the REX-Ray driver is running on. This is used
+   for the NFS export host ACLs.</li>
 </ul>
-<h3 id="optional-parameters">Optional Parameters</h3>
+<h4 id="optional-parameters">Optional Parameters<a class="headerlink" href="#optional-parameters" title="Permanent link">&para;</a></h4>
 <p>The following items are not required, but available to this driver.</p>
 <ul>
 <li><code>insecure</code> defaults to <code>false</code>.</li>
@@ -463,11 +988,11 @@ please see the section on how configuration properties are
 <li><code>quotas</code> defaults to <code>false</code>. Set to <code>true</code> if you have a SmartQuotas
    license enabled.</li>
 </ul>
-<h3 id="activating-the-driver">Activating the Driver</h3>
+<h4 id="activating-the-driver_4">Activating the Driver<a class="headerlink" href="#activating-the-driver_4" title="Permanent link">&para;</a></h4>
 <p>To activate the Isilon driver please follow the instructions for
 <a href="../config/#storage-drivers">activating storage drivers</a>,
 using <code>isilon</code> as the driver name.</p>
-<h3 id="examples">Examples</h3>
+<h4 id="examples_4">Examples<a class="headerlink" href="#examples_4" title="Permanent link">&para;</a></h4>
 <p>Below is a full <code>config.yml</code> file that works with Isilon.</p>
 <pre><code class="yaml">libstorage:
   server:
@@ -485,7 +1010,7 @@ using <code>isilon</code> as the driver name.</p>
           quotas: true
 </code></pre>
 
-<h3 id="instructions">Instructions</h3>
+<h4 id="instructions">Instructions<a class="headerlink" href="#instructions" title="Permanent link">&para;</a></h4>
 <p>It is expected that the <code>volumePath</code> exists already within the Isilon system.
 This example would reflect a directory create under <code>/ifs/volumes/libstorage</code>
 for created volumes. It is not necessary to export this volume. The <code>dataSubnet</code>
@@ -495,7 +1020,7 @@ volumes to the host that REX-Ray is running on.</p>
 Isilon cluster for the capacity size functionality of <code>libStorage</code> to work.</p>
 <p>A SnapshotIQ license must be enabled on the Isilon cluster for the snapshot
 functionality of <code>libStorage</code> to work.</p>
-<h3 id="caveats">Caveats</h3>
+<h4 id="caveats_1">Caveats<a class="headerlink" href="#caveats_1" title="Permanent link">&para;</a></h4>
 <p>The Isilon driver is not without its caveats:</p>
 <ul>
 <li>The account used to access the Isilon cluster must be in a role with the
@@ -509,10 +1034,11 @@ functionality of <code>libStorage</code> to work.</p>
 </ul>
 </li>
 </ul>
-<h2 id="scaleio">ScaleIO</h2>
+<p><a class="headerlink hiddenanchor" name="dell-emc-scaleio"></a></p>
+<h3 id="scaleio">ScaleIO<a class="headerlink" href="#scaleio" title="Permanent link">&para;</a></h3>
 <p>The ScaleIO driver registers a storage driver named <code>scaleio</code> with the
-<code>libStorage</code> driver manager and is used to connect and manage ScaleIO storage.</p>
-<h3 id="requirements">Requirements</h3>
+libStorage service registry and is used to connect and manage ScaleIO storage.</p>
+<h4 id="requirements_4">Requirements<a class="headerlink" href="#requirements_4" title="Permanent link">&para;</a></h4>
 <ul>
 <li>The ScaleIO <code>REST Gateway</code> is required for the driver to function.</li>
 <li>The <code>libStorage</code> client or application that embeds the <code>libStorage</code> client
@@ -523,7 +1049,7 @@ functionality of <code>libStorage</code> to work.</p>
    Oracle Java Runtime Environment (JRE) is required. During testing, use of the
    Open Java Development Kit (JDK) resulted in unexpected errors.</li>
 </ul>
-<h3 id="configuration_1">Configuration</h3>
+<h4 id="configuration_5">Configuration<a class="headerlink" href="#configuration_5" title="Permanent link">&para;</a></h4>
 <p>The following is an example with all possible fields configured.  For a running
 example see the <code>Examples</code> section.</p>
 <pre><code class="yaml">scaleio:
@@ -542,7 +1068,7 @@ example see the <code>Examples</code> section.</p>
   thinOrThick:          ThinProvisioned
 </code></pre>
 
-<h4 id="configuration-notes">Configuration Notes</h4>
+<h5 id="configuration-notes_3">Configuration Notes<a class="headerlink" href="#configuration-notes_3" title="Permanent link">&para;</a></h5>
 <ul>
 <li>The <code>apiVersion</code> can optionally be set here to force certain API behavior.
 The default is to retrieve the endpoint API, and pass this version during calls.</li>
@@ -561,14 +1087,14 @@ on a host that does not have any certificates installed.</li>
 <p>For information on the equivalent environment variable and CLI flag names
 please see the section on how non top-level configuration properties are
 <a href="../config/#configuration-properties">transformed</a>.</p>
-<h3 id="runtime-behavior">Runtime Behavior</h3>
+<h4 id="runtime-behavior_3">Runtime Behavior<a class="headerlink" href="#runtime-behavior_3" title="Permanent link">&para;</a></h4>
 <p>The <code>storageType</code> field that is configured per volume is considered the
 ScaleIO Storage Pool.  This can be configured by default with the <code>storagePool</code>
 setting.  It is important that you create unique names for your Storage Pools
 on the same ScaleIO platform.  Otherwise, when specifying <code>storageType</code> it
 may choose at random which <code>protectionDomain</code> the pool comes from.</p>
 <p>The <code>availabilityZone</code> field represents the ScaleIO Protection Domain.</p>
-<h3 id="configuring-the-gateway">Configuring the Gateway</h3>
+<h4 id="configuring-the-gateway">Configuring the Gateway<a class="headerlink" href="#configuring-the-gateway" title="Permanent link">&para;</a></h4>
 <ul>
 <li>Install the <code>EMC-ScaleIO-gateway</code> package.</li>
 <li>Edit the
@@ -580,11 +1106,11 @@ parameter.</li>
 <li>With 1.32 we have noticed a restart of the gateway may be necessary as well
 after an initial install with <code>service scaleio-gateway restart</code>.</li>
 </ul>
-<h3 id="activating-the-driver_1">Activating the Driver</h3>
+<h4 id="activating-the-driver_5">Activating the Driver<a class="headerlink" href="#activating-the-driver_5" title="Permanent link">&para;</a></h4>
 <p>To activate the ScaleIO driver please follow the instructions for
 <a href="../config/#storage-drivers">activating storage drivers</a>,
 using <code>scaleio</code> as the driver name.</p>
-<h3 id="troubleshooting">Troubleshooting</h3>
+<h4 id="troubleshooting_3">Troubleshooting<a class="headerlink" href="#troubleshooting_3" title="Permanent link">&para;</a></h4>
 <ul>
 <li>Verify your parameters for <code>system</code>, <code>protectionDomain</code>, and
 <code>storagePool</code> are correct.</li>
@@ -605,7 +1131,7 @@ token in return.
 <li>Please review the gateway log at
 <code>/opt/emc/scaleio/gateway/logs/catalina.out</code> for errors.</li>
 </ul>
-<h3 id="examples_1">Examples</h3>
+<h4 id="examples_5">Examples<a class="headerlink" href="#examples_5" title="Permanent link">&para;</a></h4>
 <p>Below is a full <code>config.yml</code> file that works with ScaleIO.</p>
 <pre><code class="yaml">libstorage:
   server:
@@ -622,11 +1148,368 @@ token in return.
           storagePoolName: storagePoolName
 </code></pre>
 
-<h2 id="virtualbox">VirtualBox</h2>
+<h2 id="digitalocean">DigitalOcean<a class="headerlink" href="#digitalocean" title="Permanent link">&para;</a></h2>
+<p>Thanks to the efforts of our tremendous community, libStorage also has built-in
+support for DigitalOcean!</p>
+<p><a class="headerlink hiddenanchor" name="digitalocean-block-storage"></a>
+<a class="headerlink hiddenanchor" name="dobs"></a></p>
+<h3 id="do-block-storage">DO Block Storage<a class="headerlink" href="#do-block-storage" title="Permanent link">&para;</a></h3>
+<p>The DigitalOcean Block Storage (DOBS) driver registers a driver named <code>dobs</code>
+with the libStorage service registry and is used to attach and mount
+DigitalOcean block storage devices to DigitalOcean instances.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The DigitalOcean Block Storage driver currently only supports operating in
+<em>local only</em> mode where the libStorage server must be running on the same
+host as the client.</p>
+</div>
+<h4 id="requirements_5">Requirements<a class="headerlink" href="#requirements_5" title="Permanent link">&para;</a></h4>
+<p>The DigitalOcean block storage driver has the following requirements:</p>
+<ul>
+<li>Valid DigitalOcean account</li>
+<li>Valid DigitalOcean <a href="https://goo.gl/iKoAec">access token</a></li>
+</ul>
+<h4 id="configuration_6">Configuration<a class="headerlink" href="#configuration_6" title="Permanent link">&para;</a></h4>
+<p>The following example illustrates a minimal configuration for the DigitalOcean
+block storage driver:</p>
+<pre><code class="yaml">dobs:
+  token:  123456
+  region: nyc1
+</code></pre>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The standard environment variable for the DigitalOcean access token is
+<code>DIGITALOCEAN_ACCESS_TOKEN</code>. However, the environment variable mapped to
+this driver's <code>dobs.token</code> property is <code>DOBS_TOKEN</code>. This choice was made
+to ensure that the driver must be explicitly configured for access instead
+of detecting a default token that may not be intended for the driver.</p>
+</div>
+<h2 id="fittedcloud">FittedCloud<a class="headerlink" href="#fittedcloud" title="Permanent link">&para;</a></h2>
+<p>Another example of the great community shared by the libStorage project, the
+talented people at FittedCloud have provided a driver for their EBS optimizer.</p>
+<p><a class="headerlink hiddenanchor" name="fittedcloud-ebs"></a>
+<a class="headerlink hiddenanchor" name="fittedcloud-ebs-optimizer"></a></p>
+<h3 id="ebs-optimizer">EBS Optimizer<a class="headerlink" href="#ebs-optimizer" title="Permanent link">&para;</a></h3>
+<p>The FittedCloud EBS Optimizer driver registers a storage driver named
+<code>fittedcloud</code> with the libStorage service registry and provides the ability to
+connect and manage thin-provisioned EBS volumes for EC2 instances.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This version of the FittedCloud driver only supports configurations where
+client and server are on the same host.  The libStorage server must be
+running on each node along side with the FittedCloud Agent.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This version of the FittedCloud driver does not support co-existing with the
+ebs driver on the same host. As a result it also doesn't support optimizing
+existing EBS volumes.   See the <a href="#fittedcloud-examples">Examples</a> section
+below for a running example.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The FittedCloud driver does not yet support snapshots or tags.</p>
+</div>
+<h4 id="requirements_6">Requirements<a class="headerlink" href="#requirements_6" title="Permanent link">&para;</a></h4>
+<p>This driver has the following requirements:</p>
+<ul>
+<li>AWS account</li>
+<li>VPC - EBS can be accessed within VPC</li>
+<li>AWS Credentials</li>
+<li>FittedCloud Agent software</li>
+</ul>
+<p><a class="headerlink hiddenanchor" name="fittedcloud-getting-started"></a></p>
+<h4 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h4>
+<p>Before starting, please make sure to register as a user by visiting the
+FittedCloud <a href="https://customer.fittedcloud.com/register">customer website</a>.
+Once an account is activated it will be assigned a user ID, which can be found
+on the Settings page after logging into the web site.</p>
+<p>The following commands will download and install the latest FittedCloud Agent
+software. The flags <code>-o S -m</code> enable new thin volumes to be created via the
+docker command instead of optimizing existing EBS volumes.
+Please replace the <code>&lt;User ID&gt;</code> with a FittedCloud user ID.</p>
+<pre><code class="sh">$ curl -skSL 'https://customer.fittedcloud.com/downloadsoftware?ver=latest' \
+  -o fcagent.run
+$ sudo bash ./fcagent.run -- -o S -m -d &lt;User ID&gt;
+</code></pre>
+
+<p>Please refer to FittedCloud
+<a href="https://customer.fittedcloud.com/download">website</a> for more details.</p>
+<p><a class="headerlink hiddenanchor" name="fittedcloud-config"></a></p>
+<h4 id="configuration_7">Configuration<a class="headerlink" href="#configuration_7" title="Permanent link">&para;</a></h4>
+<p>The following is an example with all possible fields configured.  For a running
+example see the <code>Examples</code> section.</p>
+<pre><code class="yaml">ebs:
+  accessKey:      XXXXXXXXXX
+  secretKey:      XXXXXXXXXX
+  kmsKeyID:       abcd1234-a123-456a-a12b-a123b4cd56ef
+</code></pre>
+
+<h5 id="configuration-notes_4">Configuration Notes<a class="headerlink" href="#configuration-notes_4" title="Permanent link">&para;</a></h5>
+<ul>
+<li>FittedCloud driver shares the ebs driver's configuration
+parameters.</li>
+<li>The <code>accessKey</code> and <code>secretKey</code> configuration parameters are optional and
+should be used when explicit AWS credentials configuration needs to be provided.
+FittedCloud driver uses official golang AWS SDK library and supports all other
+ways of providing access credentials, like environment variables or instance
+profile IAM permissions.</li>
+<li>If the <code>kmsKeyID</code> field is specified it will be used as the encryption key for
+all volumes that are created with a truthy encryption request field.</li>
+</ul>
+<p><a class="headerlink hiddenanchor" name="fittedcloud-examples"></a></p>
+<h4 id="examples_6">Examples<a class="headerlink" href="#examples_6" title="Permanent link">&para;</a></h4>
+<p>The following example illustrates how to configured the FittedCloud driver:</p>
+<pre><code class="yaml">libstorage:
+  service:    fittedcloud
+ebs:
+  accessKey:  XXXXXXXXXX
+  secretKey:  XXXXXXXXXX
+</code></pre>
+
+<p>Additional information on configuring the FittedCloud driver may be found
+at <a href="https://goo.gl/I6mf20">this</a> location.</p>
+<h2 id="google">Google<a class="headerlink" href="#google" title="Permanent link">&para;</a></h2>
+<p>libStorage ships with support for Google Compute Engine (GCE) as well.</p>
+<p><a class="headerlink hiddenanchor" name="gce-persistent-disk"></a></p>
+<h3 id="gce-persistent-disk">GCE Persistent Disk<a class="headerlink" href="#gce-persistent-disk" title="Permanent link">&para;</a></h3>
+<p>The Google Compute Engine Persistent Disk (GCEPD) driver registers a driver
+named <code>gcepd</code> with the libStorage service registry and is used to connect and
+mount Google Compute Engine (GCE) persistent disks with GCE machine instances.</p>
+<h4 id="requirements_7">Requirements<a class="headerlink" href="#requirements_7" title="Permanent link">&para;</a></h4>
+<ul>
+<li>GCE account</li>
+<li>The libStorage server must be running on a GCE instance created with a Service
+  Account with appropriate permissions, or a Service Account credentials file
+  in JSON format must be supplied. If not using the Compute Engine default
+  Service Account with the Cloud Platform/"all cloud APIs" scope, create a new
+  Service Account via the <a href="https://console.cloud.google.com/iam-admin/serviceaccounts">IAM Portal</a>.
+  This Service Account requires the <code>Compute Engine/Instance Admin</code>,
+  <code>Compute Engine/Storage Admin</code>, and <code>Project/Service Account Actor</code> roles.
+  Then create/download a new private key in JSON format. see
+  <a href="https://developers.google.com/identity/protocols/OAuth2ServiceAccount#creatinganaccount">creating a service account</a>
+  for details. The libStorage service must be restarted in order for permissions
+  changes on a service account to take effect.</li>
+</ul>
+<h4 id="configuration_8">Configuration<a class="headerlink" href="#configuration_8" title="Permanent link">&para;</a></h4>
+<p>The following is an example with all possible fields configured. For a running
+example see the <code>Examples</code> section.</p>
+<pre><code class="yaml">gcepd:
+  keyfile: /etc/gcekey.json
+  zone: us-west1-b
+  defaultDiskType: pd-ssd
+  tag: rexray
+</code></pre>
+
+<h5 id="configuration-notes_5">Configuration Notes<a class="headerlink" href="#configuration-notes_5" title="Permanent link">&para;</a></h5>
+<ul>
+<li>The <code>keyfile</code> parameter is optional. It specifies a path on disk to a file
+  containing the JSON-encoded Service Account credentials. This file can be
+  downloaded from the GCE web portal. If <code>keyfile</code> is specified, the GCE
+  instance's service account is not considered, and is not necessary. If
+  <code>keyfile</code> is <em>not</em> specified, the application will try to lookup
+  <a href="https://developers.google.com/identity/protocols/application-default-credentials">application default credentials</a>.
+  This has the effect of looking for credentials in the priority described
+  <a href="https://godoc.org/golang.org/x/oauth2/google#FindDefaultCredentials">here</a>.</li>
+<li>The <code>zone</code> parameter is optional, and configures the driver to <em>only</em> allow
+  access to the given zone. Creating and listing disks from other zones will be
+  denied. If a zone is not specified, the zone from the client Instance ID will
+  be used when creating new disks.</li>
+<li>The <code>defaultDiskType</code> parameter is optional and specifies what type of disk
+  to create, either <code>pd-standard</code> or <code>pd-ssd</code>. When not specified, the default
+  is <code>pd-ssd</code>.</li>
+<li>The <code>tag</code> parameter is optional, and causes the driver to create or return
+  disks that have a matching tag. The tag is implemented by using the GCE
+  label functionality available in the beta API. The value of the <code>tag</code>
+  parameter is used as the value for a label with the key <code>libstoragetag</code>.
+  Use of this parameter is encouraged, as the driver will only return volumes
+  that have been created by the driver, which is most useful to eliminate
+  listing the boot disks of every GCE disk in your project/zone. If you wsih to
+  "expose" previously created disks to the <code>GCEPD</code> driver, you can edit the
+  labels on the existing disk to have a key of <code>libstoragetag</code> and a value
+  matching that given in <code>tag</code>.</li>
+</ul>
+<h4 id="runtime-behavior_4">Runtime behavior<a class="headerlink" href="#runtime-behavior_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li>The GCEPD driver enforces the GCE requirements for disk sizing and naming.
+  Disks must be created with a minimum size of 10GB. Disk names must adhere to
+  the regular expression of <code>[a-z]([-a-z0-9]*[a-z0-9])?</code>, which means the first
+  character must be a lowercase letter, and all following characters must be a
+  dash, lowercase letter, or digit, except the last character, which cannot be a
+  dash.</li>
+<li>If the <code>zone</code> parameter is not specified in the driver configuration, and a
+  request is received to list all volumes that does not specify a zone in the
+  InstanceID header, volumes from all zones will be returned.</li>
+<li>By default, all disks will be created with type <code>pd-ssd</code>, which creates an SSD
+  based disk. If you wish to create disks that are not SSD-based, change the
+  default via the driver config, or the type can be changed at creation time by
+  using the <code>Type</code> field of the create request.</li>
+</ul>
+<h4 id="activating-the-driver_6">Activating the Driver<a class="headerlink" href="#activating-the-driver_6" title="Permanent link">&para;</a></h4>
+<p>To activate the GCEPD driver please follow the instructions for
+<a href="../config/#storage-drivers">activating storage drivers</a>, using <code>gcepd</code> as the
+driver name.</p>
+<h4 id="troubleshooting_4">Troubleshooting<a class="headerlink" href="#troubleshooting_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Make sure that the JSON credentials file as specified in the <code>keyfile</code>
+  configuration parameter is present and accessible, or that you are running in
+  a GCE instance created with a Service Account attached. Whether using a
+  <code>keyfile</code> or the Service Account associated with the GCE instance, the Service
+  Account must have the appropriate permissions as described in
+  <code>Configuration Notes</code></li>
+</ul>
+<h4 id="examples_7">Examples<a class="headerlink" href="#examples_7" title="Permanent link">&para;</a></h4>
+<p>Below is a full <code>config.yml</code> that works with GCE</p>
+<pre><code class="yaml">libstorage:
+  server:
+    services:
+      gcepd:
+        driver: gcepd
+        gcepd:
+          keyfile: /etc/gcekey.json
+          tag: rexray
+</code></pre>
+
+<h4 id="caveats_2">Caveats<a class="headerlink" href="#caveats_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Snapshot and copy functionality is not yet implemented</li>
+<li>Most GCE instances can have up to 64 TB of total persistent disk space
+  attached. Shared-core machine types or custom machine types with less than
+  3.75 GB of memory are limited to 3 TB of total persistent disk space. Total
+  persistent disk space for an instance includes the size of the root persistent
+  disk. You can attach up to 16 independent persistent disks to most instances,
+  but instances with shared-core machine types or custom machine types with less
+  than 3.75 GB of memory are limited to a maximum of 4 persistent disks,
+  including the root persistent disk. See
+  <a href="https://cloud.google.com/compute/docs/disks/">GCE Disks</a> docs for more
+  details.</li>
+<li>If running libStorage server in a mode where volume mounts will not be
+  performed on the same host where libStorage server is running, it should be
+  possible to use a Service Account without the <code>Service Account Actor</code> role, but
+  this has not been tested. Note that if persistent disk mounts are to be
+  performed on <em>any</em> GCE instances that have a Service Account associated with
+  the, the <code>Service Account Actor</code> role is required.</li>
+</ul>
+<h2 id="microsoft">Microsoft<a class="headerlink" href="#microsoft" title="Permanent link">&para;</a></h2>
+<p>Microsoft Azure support is included with libStorage as well.</p>
+<p><a class="headerlink hiddenanchor" name="azure-ud"></a></p>
+<h3 id="azure-unmanaged-disk">Azure Unmanaged Disk<a class="headerlink" href="#azure-unmanaged-disk" title="Permanent link">&para;</a></h3>
+<p>The Microsoft Azure Unmanaged Disk (Azure UD) driver registers a driver
+named <code>azureud</code> with the libStorage service registry and is used to connect and
+mount Azure unmanaged disks from Azure page blob storage with Azure virtual
+machines.</p>
+<h4 id="requirements_8">Requirements<a class="headerlink" href="#requirements_8" title="Permanent link">&para;</a></h4>
+<ul>
+<li>An Azure account</li>
+<li>An Azure subscription</li>
+<li>An Azure storage account</li>
+<li>An Azure resource group</li>
+<li>Any virtual machine where disks are going to be attached must have the
+  <code>lsscsi</code> utility installed. You can install this with <code>yum install lsscsi</code> on
+  Red Hat based distributions, or with <code>apt-get install lsscsi</code> on Debian based
+  distributions.</li>
+</ul>
+<h4 id="configuration_9">Configuration<a class="headerlink" href="#configuration_9" title="Permanent link">&para;</a></h4>
+<p>The following is an example with all possible fields configured. For a running
+example see the <code>Examples</code> section.</p>
+<pre><code class="yaml">azureud:
+  subscriptionID: abcdef01-2345-6789-abcd-ef0123456789
+  resourceGroup: testgroup
+  tenantID: usernamehotmail.onmicrosoft.com
+  storageAccount: username
+  storageAccessKey: XXXXXXXX
+  clientID: 123def01-2345-6789-abcd-ef0123456789
+  clientSecret: XXXXXXXX
+  certPath:
+  container: vhds
+  useHTTPS: true
+</code></pre>
+
+<h5 id="configuration-notes_6">Configuration Notes<a class="headerlink" href="#configuration-notes_6" title="Permanent link">&para;</a></h5>
+<ul>
+<li><code>subscriptionID</code> is required, and is the UUID of your Azure subscription</li>
+<li><code>resourceGroup</code> is required, and is the name of the resource group for your
+  VMs and storage.</li>
+<li><code>tenantID</code> is required, and is either the domain or UUID for your active
+  directory account within Azure.</li>
+<li><code>storageAccount</code> is required, and is the name of the storage account where
+  your disks will be created.</li>
+<li><code>storageAccessKey</code> is required, and is a valid access key associated with the
+  <code>storageAccount</code>.</li>
+<li><code>clientID</code> is required, and is the UUID of your client, which was created as
+  an App Registration within your Azure active directory account.</li>
+<li><code>clientSecret</code> is required if <code>certPath</code> is not provided instead. It is a
+  valid access key associated with <code>clientID</code>, and is managed as part of the App
+  Registration.</li>
+<li><code>certPath</code> is an alternative to <code>clientSecret</code>, contains the location of a
+  PKCS encoded RSA private key associated with <code>clientID</code>.</li>
+<li><code>container</code> is optional, and specifies the name of an existing container
+  within <code>storageAccount</code>. This container must already exist and is not created
+  automatically.</li>
+<li><code>useHTTPS</code> is optional, and is a boolean value on whether to use HTTPS when
+  communicating with the Azure storage endpoint.</li>
+</ul>
+<h4 id="runtime-behavior_5">Runtime Behavior<a class="headerlink" href="#runtime-behavior_5" title="Permanent link">&para;</a></h4>
+<ul>
+<li>The <code>container</code> config option defaults to <code>vhds</code>, and this container is
+  present by default in Azure. Changing this option is only necessary if you
+  want to use a different container within your storage account.</li>
+<li>Volume Attach/Detach operations in Azure take a long time, sometimes greater
+  than 60 seconds, which is libStorage's default task timeout. When the timeout
+  is hit, libStorage returns information to the caller about a queued task, and
+  that the task is still running. This may cause issues for upstream callers.
+  It is <em>highly</em> recommended to adjust this default timeout to 120 seconds by
+  setting the <code>libstorage.server.tasks.exeTimeout</code> property. This is done in
+  the <code>Examples</code> section below.</li>
+</ul>
+<h4 id="activating-the-driver_7">Activating the Driver<a class="headerlink" href="#activating-the-driver_7" title="Permanent link">&para;</a></h4>
+<p>To activate the Azure UD driver please follow the instructions for
+<a href="../config/#storage-drivers">activating storage drivers</a>, using <code>azureud</code> as
+the driver name.</p>
+<h4 id="troubleshooting_5">Troubleshooting<a class="headerlink" href="#troubleshooting_5" title="Permanent link">&para;</a></h4>
+<ul>
+<li>After creating your app registration, you must go into the
+  <code>Required Permissions</code> tab and grant access to "Windows Azure Service
+  Management API". Choose the delegated permission for accessing as organization
+  users.</li>
+<li>You must also grant your app registration access to your subscription, by
+  going to Subscriptions-&gt;Your <code>subscriptionID</code>-&gt;Access Control (IAM). From
+  there, add your app registration as a user, which you will have to search for
+  by name. Grant the role of "Owner".</li>
+</ul>
+<h4 id="examples_8">Examples<a class="headerlink" href="#examples_8" title="Permanent link">&para;</a></h4>
+<p>Below is a full <code>config.yml</code> that works with Azure UD</p>
+<pre><code class="yaml">libstorage:
+  server:
+    tasks:
+      exeTimeout: 120s
+    services:
+      azure:
+        driver: azureud
+        azureud:
+          subscriptionID: abcdef01-2345-6789-abcd-ef0123456789
+          resourceGroup: testgroup
+          tenantID: usernamehotmail.onmicrosoft.com
+          storageAccount: username
+          storageAccessKey: XXXXXXXX
+          clientID: 123def01-2345-6789-abcd-ef0123456789
+          clientSecret: XXXXXXXX
+</code></pre>
+
+<h4 id="caveats_3">Caveats<a class="headerlink" href="#caveats_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Snapshot and Copy functionality is not yet implemented</li>
+<li>The number of disks you can attach to a Virtual Machine depends on its type.</li>
+<li>Good resources for reading about disks in Azure are
+  <a href="https://docs.microsoft.com/en-us/azure/storage/storage-standard-storage">here</a>
+  and <a href="https://docs.microsoft.com/en-us/azure/storage/storage-about-disks-and-vhds-linux">here</a>.</li>
+</ul>
+<h2 id="virtualbox">VirtualBox<a class="headerlink" href="#virtualbox" title="Permanent link">&para;</a></h2>
 <p>The VirtualBox driver registers a storage driver named <code>virtualbox</code> with the
-<code>libStorage</code> driver manager and is used by VirtualBox's VMs to connect and
+libStorage service registry and is used by VirtualBox's VMs to connect and
 manage volumes provided by VirtualBox.</p>
-<h3 id="prerequisites">Prerequisites</h3>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
 <p>In order to leverage the <code>virtualbox</code> driver, the <code>libStorage</code> client or must
 be located on each VM that you wish to be able to consume external volumes.
 The driver leverages the <code>vboxwebserv</code> HTTP SOAP API which is a process that
@@ -646,7 +1529,7 @@ with the name of the controller you wish to use.  The port count must be set
 manually as it cannot be increased when the VMs are on.  A count of <code>30</code>
 is suggested.</p>
 <p>VirtualBox 5.0.10+ must be used.</p>
-<h3 id="configuration_2">Configuration</h3>
+<h3 id="configuration_10">Configuration<a class="headerlink" href="#configuration_10" title="Permanent link">&para;</a></h3>
 <p>The following is an example configuration of the VirtualBox driver.<br />
 The <code>localMachineNameOrId</code> parameter is for development use where you force
 <code>libStorage</code> to use a specific VM identity.  Choose a <code>volumePath</code> to store the
@@ -664,11 +1547,11 @@ volume files or virtual disks.  This path should be created ahead of time.</p>
 <p>For information on the equivalent environment variable and CLI flag names
 please see the section on how non top-level configuration properties are
 <a href="../config/#configuration-properties">transformed</a>.</p>
-<h3 id="activating-the-driver_2">Activating the Driver</h3>
+<h3 id="activating-the-driver_8">Activating the Driver<a class="headerlink" href="#activating-the-driver_8" title="Permanent link">&para;</a></h3>
 <p>To activate the VirtualBox driver please follow the instructions for
 <a href="../config/#storage-drivers">activating storage drivers</a>,
 using <code>virtualbox</code> as the driver name.</p>
-<h3 id="examples_2">Examples</h3>
+<h3 id="examples_9">Examples<a class="headerlink" href="#examples_9" title="Permanent link">&para;</a></h3>
 <p>Below is a working <code>config.yml</code> file that works with VirtualBox.</p>
 <pre><code class="yaml">libstorage:
   server:
@@ -682,96 +1565,12 @@ using <code>virtualbox</code> as the driver name.</p>
           controllerName: SATA
 </code></pre>
 
-<h3 id="caveats_1">Caveats</h3>
+<h3 id="caveats_4">Caveats<a class="headerlink" href="#caveats_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Snapshot and create volume from volume functionality is not available yet
   with this driver.</li>
 <li>The driver supports VirtualBox 5.0.10+</li>
-</ul>
-<h2 id="aws-efs">AWS EFS</h2>
-<p>The AWS EFS driver registers a storage driver named <code>efs</code> with the
-<code>libStorage</code> driver manager and is used to connect and manage AWS Elastic File
-Systems.</p>
-<h3 id="requirements_1">Requirements</h3>
-<ul>
-<li>AWS account</li>
-<li>VPC - EFS can be accessed within VPC</li>
-<li>AWS Credentials</li>
-</ul>
-<h3 id="configuration_3">Configuration</h3>
-<p>The following is an example with all possible fields configured.  For a running
-example see the <code>Examples</code> section.</p>
-<pre><code class="yaml">efs:
-  accessKey:      XXXXXXXXXX
-  secretKey:      XXXXXXXXXX
-  securityGroups: sg-XXXXXXX,sg-XXXXXX0,sg-XXXXXX1
-  region:         us-east-1
-  tag:            test
-</code></pre>
-
-<h4 id="configuration-notes_1">Configuration Notes</h4>
-<ul>
-<li>The <code>accessKey</code> and <code>secretKey</code> configuration parameters are optional and should
-be used when explicit AWS credentials configuration needs to be provided. EFS driver
-uses official golang AWS SDK library and supports all other ways of providing
-access credentials, like environment variables or instance profile IAM permissions.</li>
-<li><code>region</code> represents AWS region where should be EFS provisioned. See official AWS
-documentation for list of supported regions.</li>
-<li><code>securityGroups</code> list of security groups attached to <code>MountPoint</code> instances.
-If no security groups are provided the default VPC security group is used.</li>
-<li><code>tag</code> is used to partition multiple services within single AWS account and is
-used as prefix for EFS names in format <code>[tagprefix]/volumeName</code>.</li>
-</ul>
-<p>For information on the equivalent environment variable and CLI flag names
-please see the section on how non top-level configuration properties are
-<a href="../config/#configuration-properties">transformed</a>.</p>
-<h3 id="runtime-behavior_1">Runtime Behavior</h3>
-<p>AWS EFS storage driver creates one EFS FileSystem per volume and provides root
-of the filesystem as NFS mount point. Volumes aren't attached to instances
-directly but rather exposed to each subnet by creating <code>MountPoint</code> in each VPC
-subnet. When detaching volume from instance no action is taken as there isn't
-good way to figure out if there are other instances in same subnet using
-<code>MountPoint</code> that is being detached. There is no charge for <code>MountPoint</code>
-so they are removed only once whole volume is deleted.</p>
-<p>By default all EFS instances are provisioned as <code>generalPurpose</code> performance mode.
-<code>maxIO</code> EFS type can be provisioned by providing <code>maxIO</code> flag as <code>volumetype</code>.</p>
-<p>Its possible to mount same volume to multiple container on a single EC2 instance
-as well as use single volume across multiple EC2 instances at the same time.</p>
-<p><strong>NOTE</strong>: Each EFS FileSystem can be accessed only from single VPC at the time.</p>
-<h3 id="activating-the-driver_3">Activating the Driver</h3>
-<p>To activate the AWS EFS driver please follow the instructions for
-<a href="../config/#storage-drivers">activating storage drivers</a>,
-using <code>efs</code> as the driver name.</p>
-<h3 id="troubleshooting_1">Troubleshooting</h3>
-<ul>
-<li>Make sure that AWS credentials (user or role) has following AWS permissions on
-  <code>libStorage</code> server instance that will be making calls to AWS API:</li>
-<li><code>elasticfilesystem:CreateFileSystem</code></li>
-<li><code>elasticfilesystem:CreateMountTarget</code></li>
-<li><code>ec2:DescribeSubnets</code></li>
-<li><code>ec2:DescribeNetworkInterfaces</code></li>
-<li><code>ec2:CreateNetworkInterface</code></li>
-<li><code>elasticfilesystem:CreateTags</code></li>
-<li><code>elasticfilesystem:DeleteFileSystem</code></li>
-<li><code>elasticfilesystem:DeleteMountTarget</code></li>
-<li><code>ec2:DeleteNetworkInterface</code></li>
-<li><code>elasticfilesystem:DescribeFileSystems</code></li>
-<li><code>elasticfilesystem:DescribeMountTargets</code></li>
-</ul>
-<h3 id="examples_3">Examples</h3>
-<p>Below is a working <code>config.yml</code> file that works with AWS EFS.</p>
-<pre><code class="yaml">libstorage:
-  server:
-    services:
-      efs:
-        driver: efs
-        efs:
-          accessKey:      XXXXXXXXXX
-          secretKey:      XXXXXXXXXX
-          securityGroups: sg-XXXXXXX,sg-XXXXXX0,sg-XXXXXX1
-          region:         us-east-1
-          tag:            test
-</code></pre></div>
+</ul></div>
         </div>
 
         <script src="../../js/jquery-1.10.2.min.js"></script>

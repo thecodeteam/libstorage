@@ -3,8 +3,8 @@
 
     
     <url>
-     <loc>https://github.com/emccode/libstorage/</loc>
-     <lastmod>2016-09-07</lastmod>
+     <loc>https://github.com/codedellemc/libstorage/</loc>
+     <lastmod>2017-02-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -12,42 +12,20 @@
     
         
     <url>
-     <loc>https://github.com/emccode/libstorage/user-guide/config/</loc>
-     <lastmod>2016-09-07</lastmod>
+     <loc>https://github.com/codedellemc/libstorage/user-guide/config/</loc>
+     <lastmod>2017-02-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>https://github.com/emccode/libstorage/user-guide/storage-providers/</loc>
-     <lastmod>2016-09-07</lastmod>
+     <loc>https://github.com/codedellemc/libstorage/user-guide/storage-providers/</loc>
+     <lastmod>2017-02-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>https://github.com/emccode/libstorage/user-guide/schedulers/</loc>
-     <lastmod>2016-09-07</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    
-
-    
-        
-    <url>
-     <loc>https://github.com/emccode/libstorage/dev-guide/project-guidelines/</loc>
-     <lastmod>2016-09-07</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>https://github.com/emccode/libstorage/dev-guide/build-reference/</loc>
-     <lastmod>2016-09-07</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>https://github.com/emccode/libstorage/dev-guide/release-process/</loc>
-     <lastmod>2016-09-07</lastmod>
+     <loc>https://github.com/codedellemc/libstorage/user-guide/schedulers/</loc>
+     <lastmod>2017-02-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -56,20 +34,42 @@
     
         
     <url>
-     <loc>https://github.com/emccode/libstorage/about/contributing/</loc>
-     <lastmod>2016-09-07</lastmod>
+     <loc>https://github.com/codedellemc/libstorage/dev-guide/project-guidelines/</loc>
+     <lastmod>2017-02-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>https://github.com/emccode/libstorage/about/license/</loc>
-     <lastmod>2016-09-07</lastmod>
+     <loc>https://github.com/codedellemc/libstorage/dev-guide/build-reference/</loc>
+     <lastmod>2017-02-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>https://github.com/emccode/libstorage/about/release-notes/</loc>
-     <lastmod>2016-09-07</lastmod>
+     <loc>https://github.com/codedellemc/libstorage/dev-guide/release-process/</loc>
+     <lastmod>2017-02-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    
+
+    
+        
+    <url>
+     <loc>https://github.com/codedellemc/libstorage/about/contributing/</loc>
+     <lastmod>2017-02-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>https://github.com/codedellemc/libstorage/about/license/</loc>
+     <lastmod>2017-02-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>https://github.com/codedellemc/libstorage/about/release-notes/</loc>
+     <lastmod>2017-02-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
         

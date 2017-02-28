@@ -6,8 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://github.com/emccode/libstorage/user-guide/config/">
-        <link rel="shortcut icon" href="../../favicon.ico">
+        <link rel="canonical" href="https://github.com/codedellemc/libstorage/user-guide/config/">
+        <link rel="shortcut icon" href="favicon.ico">
         
 
 	<title>Configuration - libStorage</title>
@@ -16,6 +16,7 @@
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
         <link rel="stylesheet" href="../../css/highlight.css">
         <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/emccode.css" rel="stylesheet">
         <link href="../../css/emccode-font.css" rel="stylesheet">
         <link href="../../css/hX.css" rel="stylesheet">
 
@@ -226,7 +227,7 @@
                 </li>
                 
                 <li>
-                    <a href="https://github.com/emccode/libstorage.git">
+                    <a href="https://github.com/codedellemc/libstorage.git">
                         
                             <i class="fa fa-github"></i>
                         
@@ -384,14 +385,14 @@
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="configuring-libstorage">Configuring libStorage</h1>
+<h1 id="configuring-libstorage">Configuring libStorage<a class="headerlink" href="#configuring-libstorage" title="Permanent link">&para;</a></h1>
 <p>Tweak this, turn that, peek behind the curtain...</p>
 <hr />
-<h2 id="overview">Overview</h2>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>This page reviews how to configure <code>libStorage</code> to suit any environment,
 beginning with the the most common use cases, exploring recommended guidelines,
 and finally, delving into the details of more advanced settings.</p>
-<h3 id="clientserver-configuration">Client/Server Configuration</h3>
+<h3 id="clientserver-configuration">Client/Server Configuration<a class="headerlink" href="#clientserver-configuration" title="Permanent link">&para;</a></h3>
 <p>Except when specified otherwise, the configuration examples below assume the
 <code>libStorage</code> client and server exist on the same host. However, that is not at
 all a requirement. It is fully possible, and in fact the entire purpose of
@@ -418,10 +419,10 @@ will be a few differences from the examples below:</p>
     maintains that storage platform access information.</p>
 </li>
 </ul>
-<h2 id="basic-configuration">Basic Configuration</h2>
+<h2 id="basic-configuration">Basic Configuration<a class="headerlink" href="#basic-configuration" title="Permanent link">&para;</a></h2>
 <p>This section outlines the most common configuration scenarios encountered by
 <code>libStorage</code>'s users.</p>
-<h3 id="simple">Simple</h3>
+<h3 id="simple">Simple<a class="headerlink" href="#simple" title="Permanent link">&para;</a></h3>
 <p>The first example is a simple <code>libStorage</code> configuration with the VirtualBox
 storage driver. The below example omits the host property, but the configuration
 is still valid. If the <code>libstorage.host</code> property is not found, the server is
@@ -454,7 +455,7 @@ web service is not always available at <code>10.0.2.2:18083</code>.</p>
           controllerName: SATA
 </code></pre>
 
-<h3 id="tcp">TCP</h3>
+<h3 id="tcp">TCP<a class="headerlink" href="#tcp" title="Permanent link">&para;</a></h3>
 <p>The following example illustrates how to configure a <code>libStorage</code> client and
 server running on the same host. The server has one endpoint on which it is
 accessible - a single TCP port, 7979, bound to the localhost network interface.</p>
@@ -471,7 +472,7 @@ accessible - a single TCP port, 7979, bound to the localhost network interface.<
           controllerName: SATA
 </code></pre>
 
-<h3 id="tcptls">TCP+TLS</h3>
+<h3 id="tcptls">TCP+TLS<a class="headerlink" href="#tcptls" title="Permanent link">&para;</a></h3>
 <p>The following example illustrates how to configure a <code>libStorage</code> client and
 server running on the same host. The server has one endpoint on which it is
 accessible - a single TCP port, 7979, bound to all of the host's network
@@ -506,7 +507,7 @@ encrypt communications between client and server.</p>
 introduced. This property is always present, even if not explicitly specified.
 It exists to override <code>libStorage</code> properties for the client only, such as TLS
 settings, logging, etc.</p>
-<h3 id="unix-socket">UNIX Socket</h3>
+<h3 id="unix-socket">UNIX Socket<a class="headerlink" href="#unix-socket" title="Permanent link">&para;</a></h3>
 <p>For the security conscious, there is no safer way to run a client/server setup
 on a single system than the option to use a UNIX socket. The socket offloads
 authentication and relies on the file system file access to ensure authorized
@@ -526,7 +527,7 @@ users can use the <code>libStorage</code> API.</p>
 
 <p>It is possible to apply TLS to the UNIX socket. Refer to the TCP+TLS section
 for applying TLS to the UNIX sockets.</p>
-<h3 id="multiple-endpoints">Multiple Endpoints</h3>
+<h3 id="multiple-endpoints">Multiple Endpoints<a class="headerlink" href="#multiple-endpoints" title="Permanent link">&para;</a></h3>
 <p>There may be occasions when it is desirable to provide multiple ingress vectors
 for the <code>libStorage</code> API. In these situations, configuring multiple endpoints
 is the solution. The below example illustrates how to configure three endpoints:</p>
@@ -596,7 +597,7 @@ endpoint using the value from the property <code>libstorage.host</code>. However
 when there's at least one explicitly defined endpoint, the <code>libstorage.host</code>
 property still serves a very important function -- it is the property used
 by the <code>libStorage</code> client to determine which to which endpoint to connect.</p>
-<h3 id="multiple-services">Multiple Services</h3>
+<h3 id="multiple-services">Multiple Services<a class="headerlink" href="#multiple-services" title="Permanent link">&para;</a></h3>
 <p>All of the previous examples have used the VirtualBox storage driver as the
 sole measure of how to configure a <code>libStorage</code> service. However, it is possible
 to configure many services at the same time in order to provide access to
@@ -682,7 +683,7 @@ services can also host different driver configurations. In service
 <code>virtualbox-00</code>, the volume path is <code>$HOME/VirtualBox/Volumes-00</code>,
 whereas for service <code>virtualbox-01</code>, the volume path is
 <code>$HOME/VirtualBox/Volumes-01</code>.</p>
-<h3 id="logging">Logging</h3>
+<h3 id="logging">Logging<a class="headerlink" href="#logging" title="Permanent link">&para;</a></h3>
 <p>Sometimes it helps to see a little more, or maybe even a little less,
 information in the logs. Configuring logging is quite straight-forward:</p>
 <pre><code class="yaml">libstorage:
@@ -703,16 +704,16 @@ information in the logs. Configuring logging is quite straight-forward:</p>
 
 <p>The <code>libStorage</code> configuration shown above uses a global log level of <code>warn</code>,
 and a more verbose, <code>info</code> log level for just the server.</p>
-<h2 id="advanced-configuration">Advanced Configuration</h2>
+<h2 id="advanced-configuration">Advanced Configuration<a class="headerlink" href="#advanced-configuration" title="Permanent link">&para;</a></h2>
 <p>The following sections detail every last aspect of how <code>libStorage</code> works and can
 be configured.</p>
-<h3 id="embedded-configuration">Embedded Configuration</h3>
+<h3 id="embedded-configuration">Embedded Configuration<a class="headerlink" href="#embedded-configuration" title="Permanent link">&para;</a></h3>
 <p>If <code>libStorage</code> is embedded into another application, such as
-<a href="https://github.com/emccode/rexray"><code>REX-Ray</code></a>, then that application may
+<a href="https://github.com/codedellemc/rexray"><code>REX-Ray</code></a>, then that application may
 manage its own configuration and supply the embedded <code>libStorage</code> instance
 directly with a configuration object. In this scenario, the <code>libStorage</code>
 configuration files are ignored in deference to the embedding application.</p>
-<h3 id="data-directories">Data Directories</h3>
+<h3 id="data-directories">Data Directories<a class="headerlink" href="#data-directories" title="Permanent link">&para;</a></h3>
 <p>The first time <code>libStorage</code> is executed it will create several directories if
 they do not already exist:</p>
 <ul>
@@ -726,7 +727,7 @@ mounted volumes. However, the location of these directories can also be
 influenced with the environment variable <code>LIBSTORAGE_HOME</code>. All of the above
 data directories will be placed in their same paths, but prefixed by the path
 specified via <code>LIBSTORAGE_HOME</code>, if <code>LIBSTORAGE_HOME</code> is in fact specified.</p>
-<h3 id="configuration-methods">Configuration Methods</h3>
+<h3 id="configuration-methods">Configuration Methods<a class="headerlink" href="#configuration-methods" title="Permanent link">&para;</a></h3>
 <p>There are three ways to configure <code>libStorage</code>:</p>
 <ul>
 <li>Command line options</li>
@@ -737,7 +738,7 @@ specified via <code>LIBSTORAGE_HOME</code>, if <code>LIBSTORAGE_HOME</code> is i
 options set in multiple locations that may override one another. Values set
 via CLI flags have the highest order of precedence, followed by values set by
 environment variables, followed, finally, by values set in configuration files.</p>
-<h3 id="configuration-files">Configuration Files</h3>
+<h3 id="configuration-files">Configuration Files<a class="headerlink" href="#configuration-files" title="Permanent link">&para;</a></h3>
 <p>There are two <code>libStorage</code> configuration files - global and user:</p>
 <ul>
 <li><code>/etc/libstorage/config.yml</code></li>
@@ -748,7 +749,7 @@ home directory, this is the directory of the user that starts <code>libStorage</
 if <code>libStorage</code> is being started as a service, then <code>sudo</code> is likely being used,
 which means that <code>$HOME/.libstorage/config.yml</code> won't point to <em>your</em> home
 directory, but rather <code>/root/.libstorage/config.yml</code>.</p>
-<h3 id="configuration-properties">Configuration Properties</h3>
+<h3 id="configuration-properties">Configuration Properties<a class="headerlink" href="#configuration-properties" title="Permanent link">&para;</a></h3>
 <p>The section <a href="#configuration-methods">Configuration Methods</a> mentions there are
 three ways to configure libStorage: config files, environment variables, and the
 command line. However, this section will illuminate the relationship between the
@@ -836,7 +837,7 @@ the table below the example.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="inherited-properties">Inherited Properties</h3>
+<h3 id="inherited-properties">Inherited Properties<a class="headerlink" href="#inherited-properties" title="Permanent link">&para;</a></h3>
 <p>Referring to the section on defining
 <a href="./#multiple-services">Multiple Services</a>, there is also another way
 to define the TLS settings for the external TCP endpoint. The same configuration
@@ -879,7 +880,7 @@ while the driver may only find the <code>volumePath</code> property defined unde
 configured service scope, the property access attempt travels up the
 configuration stack until it hits the <code>libstorage.server</code> scope where the
 remainder of the VirtualBox driver's properties <em>are</em> defined.</p>
-<h4 id="overriding-inherited-properties">Overriding Inherited Properties</h4>
+<h4 id="overriding-inherited-properties">Overriding Inherited Properties<a class="headerlink" href="#overriding-inherited-properties" title="Permanent link">&para;</a></h4>
 <p>It's also possible to override inherited properties as is demonstrated in the
 <a href="#logging">Logging configuration example</a> above:</p>
 <pre><code class="yaml">libstorage:
@@ -911,7 +912,7 @@ latter, server-specific value of <code>info</code> not been defined, an attempt 
 access the log level by the server would be perfectly valid since the attempt
 would traverse up the configuration data until it found the log level defined
 at the root of the configuration.</p>
-<h3 id="logging-configuration">Logging Configuration</h3>
+<h3 id="logging-configuration">Logging Configuration<a class="headerlink" href="#logging-configuration" title="Permanent link">&para;</a></h3>
 <p>The <code>libStorage</code> log level determines the level of verbosity emitted by the
 internal logger. The default level is <code>warn</code>, but there are three other levels
 as well:</p>
@@ -941,7 +942,7 @@ as well:</p>
 </tr>
 </tbody>
 </table>
-<h3 id="tasks-configuration">Tasks Configuration</h3>
+<h3 id="tasks-configuration">Tasks Configuration<a class="headerlink" href="#tasks-configuration" title="Permanent link">&para;</a></h3>
 <p>All operations received by the libStorage API are immediately enqueued into a
 Task Service in order to divorce the business objective from the scope of the
 HTTP request that delivered it. If a task completes before the HTTP request
@@ -979,14 +980,14 @@ tasks logged for 10 minutes before purging them from memory:</p>
 is parseable by the Golang
 <a href="https://golang.org/pkg/time/#ParseDuration">time.ParseDuration</a> function. For
 example, <code>1000ms</code>, <code>10s</code>, <code>5m</code>, and <code>1h</code> are all valid values.</p>
-<h3 id="driver-configuration">Driver Configuration</h3>
+<h3 id="driver-configuration">Driver Configuration<a class="headerlink" href="#driver-configuration" title="Permanent link">&para;</a></h3>
 <p>There are three types of drivers:</p>
 <ol>
 <li>OS Drivers</li>
 <li>Storage Drivers</li>
 <li>Integration Drivers</li>
 </ol>
-<h4 id="os-drivers">OS Drivers</h4>
+<h4 id="os-drivers">OS Drivers<a class="headerlink" href="#os-drivers" title="Permanent link">&para;</a></h4>
 <p>Operating system (OS) drivers enable <code>libStorage</code> to manage storage on
 the underlying OS. Currently the following OS drivers are supported:</p>
 <table>
@@ -1005,7 +1006,7 @@ the underlying OS. Currently the following OS drivers are supported:</p>
 </table>
 <p>The OS driver <code>linux</code> is automatically activated when <code>libStorage</code> is running on
 the Linux OS.</p>
-<h4 id="storage-drivers">Storage Drivers</h4>
+<h4 id="storage-drivers">Storage Drivers<a class="headerlink" href="#storage-drivers" title="Permanent link">&para;</a></h4>
 <p>Storage drivers enable <code>libStorage</code> to communicate with direct-attached or
 remote storage systems. Currently the following storage drivers are supported:</p>
 <table>
@@ -1017,11 +1018,11 @@ remote storage systems. Currently the following storage drivers are supported:</
 </thead>
 <tbody>
 <tr>
-<td><a href="../storage-providers/#isilon">Isilon</a></td>
+<td><a href="../storage-providers/#dell-emc-isilon">Dell EMC Isilon</a></td>
 <td>isilon</td>
 </tr>
 <tr>
-<td><a href="../storage-providers/#scaleio">ScaleIO</a></td>
+<td><a href="../storage-providers/#dell-emc-scaleio">Dell EMC ScaleIO</a></td>
 <td>scaleio</td>
 </tr>
 <tr>
@@ -1029,8 +1030,28 @@ remote storage systems. Currently the following storage drivers are supported:</
 <td>virtualbox</td>
 </tr>
 <tr>
-<td>..more coming</td>
-<td></td>
+<td><a href="../storage-providers/#aws-ebs">AWS EBS</a></td>
+<td>ebs, ec2</td>
+</tr>
+<tr>
+<td><a href="../storage-providers/#aws-efs">AWS EFS</a></td>
+<td>efs</td>
+</tr>
+<tr>
+<td><a href="../storage-providers/#aws-s3fs">AWS S3FS</a></td>
+<td>s3fs</td>
+</tr>
+<tr>
+<td><a href="../storage-providers/#ceph-rbd">Ceph RBD</a></td>
+<td>rbd</td>
+</tr>
+<tr>
+<td><a href="../storage-providers/#gce-persistent-disk">GCE PD</a></td>
+<td>gcepd</td>
+</tr>
+<tr>
+<td><a href="../storage-providers/#azure-ud">Azure UD</a></td>
+<td>azureud</td>
 </tr>
 </tbody>
 </table>
@@ -1044,7 +1065,7 @@ property is valid <em>only</em> on the server. Well, not really. Internally the
 <code>libStorage</code> client uses the same configuration property to denote its own
 storage driver. This internal storage driver is actually how the <code>libStorage</code>
 client communicates with the <code>libStorage</code> server.</p>
-<h4 id="integration-drivers">Integration Drivers</h4>
+<h4 id="integration-drivers">Integration Drivers<a class="headerlink" href="#integration-drivers" title="Permanent link">&para;</a></h4>
 <p>Integration drivers enable <code>libStorage</code> to integrate with schedulers and other
 storage consumers, such as <code>Docker</code> or <code>Mesos</code>. Currently the following
 integration drivers are supported:</p>
@@ -1057,17 +1078,17 @@ integration drivers are supported:</p>
 </thead>
 <tbody>
 <tr>
-<td>Docker</td>
-<td>docker</td>
+<td>Linux</td>
+<td>linux</td>
 </tr>
 </tbody>
 </table>
-<p>The integration driver <code>docker</code> provides necessary functionality to enable
+<p>The integration driver <code>linux</code> provides necessary functionality to enable
 most consuming platforms to work with storage volumes.</p>
-<h3 id="volume-configuration">Volume Configuration</h3>
+<h3 id="volume-configuration">Volume Configuration<a class="headerlink" href="#volume-configuration" title="Permanent link">&para;</a></h3>
 <p>This section describes various global configuration options related to an
 integration driver's volume operations, such as mounting and unmounting volumes.</p>
-<h4 id="volume-properties">Volume Properties</h4>
+<h4 id="volume-properties">Volume Properties<a class="headerlink" href="#volume-properties" title="Permanent link">&para;</a></h4>
 <p>The properties listed below are the global properties valid for an integration
 driver's volume-related properties.</p>
 <table>
@@ -1132,7 +1153,7 @@ the default values for volume creation requests.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="disable-create">Disable Create</h4>
+<h4 id="disable-create">Disable Create<a class="headerlink" href="#disable-create" title="Permanent link">&para;</a></h4>
 <p>The disable create feature enables you to disallow any volume creation activity.
 Any requests will be returned in a successful manner, but the create will not
 get passed to the backend storage platform.</p>
@@ -1144,7 +1165,7 @@ get passed to the backend storage platform.</p>
           disable: true
 </code></pre>
 
-<h4 id="disable-remove">Disable Remove</h4>
+<h4 id="disable-remove">Disable Remove<a class="headerlink" href="#disable-remove" title="Permanent link">&para;</a></h4>
 <p>The disable remove feature enables you to disallow any volume removal activity.
 Any requests will be returned in a successful manner, but the remove will not
 get passed to the backend storage platform.</p>
@@ -1156,7 +1177,7 @@ get passed to the backend storage platform.</p>
           disable: true
 </code></pre>
 
-<h4 id="preemption">Preemption</h4>
+<h4 id="preemption">Preemption<a class="headerlink" href="#preemption" title="Permanent link">&para;</a></h4>
 <p>There is a capability to preemptively detach any existing attachments to other
 instances before attempting a mount.  This will enable use cases for
 availability where another instance must be able to take control of a volume
@@ -1180,20 +1201,44 @@ equivalent to a power off of the existing instance for the device.</p>
 </thead>
 <tbody>
 <tr>
-<td>Isilon</td>
+<td>Dell EMC Isilon</td>
 <td>Not yet</td>
 </tr>
 <tr>
-<td>ScaleIO</td>
+<td>Dell EMC ScaleIO</td>
 <td>Yes</td>
 </tr>
 <tr>
 <td>VirtualBox</td>
 <td>Yes</td>
 </tr>
+<tr>
+<td>AWS EBS</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>AWS EFS</td>
+<td>No</td>
+</tr>
+<tr>
+<td>AWS S3FS</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Ceph RBD</td>
+<td>No</td>
+</tr>
+<tr>
+<td>GCE PD</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Azure UD</td>
+<td>Yes</td>
+</tr>
 </tbody>
 </table>
-<h4 id="ignore-used-count">Ignore Used Count</h4>
+<h4 id="ignore-used-count">Ignore Used Count<a class="headerlink" href="#ignore-used-count" title="Permanent link">&para;</a></h4>
 <p>By default accounting takes place during operations that are performed
 on <code>Mount</code>, <code>Unmount</code>, and other operations.  This only has impact when running
 as a service through the HTTP/JSON interface since the counts are persisted
@@ -1219,7 +1264,7 @@ will cause issues if <em>multiple containers</em> are sharing a volume.  If you 
 sharing volumes, it is recommended that you reset the service along with the
 accompanying container runtime (if this setting is false) to ensure they are
 synchronized.  </p>
-<h4 id="volume-path-cache">Volume Path Cache</h4>
+<h4 id="volume-path-cache">Volume Path Cache<a class="headerlink" href="#volume-path-cache" title="Permanent link">&para;</a></h4>
 <p>In order to optimize <code>Path</code> requests, the paths of actively mounted volumes
 returned as the result of a <code>List</code> request are cached. Subsequent <code>Path</code>
 requests for unmounted volumes will not dirty the cache. Only once a volume
@@ -1241,7 +1286,7 @@ entirely omit the above configuration excerpt from a production deployment, and
 the system will still use asynchronous caching. Setting the <code>async</code> property to
 <code>false</code> simply means that the initial population of the cache will be handled
 synchronously, slowing down the program's startup time.</p>
-<h4 id="volume-root-path">Volume Root Path</h4>
+<h4 id="volume-root-path">Volume Root Path<a class="headerlink" href="#volume-root-path" title="Permanent link">&para;</a></h4>
 <p>When volumes are mounted there can be an additional path that is specified to
 be created and passed as the valid mount point.  This is required for certain
 applications that do not want to place data from the root of a mount point.</p>

@@ -6,8 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://github.com/emccode/libstorage/dev-guide/build-reference/">
-        <link rel="shortcut icon" href="../../favicon.ico">
+        <link rel="canonical" href="https://github.com/codedellemc/libstorage/dev-guide/build-reference/">
+        <link rel="shortcut icon" href="favicon.ico">
         
 
 	<title>Build Reference - libStorage</title>
@@ -16,6 +16,7 @@
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
         <link rel="stylesheet" href="../../css/highlight.css">
         <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/emccode.css" rel="stylesheet">
         <link href="../../css/emccode-font.css" rel="stylesheet">
         <link href="../../css/hX.css" rel="stylesheet">
 
@@ -226,7 +227,7 @@
                 </li>
                 
                 <li>
-                    <a href="https://github.com/emccode/libstorage.git">
+                    <a href="https://github.com/codedellemc/libstorage.git">
                         
                             <i class="fa fa-github"></i>
                         
@@ -249,15 +250,43 @@
     
         <li class="main active"><a href="#build-reference">Build Reference</a></li>
         
-            <li><a href="#build-requirements">Build Requirements</a>
+            <li><a href="#basic-builds">Basic Builds</a>
+            
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#basic-build-requirements">Basic Build Requirements</a><!--
+                -->
+                </li>
+                
+                <li><a href="#basic-build-targets">Basic Build Targets</a><!--
+                -->
+                </li>
+                
+                <li><a href="#basic-build-options">Basic Build Options</a><!--
+                -->
+                </li>
+                
+                </ul>
             
             </li>
         
-            <li><a href="#cross-compilation">Cross-Compilation</a>
+            <li><a href="#advanced-builds">Advanced Builds</a>
             
-            </li>
-        
-            <li><a href="#basic-build">Basic Build</a>
+                <ul class="nav nav-stacked">
+                
+                <li><a href="#advanced-build-requirements">Advanced Build Requirements</a><!--
+                -->
+                </li>
+                
+                <li><a href="#advanced-build-targets">Advanced Build Targets</a><!--
+                -->
+                </li>
+                
+                <li><a href="#advanced-build-options">Advanced Build Options</a><!--
+                -->
+                </li>
+                
+                </ul>
             
             </li>
         
@@ -270,10 +299,122 @@
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="build-reference">Build Reference</h1>
+<h1 id="build-reference">Build Reference<a class="headerlink" href="#build-reference" title="Permanent link">&para;</a></h1>
 <p>How to build libStorage</p>
 <hr />
-<h2 id="build-requirements">Build Requirements</h2>
+<h2 id="basic-builds">Basic Builds<a class="headerlink" href="#basic-builds" title="Permanent link">&para;</a></h2>
+<p>The following one-line command is the quickest, simplest, and most
+deterministic approach to building libStorage:</p>
+<pre><code class="bash">$ git clone https://github.com/codedellemc/libstorage &amp;&amp; make -C libstorage
+</code></pre>
+
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>The above <code>make</code> command defaults to the <code>docker-build</code> target only if
+Docker is detected and running on a host, otherwise the <code>build</code> target is
+used. For more information about the <code>build</code> target, please see the
+<a href="#advanced-builds">Advanced Builds</a> section.</p>
+</div>
+<h3 id="basic-build-requirements">Basic Build Requirements<a class="headerlink" href="#basic-build-requirements" title="Permanent link">&para;</a></h3>
+<p>Building libStorage with Docker has the following requirements:</p>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Operating System</td>
+<td>Linux, OS X</td>
+</tr>
+<tr>
+<td><a href="https://www.docker.com/">Docker</a></td>
+<td>&gt;=1.11</td>
+</tr>
+<tr>
+<td><a href="https://www.gnu.org/software/make/">GNU Make</a></td>
+<td>&gt;=3.80</td>
+</tr>
+<tr>
+<td><a href="https://git-scm.com/">Git</a></td>
+<td>&gt;= 1.7</td>
+</tr>
+</tbody>
+</table>
+<p>OS X ships with a very old version of GNU Make, and a package manager like
+<a href="http://brew.sh/">Homebrew</a> can be used to install the required version.</p>
+<h3 id="basic-build-targets">Basic Build Targets<a class="headerlink" href="#basic-build-targets" title="Permanent link">&para;</a></h3>
+<p>The following targets are available when building libStorage with Docker:</p>
+<table>
+<thead>
+<tr>
+<th>Target</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker-build</code></td>
+<td>Builds libStorage inside a Docker container.</td>
+</tr>
+<tr>
+<td><code>docker-test</code></td>
+<td>Executes all of the libStorage tests inside the container.</td>
+</tr>
+<tr>
+<td><code>docker-clean</code></td>
+<td>This target stops and removes the default container used for libStorage builds. The name of the default container is <code>build-libstorage</code>.</td>
+</tr>
+<tr>
+<td><code>docker-clobber</code></td>
+<td>This target stops and removes all Docker containers that have a name that matches the name of the configured container prefix (default prefix is <code>build-libstorage</code>).</td>
+</tr>
+<tr>
+<td><code>docker-list</code></td>
+<td>Lists all Docker containers that have a name that matches the name of the configured prefix (default prefix is <code>build-libstorage</code>).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="basic-build-options">Basic Build Options<a class="headerlink" href="#basic-build-options" title="Permanent link">&para;</a></h3>
+<p>The following options (via environment variables) can be used to influence
+how libStorage is built with Docker:</p>
+<table>
+<thead>
+<tr>
+<th>Environment Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DRIVERS</code></td>
+<td>This variable can be set to a space-delimited list of driver names in order to indicate which storage platforms to support. For example, the command <code>$ DRIVERS="ebs scaleio" make docker-build</code> would build libStorage for only the EBS and ScaleIO storage platforms.</td>
+</tr>
+<tr>
+<td><code>DBUILD_ONCE</code></td>
+<td>When set to <code>1</code>, this environment variable instructs the Makefile to create a temporary, one-time use container for the subsequent build. The container is removed upon a successful build. If the build fails the container is not removed. This is because Makefile error logic is lacking. However, <code>make docker-clobber</code> can be used to easily clean up these containers. The containers will follow a given pattern using the container prefix (<code>build-libstorage</code> is the default prefix value). The one-time containers use <code>PREFIX-EPOCH</code>. For example, <code>build-libstorage-1474691232</code>.</td>
+</tr>
+<tr>
+<td><code>DGOOS</code></td>
+<td>This sets the OS target for which to build the libStorage binaries. Valid values are <code>linux</code> and <code>darwin</code>. If omitted the host OS value returned from <code>uname -s</code> is used instead.</td>
+</tr>
+<tr>
+<td><code>DLOCAL_IMPORTS</code></td>
+<td>Specify a list of space-delimited import paths that will be copied from the host OS's <code>GOPATH</code> into the container build's vendor area, overriding the dependency code that would normally be fetched by Glide.<br/><br/>For example, the project's <code>glide.yaml</code> file might specify to build REX-Ray with libStorage v0.2.1. However, the following command will build REX-Ray using the libStorage sources on the host OS at <code>$GOPATH/src/github.com/codedellemc/libstorage</code>:<br/><br/><pre lang="bash">$ DLOCAL_IMPORTS=github.com/codedellemc/libstorage make docker-build</pre>Using local sources can sometimes present a problem due to missing dependencies. Please see the next environment variable for instructions on how to overcome this issue.</td>
+</tr>
+<tr>
+<td><code>DGLIDE_YAML</code></td>
+<td>Specify a file that will be used for the container build in place of the standard <code>glide.yaml</code> file.<br/><br/>This is necessary for occasions when sources injected into the build via the <code>DLOCAL_IMPORTS</code> variable import packages that are not imported by the package specified in the project's standard <code>glide.yaml</code> file.<br/><br/>For example, if <code>glide.yaml</code> specifies that libStorage depends upon AWS SDK v1.2.2, but <code>DLOCAL_IMPORTS</code> specifies the value <code>github.com/aws/aws-sdk-go</code> and the AWS SDK source code on the host includes a new dependency not present in the v1.2.2 version, Glide will not fetch the new dependency when doing the container build.<br/><br/>So it may be necessary to use <code>DGLIDE_YAML</code> to provide a superset of the project's standard <code>glide.yaml</code> file which also includes the dependencies necessary to build the packages specified in <code>DLOCAL_IMPORTS</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="advanced-builds">Advanced Builds<a class="headerlink" href="#advanced-builds" title="Permanent link">&para;</a></h2>
+<p>While building libStorage with Docker is simple, it ultimately relies on the
+same <code>Makefile</code> included in the libStorage repository and so it's entirely
+possible (and often desirable) to build libStorage directly.</p>
+<h3 id="advanced-build-requirements">Advanced Build Requirements<a class="headerlink" href="#advanced-build-requirements" title="Permanent link">&para;</a></h3>
 <p>This project has very few build requirements, but there are still one or two
 items of which to be aware. Also, please note that this are the requirements to
 <em>build</em> <code>libStorage</code>, not run it.</p>
@@ -313,192 +454,66 @@ items of which to be aware. Also, please note that this are the requirements to
 <td><a href="https://gcc.gnu.org/">GNU C Compiler</a> (Linux only)</td>
 <td>&gt;= 4.8</td>
 </tr>
+<tr>
+<td><a href="https://www.perl.org/">Perl</a></td>
+<td>&gt;= 5.0</td>
+</tr>
+<tr>
+<td><a href="https://git-scm.com/">Git</a></td>
+<td>&gt;= 1.7</td>
+</tr>
 </tbody>
 </table>
 <p>OS X ships with a very old version of GNU Make, and a package manager like
 <a href="http://brew.sh/">Homebrew</a> can be used to install the required version.</p>
 <p>It's also possible to use GCC as the Cgo compiler for OS X or to use Clang on
 Linux, but by default Clang is used on OS X and GCC on Linux.</p>
-<h2 id="cross-compilation">Cross-Compilation</h2>
-<p>This project's
-<a href="https://github.com/emccode/libstorage/blob/master/Makefile"><code>Makefile</code></a>
-is configured by default to cross-compile certain project components for both
-Linux x86_64 and Darwin (OS X) x86_64. Therefore the build process will fail if
-the local Go environment is not configured for cross-compilation. Please take a
-minute to read this
-<a href="http://dave.cheney.net/2015/08/22/cross-compilation-with-go-1-5">blog post</a>
-regarding cross-compilation with Go &gt;=1.5.</p>
-<p>While <em>some</em> of this project's components are cross-compiled as part of a
-standard build, the project as a whole is not. This is because the project
-has key components that are dependent upon the Cgo compiler, and most build
-systems do not possess the capability to cross-compile against the C stdlib
-tool-chain.</p>
-<h2 id="basic-build">Basic Build</h2>
-<p>Building from source should be fairly straight-forward as the most basic build
-can be achieved by executing <code>make</code> from the project's root directory.</p>
-<pre><code class="sh">$ make
-make deps
-make[1]: Entering directory './github.com/emccode/libstorage'
-glide up &amp;&amp; touch glide.lock.d
-[INFO] Downloading dependencies. Please wait...
-[INFO] Fetching updates for github.com/Sirupsen/logrus.
-[INFO] Fetching updates for github.com/stretchr/testify.
-[INFO] Fetching updates for github.com/akutz/golf.
-[INFO] Fetching updates for github.com/akutz/gofig.
-[INFO] Fetching updates for github.com/appropriate/go-virtualboxclient.
-[INFO] Fetching updates for github.com/jteeuwen/go-bindata.
-[INFO] Fetching updates for github.com/emccode/goisilon.
-[INFO] Fetching updates for github.com/blang/semver.
-[INFO] Fetching updates for github.com/cesanta/validate-json.
-[INFO] Fetching updates for github.com/akutz/goof.
-[INFO] Fetching updates for github.com/emccode/goscaleio.
-[INFO] Fetching updates for github.com/akutz/gotil.
-[INFO] Setting version for github.com/Sirupsen/logrus to feature/logrus-aware-types.
-[INFO] Setting version for github.com/blang/semver to v3.0.1.
-[INFO] Setting version for github.com/jteeuwen/go-bindata to feature/md5checksum.
-[INFO] Setting version for github.com/emccode/goscaleio to 53ea76f52205380ab52b9c1f4ad89321c286bb95.
-[INFO] Setting version for github.com/emccode/goisilon to f9b53f0aaadb12a26b134830142fc537f492cb13.
-[INFO] Setting version for github.com/appropriate/go-virtualboxclient to e0978ab2ed407095400a69d5933958dd260058cd.
-[INFO] Resolving imports
-[INFO] Setting version for github.com/akutz/goof to master.
-[INFO] Setting version for github.com/akutz/gotil to master.
-[INFO] Fetching updates for github.com/spf13/pflag.
-[INFO] Setting version for github.com/spf13/pflag to b084184666e02084b8ccb9b704bf0d79c466eb1d.
-[INFO] Fetching updates for github.com/spf13/viper.
-[INFO] Setting version for github.com/spf13/viper to support/rexray.
-[INFO] Fetching updates for gopkg.in/yaml.v2.
-[INFO] Setting version for gopkg.in/yaml.v2 to b4a9f8c4b84c6c4256d669c649837f1441e4b050.
-[INFO] Fetching updates for golang.org/x/sys.
-[INFO] Fetching updates for github.com/kardianos/osext.
-[INFO] Setting version for github.com/kardianos/osext to master.
-[INFO] Fetching updates for golang.org/x/net.
-[INFO] Found Godeps.json file in vendor/github.com/stretchr/testify
-[INFO] Fetching updates for github.com/davecgh/go-spew.
-[INFO] Setting version for github.com/davecgh/go-spew to 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d.
-[INFO] Fetching updates for github.com/pmezard/go-difflib.
-[INFO] Setting version for github.com/pmezard/go-difflib to d8ed2627bdf02c080bf22230dbb337003b7aba2d.
-[INFO] Fetching updates for github.com/asaskevich/govalidator.
-[INFO] Fetching updates for github.com/BurntSushi/toml.
-[INFO] Fetching updates for github.com/kr/pretty.
-[INFO] Fetching updates for github.com/magiconair/properties.
-[INFO] Fetching updates for github.com/mitchellh/mapstructure.
-[INFO] Fetching updates for github.com/spf13/cast.
-[INFO] Fetching updates for github.com/spf13/jwalterweatherman.
-[INFO] Fetching updates for gopkg.in/fsnotify.v1.
-[INFO] Fetching updates for github.com/kr/text.
-[INFO] Downloading dependencies. Please wait...
-[INFO] Fetching updates for github.com/gorilla/mux.
-[INFO] Fetching updates for github.com/cesanta/ucl.
-[INFO] Fetching updates for github.com/gorilla/context.
-[INFO] Setting references for remaining imports
-[INFO] Project relies on 32 dependencies.
-go install github.com/emccode/libstorage/vendor/github.com/jteeuwen/go-bindata/go-bindata
-make[1]: Leaving directory './github.com/emccode/libstorage'
-make build
-make[1]: Entering directory './github.com/emccode/libstorage'
-gcc -Wall -pedantic -std=c99 cli/semaphores/open.c -o cli/semaphores/open -lpthread
-gcc -Wall -pedantic -std=c99 cli/semaphores/wait.c -o cli/semaphores/wait -lpthread
-gcc -Wall -pedantic -std=c99 cli/semaphores/signal.c -o cli/semaphores/signal -lpthread
-gcc -Wall -pedantic -std=c99 cli/semaphores/unlink.c -o cli/semaphores/unlink -lpthread
-go install ./api/types
-go install ./api/context
-go install ./api/utils
-go install ./api/registry
-go install ./api/utils/schema
-go install ./api/server/services
-go install ./api/server/httputils
-go install ./api/server/handlers
-go install ./api/utils/paths
-go install ./api/utils/config
-go install ./api/utils/semaphore
-go install ./drivers/storage/isilon
-go install ./drivers/storage/isilon/storage
-go install ./drivers/storage/scaleio
-go install ./drivers/storage/scaleio/storage
-go install ./drivers/storage/vbox
-go install ./drivers/storage/vbox/storage
-go install ./drivers/storage/vfs
-go install ./drivers/storage/vfs/storage
-go install ./imports/remote
-env GOOS=linux GOARCH=amd64 make -j $GOPATH/bin/linux_amd64/lsx-linux
-make[2]: Entering directory './github.com/emccode/libstorage'
-go install ./api/types
-go install ./drivers/storage/isilon
-go install ./api/context
-go install ./api/utils
-go install ./api/registry
-go install ./api/utils/config
-go install ./drivers/storage/isilon/executor
-go install ./drivers/storage/scaleio/executor
-go install ./drivers/storage/vbox/executor
-go install ./drivers/storage/vfs/executor
-go install ./imports/executors
-go install ./cli/lsx
-go install ./cli/lsx/lsx-linux
-make[2]: Leaving directory './github.com/emccode/libstorage'
-go install ./imports/config
-go install ./drivers/storage/isilon/executor
-go install ./drivers/storage/scaleio/executor
-go install ./drivers/storage/vbox/executor
-go install ./drivers/storage/vfs/executor
-go install ./imports/executors
-go install ./cli/lsx
-go install ./cli/lsx/lsx-darwin
-go install github.com/emccode/libstorage/vendor/github.com/jteeuwen/go-bindata/go-bindata
-$GOPATH/bin/go-bindata -md5checksum -pkg executors -prefix api/server/executors/bin -o api/server/executors/executors_generated.go api/server/executors/bin/...
-go install ./api/server/executors
-go install ./api/server/router/executor
-go install ./api/server/router/root
-go install ./api/server/router/service
-go install ./api/utils/filters
-go install ./api/server/router/volume
-go install ./api/server/router/snapshot
-go install ./api/server/router/tasks
-go install ./imports/routers
-go install ./api/server
-go install ./drivers/integration/docker
-go install ./drivers/os/darwin
-go install ./drivers/os/linux
-go install ./api/client
-go install ./drivers/storage/libstorage
-go install ./drivers/storage/vfs/client
-go install ./imports/local
-go install ./client
-go install .
-go install ./api
-go install ./api/server/router
-go install ./api/tests
-go install ./cli/lss
-go install ./cli/lss/lss-darwin
-go install ./drivers/storage/vbox/client
-make -j libstor-c libstor-s
-make[2]: Entering directory './github.com/emccode/libstorage'
-go build -buildmode=c-shared -o $GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/libstor-c.so ./c/libstor-c
-go install ./drivers/storage/isilon/storage
-go install github.com/emccode/libstorage/vendor/github.com/jteeuwen/go-bindata/go-bindata
-go build -buildmode=c-shared -o $GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/libstor-s.so ./c/libstor-s
-gcc -Wall -pedantic -std=c99 -I$GOPATH/src/github.com/emccode/libstorage/c/libstor-c \
-          -I$GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/ \
-          -L$GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/ \
-          -o $GOPATH/bin/libstor-c \
-          ./c/libstor-c.c \
-          -lstor-c
-gcc -Wall -pedantic -std=c99 -I$GOPATH/src/github.com/emccode/libstorage/c \
-          -I$GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/ \
-          -L$GOPATH/pkg/darwin_amd64/github.com/emccode/libstorage/c/ \
-          -o $GOPATH/bin/libstor-s \
-          ./c/libstor-s.c \
-          -lstor-s
-make[2]: Leaving directory './github.com/emccode/libstorage'
-make build-lss
-make[2]: Entering directory './github.com/emccode/libstorage'
-go install ./drivers/storage/isilon/storage
-go install github.com/emccode/libstorage/vendor/github.com/jteeuwen/go-bindata/go-bindata
-make[2]: Leaving directory './github.com/emccode/libstorage'
-make[1]: Leaving directory './github.com/emccode/libstorage'
-</code></pre>
-
-<h2 id="version-file">Version File</h2>
+<h3 id="advanced-build-targets">Advanced Build Targets<a class="headerlink" href="#advanced-build-targets" title="Permanent link">&para;</a></h3>
+<p>The following targets are available when building libStorage directly:</p>
+<table>
+<thead>
+<tr>
+<th>Target</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>build</code></td>
+<td>Builds libStorage.</td>
+</tr>
+<tr>
+<td><code>test</code></td>
+<td>Executes all of the libStorage tests.</td>
+</tr>
+<tr>
+<td><code>clean</code></td>
+<td>This target removes all of the source file markers.</td>
+</tr>
+<tr>
+<td><code>clobber</code></td>
+<td>This is the same as <code>clean</code> but also removes any produced artifacts.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="advanced-build-options">Advanced Build Options<a class="headerlink" href="#advanced-build-options" title="Permanent link">&para;</a></h3>
+<p>The following options (via environment variables) can be used to influence
+how libStorage is built:</p>
+<table>
+<thead>
+<tr>
+<th>Environment Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DRIVERS</code></td>
+<td>This variable can be set to a space-delimited list of driver names in order to indicate which storage platforms to support. For example, the command <code>$ DRIVERS="ebs scaleio" make build</code> would build libStorage for only the EBS and ScaleIO storage platforms.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="version-file">Version File<a class="headerlink" href="#version-file" title="Permanent link">&para;</a></h2>
 <p>There is a file at the root of the project named <code>VERSION</code>. The file contains
 a single line with the <em>target</em> version of the project in the file. The version
 follows the format:</p>

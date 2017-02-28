@@ -6,8 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://github.com/emccode/libstorage/user-guide/schedulers/">
-        <link rel="shortcut icon" href="../../favicon.ico">
+        <link rel="canonical" href="https://github.com/codedellemc/libstorage/user-guide/schedulers/">
+        <link rel="shortcut icon" href="favicon.ico">
         
 
 	<title>Schedulers - libStorage</title>
@@ -16,6 +16,7 @@
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
         <link rel="stylesheet" href="../../css/highlight.css">
         <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/emccode.css" rel="stylesheet">
         <link href="../../css/emccode-font.css" rel="stylesheet">
         <link href="../../css/hX.css" rel="stylesheet">
 
@@ -226,7 +227,7 @@
                 </li>
                 
                 <li>
-                    <a href="https://github.com/emccode/libstorage.git">
+                    <a href="https://github.com/codedellemc/libstorage.git">
                         
                             <i class="fa fa-github"></i>
                         
@@ -278,12 +279,12 @@
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="schedulers">Schedulers</h1>
+<h1 id="schedulers">Schedulers<a class="headerlink" href="#schedulers" title="Permanent link">&para;</a></h1>
 <p>Scheduling storage one resource at a time...</p>
 <hr />
-<h2 id="overview">Overview</h2>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>This page reviews the scheduling systems supported by <code>libStorage</code>.</p>
-<h2 id="docker">Docker</h2>
+<h2 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h2>
 <p><code>libStorage</code>'s '<code>Docker Integration Driver</code> is compatible with 1.10+.</p>
 <p>However, <code>Docker 1.10.2+</code> is suggested if volumes are shared between containers
 or interactive volume inspection requests are desired via the <code>/volumes</code>,
@@ -293,7 +294,7 @@ or interactive volume inspection requests are desired via the <code>/volumes</co
 <code>libStorage</code> does not provide a way to expose the <code>Docker Integration Driver</code>
 via the <code>Docker Volume Plug-in</code>, but <code>REX-Ray</code>, which embeds <code>libStorage</code>,
 does.</p>
-<h3 id="example-configuration">Example Configuration</h3>
+<h3 id="example-configuration">Example Configuration<a class="headerlink" href="#example-configuration" title="Permanent link">&para;</a></h3>
 <p>Below is an example <code>config.yml</code> that can be used.  The <code>volume.mount.preempt</code>
 is an optional parameter here which enables any host to take control of a
 volume irrespective of whether other hosts are using the volume.  If this is
@@ -323,7 +324,7 @@ create all new volumes at the specified size in GB.</p>
           controllerName: SATA
 </code></pre>
 
-<h3 id="configuration-properties">Configuration Properties</h3>
+<h3 id="configuration-properties">Configuration Properties<a class="headerlink" href="#configuration-properties" title="Permanent link">&para;</a></h3>
 <p>The Docker integration driver adheres to the properties described in the
 section on an
 <a href="../config/#volume-properties">Integration driver's volume-related properties</a>.</p>
@@ -331,7 +332,7 @@ section on an
 property <code>libstorage.integration.volume.remove.disable</code> be set to <code>true</code> in
 order to prevent <code>Docker</code> from removing external volumes in-use by containers
 that are forcefully removed.</p>
-<h3 id="caveats">Caveats</h3>
+<h3 id="caveats">Caveats<a class="headerlink" href="#caveats" title="Permanent link">&para;</a></h3>
 <p>If you restart the process which embeds <code>libStorage</code> and hosts the
 <code>Docker Volume Plug-in</code> while volumes <em>are shared between Docker containers</em>,
 then problems may arise when stopping one of the containers sharing the volume.</p>
