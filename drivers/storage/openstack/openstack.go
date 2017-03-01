@@ -16,6 +16,7 @@ func init() {
 	r.Key(gofig.String, "", "", "", "openstack.userID")
 	r.Key(gofig.String, "", "", "", "openstack.userName")
 	r.Key(gofig.String, "", "", "", "openstack.password")
+	r.Key(gofig.String, "", "", "", "openstack.tokenID")
 	r.Key(gofig.String, "", "", "", "openstack.tenantID")
 	r.Key(gofig.String, "", "", "", "openstack.tenantName")
 	r.Key(gofig.String, "", "", "", "openstack.domainID")

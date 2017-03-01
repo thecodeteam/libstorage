@@ -89,6 +89,11 @@ func (d *driver) Init(context types.Context, config gofig.Config) error {
 	} else {
 		fields["password"] = "******"
 	}
+	if d.tokenID() == "" {
+		fields["tokenId"] = ""
+	} else {
+		fields["tokenId"] = "******"
+	}
 	fields["tenantId"] = d.tenantID()
 	fields["tenantName"] = d.tenantName()
 	fields["domainId"] = d.domainID()
@@ -154,6 +159,7 @@ func (d *driver) getAuthOptions() gophercloud.AuthOptions {
 		UserID:           d.userID(),
 		Username:         d.userName(),
 		Password:         d.password(),
+		TokenID:          d.tokenID(),
 		TenantID:         d.tenantID(),
 		TenantName:       d.tenantName(),
 		DomainID:         d.domainID(),
@@ -682,6 +688,10 @@ func (d *driver) userName() string {
 
 func (d *driver) password() string {
 	return d.config.GetString("openstack.password")
+}
+
+func (d *driver) tokenID() string {
+	return d.config.GetString("openstack.tokenID")
 }
 
 func (d *driver) tenantID() string {
