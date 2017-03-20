@@ -1,0 +1,24 @@
+rexray:
+  logLevel: warn
+  modules:
+    rexray:
+      type: docker
+      libstorage:
+        service: scaleio
+      host: unix:///run/docker/plugins/rexray.sock
+libstorage:
+  service: scaleio
+  integration:
+    volume:
+      operations:
+        mount:
+          preempt: true
+scaleio:
+  endpoint: https://10.0.0.11/api
+  insecure: true
+  thinOrThick: ThinProvisioned
+  userName: admin
+  password: F00barbaz
+  systemId: 43ecfaf278877395
+  protectionDomainName: default
+  storagePoolName: default

@@ -1,0 +1,30 @@
+rexray:
+  logLevel: warn
+  modules:
+    rexray:
+      type: docker
+      libstorage:
+        service: efs
+      host: unix:///run/docker/plugins/rexray.sock
+libstorage:
+  logging:
+    httpRequests: true
+    httpResponses: true
+  integration:
+    volume:
+      operations:
+        mount:
+          preempt: true
+  service: efs
+  server:
+    endpoints:
+      private:
+        address: tcp://127.0.0.1:7979
+      public:
+        address: tcp://:7980
+    services:
+      efs:
+        driver: efs
+efs:
+  accessKey: [ACCESS_KEY]
+  secretKey: [SECRET_KEY]
