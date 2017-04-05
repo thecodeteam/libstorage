@@ -94,7 +94,7 @@ import:
 
 ### OpenStack
   - package: github.com/gophercloud/gophercloud
-    ref:     d5eda9707e146108e4d424062b602fd97a71c2e6
+    ref:     9a5595b8ffe429439c63781cdc312c254e4ad990
 
 
 ################################################################################
