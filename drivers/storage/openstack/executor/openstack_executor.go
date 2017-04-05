@@ -51,15 +51,13 @@ func (d *driver) InstanceID(
 	ctx types.Context,
 	opts types.Store) (*types.InstanceID, error) {
 
-	uuid, err := getInstanceIDFromMetadataServer()
-	if err != nil {
-		metadataServerErr := err
-		uuid, err = getInstanceIDFromCloudInitFile()
-		if err != nil {
-			cloudInitFileErr := err
-			uuid, err = getInstanceIDWithDMIDecode()
-			if err != nil {
-				return nil, fmt.Errorf("%v ; %v ; %v", cloudInitFileErr, metadataServerErr, err)
+	uuid, metadataServerErr := getInstanceIDFromMetadataServer()
+	if metadataServerErr != nil {
+		uuid, cloudInitFileErr = getInstanceIDFromCloudInitFile()
+		if cloudInitFileErr != nil {
+			uuid, dmidecodeErr = getInstanceIDWithDMIDecode()
+			if dmidecodeErr != nil {
+				return nil, fmt.Errorf("%v ; %v ; %v", cloudInitFileErr, metadataServerErr, dmidecodeErr)
 			}
 		}
 	}
@@ -73,7 +71,7 @@ func getInstanceIDFromCloudInitFile() (string, error) {
 	const instanceIDFile = "/var/lib/cloud/data/instance-id"
 	idBytes, err := ioutil.ReadFile(instanceIDFile)
 	if err != nil {
-		return "", goof.WithError("error reading file "+instanceIDFile, err)
+		return "", goof.WithFieldE("file", instanceIDFile, "error reading file", err)
 	}
 
 	instanceID := string(idBytes)
@@ -115,9 +113,17 @@ func getInstanceIDWithDMIDecode() (string, error) {
 	cmd := exec.Command("dmidecode", "-t", "system")
 	cmdOut, err := cmd.Output()
 
-	if err != nil {
-		return "", goof.WithError("error calling dmidecode", err)
+	if exiterr, ok := err.(*exec.ExitError); ok {
+		stderr := string(exiterr.Stderr)
+		ctx.WithError(
+			exiterr,
+		).WithField(
+			"stderr", stderr,
+		).Error("error calling dmidecode")
+		return nil,
+			goof.Newf("error calling dmidecode: %s", stderr)
 	}
+	return nil, goof.WithError("error calling dmidecode", err)
 
 	rp := regexp.MustCompile("UUID:(.*)")
 	uuid := strings.Replace(rp.FindString(string(cmdOut)), "UUID: ", "", -1)
@@ -140,8 +146,7 @@ func (d *driver) LocalDevices(
 	contentBytes, err := ioutil.ReadFile(file)
 	if err != nil {
 		return nil,
-			goof.WithFieldsE(
-				goof.Fields{"file": file}, "error reading file", err)
+			goof.WithFieldE("file", file, "error reading file", err)
 	}
 
 	content := string(contentBytes)

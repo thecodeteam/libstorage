@@ -8,10 +8,8 @@ BUILD_TAGS :=   gofig \
 ifneq (true,$(TRAVIS))
 BUILD_TAGS +=   libstorage_storage_driver \
 				libstorage_storage_driver_vfs \
-				libstorage_storage_driver_openstack \
 				libstorage_storage_executor \
-				libstorage_storage_executor_vfs \
-				libstorage_storage_executor_openstack
+				libstorage_storage_executor_vfs
 endif
 endif
 
@@ -1144,6 +1142,13 @@ test-rbd-clean:
 
 test-vfs:
 	DRIVERS=vfs $(MAKE) ./drivers/storage/vfs/tests/vfs.test
+
+test-openstack:
+	DRIVERS=openstack $(MAKE) deps
+	DRIVERS=openstack $(MAKE) ./drivers/storage/openstack/tests/openstack.test
+
+test-openstack-clean:
+	DRIVERS=openstack $(MAKE) clean
 
 clean: $(GO_CLEAN)
 

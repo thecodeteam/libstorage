@@ -23,6 +23,10 @@ import (
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/extensions/trusts"
 )
 
+const (
+	minSizeGiB = 1
+)
+
 type driver struct {
 	provider             *gophercloud.ProviderClient
 	clientCompute        *gophercloud.ServiceClient
@@ -145,12 +149,9 @@ func (d *driver) InstanceInspect(
 	ctx types.Context,
 	opts types.Store) (*types.Instance, error) {
 
-	iid := context.MustInstanceID(ctx)
-	if iid.ID != "" {
-		return &types.Instance{InstanceID: iid}, nil
-	}
-
-	return nil, goof.New("Can create an instance without an instanceID")
+	return &types.Instance{
+		InstanceID: context.MustInstanceID(ctx),
+	}, nil
 }
 
 func (d *driver) getAuthOptions() gophercloud.AuthOptions {
@@ -398,8 +399,7 @@ func (d *driver) SnapshotRemove(
 	opts types.Store) error {
 	resp := snapshots.Delete(d.clientBlockStorage, snapshotID)
 	if resp.Err != nil {
-		return goof.WithFieldsE(goof.Fields{
-			"snapshotId": snapshotID}, "error removing snapshot", resp.Err)
+		return goof.WithFieldE("snapshotId", snapshotID, "error removing snapshot", resp.Err)
 	}
 
 	return nil
@@ -445,9 +445,9 @@ func (d *driver) createVolume(
 	opts *types.VolumeCreateOpts) (*types.Volume, error) {
 
 	options := &volumes.CreateOpts{
-		Name:             volumeName,
-		SnapshotID:       snapshotID,
-		SourceReplica:    volumeSourceID,
+		Name:          volumeName,
+		SnapshotID:    snapshotID,
+		SourceReplica: volumeSourceID,
 	}
 
 	if opts.Type != nil {
@@ -455,6 +455,9 @@ func (d *driver) createVolume(
 	}
 	if opts.Size != nil {
 		options.Size = int(*opts.Size)
+		if options.Size < minSizeGiB {
+			options.Size = minSizeGiB
+		}
 	}
 	if opts.AvailabilityZone != nil {
 		options.AvailabilityZone = *opts.AvailabilityZone
