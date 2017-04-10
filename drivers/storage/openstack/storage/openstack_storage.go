@@ -104,7 +104,11 @@ func (d *driver) Init(context types.Context, config gofig.Config) error {
 	fields["domainName"] = d.domainName()
 
 	trustID := d.trustID()
-	fields["trustId"] = trustID
+	if trustID == "" {
+		fields["trustId"] = ""
+	} else {
+		fields["trustId"] = "******"
+	}
 
 	d.provider, err = openstack.NewClient(authOpts.IdentityEndpoint)
 	if err != nil {
@@ -382,7 +386,7 @@ func (d *driver) VolumeSnapshot(
 
 	ctx.WithFields(fields).Info("waiting for snapshot creation to complete")
 
-	err = snapshots.WaitForStatus(d.clientBlockStorage, snapshot.ID, "available", int(d.volumeSnapshotTimeout().Seconds()))
+	err = snapshots.WaitForStatus(d.clientBlockStorage, snapshot.ID, "available", int(d.snapshotTimeout().Seconds()))
 	if err != nil {
 		return nil,
 			goof.WithFieldsE(fields,
@@ -391,6 +395,21 @@ func (d *driver) VolumeSnapshot(
 
 	return translateSnapshot(snapshot), nil
 
+}
+
+func waitFor404(c *gophercloud.ServiceClient, url string, secs int) error {
+	return gophercloud.WaitFor(secs, func() (bool, error) {
+		ret, err := c.Get(url, nil, nil)
+
+		if err != nil {
+			if ret != nil && ret.StatusCode == 404 {
+				return true, nil
+			}
+			return false, err
+		}
+
+		return false, nil
+	})
 }
 
 func (d *driver) SnapshotRemove(
@@ -402,6 +421,10 @@ func (d *driver) SnapshotRemove(
 		return goof.WithFieldE("snapshotId", snapshotID, "error removing snapshot", resp.Err)
 	}
 
+	err := waitFor404(d.clientBlockStorage, d.clientBlockStorage.ServiceURL("snapshots", snapshotID), int(d.deleteTimeout().Seconds()))
+	if err != nil {
+		return goof.WithFieldE("snapshotId", snapshotID, "error waiting for snapshot removal", err)
+	}
 	return nil
 }
 
@@ -486,7 +509,7 @@ func (d *driver) createVolume(
 		fields["volumeId"] = volume.ID
 
 		ctx.WithFields(fields).Info("waiting for volume creation to complete")
-		err = volumes.WaitForStatus(d.clientBlockStoragev2, volume.ID, "available", int(d.volumeCreateTimeout().Seconds()))
+		err = volumes.WaitForStatus(d.clientBlockStoragev2, volume.ID, "available", int(d.createTimeout().Seconds()))
 		if err != nil {
 			return nil,
 				goof.WithFieldsE(fields,
@@ -505,7 +528,7 @@ func (d *driver) createVolume(
 	fields["volumeId"] = volume.ID
 
 	ctx.WithFields(fields).Info("waiting for volume creation to complete")
-	err = volumesv1.WaitForStatus(d.clientBlockStorage, volume.ID, "available", int(d.volumeCreateTimeout().Seconds()))
+	err = volumesv1.WaitForStatus(d.clientBlockStorage, volume.ID, "available", int(d.createTimeout().Seconds()))
 	if err != nil {
 		return nil,
 			goof.WithFieldsE(fields,
@@ -526,16 +549,21 @@ func (d *driver) VolumeRemove(
 		return goof.WithFields(fields, "volumeId is required")
 	}
 
+	volumesClient := d.clientBlockStorage
+	var res gophercloud.ErrResult
 	if d.clientBlockStoragev2 != nil {
-		res := volumes.Delete(d.clientBlockStoragev2, volumeID)
-		if res.Err != nil {
-			return goof.WithFieldsE(fields, "error removing volume", res.Err)
-		}
+		volumesClient = d.clientBlockStoragev2
+		res = volumes.Delete(d.clientBlockStoragev2, volumeID).ErrResult
 	} else {
-		res := volumesv1.Delete(d.clientBlockStorage, volumeID)
-		if res.Err != nil {
-			return goof.WithFieldsE(fields, "error removing volume", res.Err)
-		}
+		res = volumesv1.Delete(d.clientBlockStorage, volumeID).ErrResult
+	}
+
+	if res.Err != nil {
+		return goof.WithFieldsE(fields, "error removing volume", res.Err)
+	}
+	err := waitFor404(volumesClient, volumesClient.ServiceURL("volumes", volumeID), int(d.deleteTimeout().Seconds()))
+	if err != nil {
+		return goof.WithFieldsE(fields, "error waiting for volume removal", err)
 	}
 
 	return nil
@@ -578,7 +606,7 @@ func (d *driver) VolumeAttach(
 	}
 
 	ctx.WithFields(fields).Debug("waiting for volume to attach")
-	volume, err := d.waitVolumeAttachStatus(ctx, volumeID, true, 30*time.Second)
+	volume, err := d.waitVolumeAttachStatus(ctx, volumeID, true, d.attachTimeout())
 	if err != nil {
 		return nil, "", goof.WithFieldsE(
 			fields, "error waiting for volume to attach", err)
@@ -609,7 +637,7 @@ func (d *driver) VolumeDetach(
 	}
 
 	ctx.WithFields(fields).Debug("waiting for volume to detach")
-	volume, err := d.waitVolumeAttachStatus(ctx, volumeID, false, 30*time.Second)
+	volume, err := d.waitVolumeAttachStatus(ctx, volumeID, false, d.attachTimeout())
 	if err == nil {
 		return volume, nil
 	}
@@ -621,7 +649,7 @@ func (d *driver) VolumeDetach(
 			return nil, goof.WithFieldsE(fields, "error force detaching volume", resp.Err)
 		}
 
-		volume, err = d.waitVolumeAttachStatus(ctx, volumeID, false, 30*time.Second)
+		volume, err = d.waitVolumeAttachStatus(ctx, volumeID, false, d.attachTimeout())
 		if err != nil {
 			return nil, goof.WithFieldsE(
 				fields, "error waiting for volume to force detach", err)
@@ -725,8 +753,8 @@ func (d *driver) trustID() string {
 	return d.config.GetString("openstack.trustID")
 }
 
-func (d *driver) volumeCreateTimeout() time.Duration {
-	strVal := d.config.GetString("openstack.volumeCreateTimeout")
+func (d *driver) timeout() time.Duration {
+	strVal := d.config.GetString("openstack.timeout")
 	val, err := time.ParseDuration(strVal)
 
 	if err != nil || val <= 0 {
@@ -735,12 +763,42 @@ func (d *driver) volumeCreateTimeout() time.Duration {
 	return val
 }
 
-func (d *driver) volumeSnapshotTimeout() time.Duration {
-	strVal := d.config.GetString("openstack.volumeSnapshotTimeout")
+func (d *driver) attachTimeout() time.Duration {
+	strVal := d.config.GetString("openstack.attachTimeout")
 	val, err := time.ParseDuration(strVal)
 
 	if err != nil || val <= 0 {
-		val = 10 * time.Minute
+		val = d.timeout()
+	}
+	return val
+}
+
+func (d *driver) deleteTimeout() time.Duration {
+	strVal := d.config.GetString("openstack.deleteTimeout")
+	val, err := time.ParseDuration(strVal)
+
+	if err != nil || val <= 0 {
+		val = d.timeout()
+	}
+	return val
+}
+
+func (d *driver) createTimeout() time.Duration {
+	strVal := d.config.GetString("openstack.createTimeout")
+	val, err := time.ParseDuration(strVal)
+
+	if err != nil || val <= 0 {
+		val = d.timeout()
+	}
+	return val
+}
+
+func (d *driver) snapshotTimeout() time.Duration {
+	strVal := d.config.GetString("openstack.snapshotTimeout")
+	val, err := time.ParseDuration(strVal)
+
+	if err != nil || val <= 0 {
+		val = d.timeout()
 	}
 	return val
 }
