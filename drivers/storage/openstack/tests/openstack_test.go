@@ -20,23 +20,15 @@ import (
 	"github.com/codedellemc/libstorage/api/types"
 	"github.com/codedellemc/libstorage/api/utils"
 
-	// load the driver
 	openstack "github.com/codedellemc/libstorage/drivers/storage/openstack"
-	openstackx "github.com/codedellemc/libstorage/drivers/storage/openstack/executor"
+	// load and register the driver
+	_ "github.com/codedellemc/libstorage/drivers/storage/openstack/executor"
+	_ "github.com/codedellemc/libstorage/drivers/storage/openstack/storage"
 )
 
 // configYAML is an embedded config file that specifies the bare minimum
 // configuration for creating an openstack volume.
-var configYAML = []byte(`
-openstack:
-  authURL: ` + os.Getenv("OS_AUTH_URL") + `
-  username: ` + os.Getenv("OS_USERNAME") + `
-  tenantName: ` + os.Getenv("OS_TENANT_NAME") + `
-  domainName: ` + os.Getenv("OS_USER_DOMAIN_NAME") + `
-  password: ` + os.Getenv("OS_PASSWORD") + `
-  availabilityZoneName: ` + os.Getenv("OS_AVAILABILITY_ZONE") + `
-  regionName: ` + os.Getenv("OS_REGION_NAME") + `
-`)
+var configYAML []byte
 
 var volumeName string
 var volumeName2 string
@@ -57,6 +49,22 @@ func init() {
 	uuid, _ = types.NewUUID()
 	uuids = strings.Split(uuid.String(), "-")
 	volumeName2 = uuids[0]
+
+	tenantName := os.Getenv("OS_TENANT_NAME")
+	if tenantName == "" {
+		tenantName = os.Getenv("OS_PROJECT_NAME")
+	}
+
+	configYAML = []byte(`
+openstack:
+  authURL: ` + os.Getenv("OS_AUTH_URL") + `
+  username: ` + os.Getenv("OS_USERNAME") + `
+  tenantName: ` + tenantName + `
+  domainName: ` + os.Getenv("OS_USER_DOMAIN_NAME") + `
+  password: ` + os.Getenv("OS_PASSWORD") + `
+  availabilityZoneName: ` + os.Getenv("OS_AVAILABILITY_ZONE") + `
+  regionName: ` + os.Getenv("OS_REGION_NAME") + `
+`)
 }
 
 func TestMain(m *testing.M) {
@@ -74,16 +82,25 @@ func TestInstanceID(t *testing.T) { //PASSES lowercase hidden for testing other 
 	if err != nil {
 		t.Fatal(err)
 	}
+	se, err := registry.NewStorageExecutor(openstack.Name)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ctx := context.Background()
 	configR := registry.NewConfig()
 	if err := configR.ReadConfig(bytes.NewReader(configYAML)); err != nil {
 		panic(err)
 	}
+
 	if err := sd.Init(ctx, configR); err != nil {
 		t.Fatal(err)
 	}
-	iid, err := openstackx.InstanceID(configR)
+	if err := se.Init(ctx, configR); err != nil {
+		t.Fatal(err)
+	}
+
+	iid, err := se.InstanceID(ctx, utils.NewStore())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -346,26 +363,22 @@ func TestVolumeAttach(t *testing.T) { //PASSES lowercase hidden to test other st
 	apitests.Run(t, openstack.Name, configYAML, tf)
 }
 
-func testSnapshots(t *testing.T) { //currently fails due to timeout lowercase privated for now
+func TestSnapshots(t *testing.T) {
 	if skipTests() {
 		t.SkipNow()
 	}
 	var vol *types.Volume
 	var cvol *types.Volume
 	var snap *types.Snapshot
-	var csnap *types.Snapshot
 	tf := func(config gofig.Config, client types.Client, t *testing.T) {
 		vol = volumeCreate(t, client, volumeName)
 		snap = volumeSnapshot(t, client, vol.ID, "libstorage test snapshot")
 		_ = snapshotInspect(t, client, snap.ID)
 		_ = snapshotByName(t, client, "libstorage test snapshot")
-		csnap = snapshotCopy(t, client, snap.ID, "listorage snapshot copy", "DestinationID not used")
-		_ = snapshotInspect(t, client, csnap.ID)
 		cvol = volumeCreateFromSnapshot(t, client, snap.ID, volumeName2)
 		_ = volumeInspectDetached(t, client, cvol.ID)
 		volumeRemove(t, client, cvol.ID)
 		snapshotRemove(t, client, snap.ID)
-		snapshotRemove(t, client, csnap.ID)
 		volumeRemove(t, client, vol.ID)
 	}
 	apitests.Run(t, openstack.Name, configYAML, tf)
