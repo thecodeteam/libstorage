@@ -753,22 +753,12 @@ func (d *driver) trustID() string {
 	return d.config.GetString("openstack.trustID")
 }
 
-func (d *driver) timeout() time.Duration {
-	strVal := d.config.GetString("openstack.timeout")
-	val, err := time.ParseDuration(strVal)
-
-	if err != nil || val <= 0 {
-		val = 10 * time.Minute
-	}
-	return val
-}
-
 func (d *driver) attachTimeout() time.Duration {
 	strVal := d.config.GetString("openstack.attachTimeout")
 	val, err := time.ParseDuration(strVal)
 
 	if err != nil || val <= 0 {
-		val = d.timeout()
+		val = 1 * time.Minute
 	}
 	return val
 }
@@ -778,7 +768,7 @@ func (d *driver) deleteTimeout() time.Duration {
 	val, err := time.ParseDuration(strVal)
 
 	if err != nil || val <= 0 {
-		val = d.timeout()
+		val = 10 * time.Minute
 	}
 	return val
 }
@@ -788,7 +778,7 @@ func (d *driver) createTimeout() time.Duration {
 	val, err := time.ParseDuration(strVal)
 
 	if err != nil || val <= 0 {
-		val = d.timeout()
+		val = 10 * time.Minute
 	}
 	return val
 }
@@ -798,7 +788,7 @@ func (d *driver) snapshotTimeout() time.Duration {
 	val, err := time.ParseDuration(strVal)
 
 	if err != nil || val <= 0 {
-		val = d.timeout()
+		val = 10 * time.Minute
 	}
 	return val
 }
