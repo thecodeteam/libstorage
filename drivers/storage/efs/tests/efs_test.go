@@ -22,56 +22,54 @@ import (
 
 	// load the driver
 	"github.com/codedellemc/libstorage/drivers/storage/efs"
-	efsx "github.com/codedellemc/libstorage/drivers/storage/efs/executor"
+	efsUtils "github.com/codedellemc/libstorage/drivers/storage/efs/utils"
 )
 
 var (
 	configYAML = []byte(`
+libstorage:
+  service: efs
+  integration:
+    volume:
+      operations:
+        mount:
+          preempt: true
 efs:
-  tag: %s
-  region: %s
-  securityGroups: %s
+  region: us-west-2
+  endpoint: ec2.us-west-2.amazonaws.com
+  accessKey: %s
+  secretKey: %s
 `)
 )
 
+var volumeName string
+var volumeName2 string
+
+// Check environment vars to see whether or not to run this test
 func skipTests() bool {
 	travis, _ := strconv.ParseBool(os.Getenv("TRAVIS"))
 	noTest, _ := strconv.ParseBool(os.Getenv("TEST_SKIP_EFS"))
 	return travis || noTest
 }
 
-var volumeName string
-var volumeName2 string
-
 func init() {
-	uuid, _ := types.NewUUID()
-	uuids := strings.Split(uuid.String(), "-")
-	volumeName = uuids[0]
-	uuid, _ = types.NewUUID()
-	uuids = strings.Split(uuid.String(), "-")
-	volumeName2 = uuids[0]
+	volumeName = os.Getenv("FIRST_VOLUME")
+	if len(volumeName) == 0 {
+		uuid, _ := types.NewUUID()
+		uuids := strings.Split(uuid.String(), "-")
+		volumeName = uuids[0]
+	}
+	volumeName2 = os.Getenv("SECOND_VOLUME")
+	if len(volumeName2) == 0 {
+		uuid, _ := types.NewUUID()
+		uuids := strings.Split(uuid.String(), "-")
+		volumeName2 = uuids[0]
+	}
 
 	// Build configuration based on provided environmet
-	awsRegion := os.Getenv("AWS_REGION")
-	awsSecurityGroups := os.Getenv("AWS_EFS_SECURITY_GROUPS")
-	awsTag := os.Getenv("AWS_EFS_TAG")
-
-	if awsTag == "" {
-		awsTag = "integrationtest"
-	}
-	if awsRegion == "" {
-		awsRegion = "us-east-1"
-	}
-	if awsSecurityGroups == "" {
-		awsSecurityGroups = "sg-4bf71430"
-	}
-	configYAML = []byte(fmt.Sprintf(string(configYAML[:]), awsTag, awsRegion, awsSecurityGroups))
-
-	log.WithFields(log.Fields{
-		"efs.tag":            awsTag,
-		"efs.region":         awsRegion,
-		"efs.securityGroups": awsSecurityGroups,
-	}).Info("Test environment initialized")
+	awsAccessKey := os.Getenv("AWS_ACCESSKEY")
+	awsSecretKey := os.Getenv("AWS_SECRETKEY")
+	configYAML = []byte(fmt.Sprintf(string(configYAML[:]), awsAccessKey, awsSecretKey))
 }
 
 func TestMain(m *testing.M) {
@@ -95,7 +93,7 @@ func TestInstanceID(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	iid, err := efsx.InstanceID()
+	iid, err := efsUtils.InstanceID(ctx)
 	assert.NoError(t, err)
 	if err != nil {
 		t.Error("failed TestInstanceID")

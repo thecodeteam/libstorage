@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script launches infrastructure required for testing the EFS storage driver.
+# This script launches infrastructure required for testing the EBS storage driver.
 # It spins up VPC and EC2 instance so AWS account owner will get charged for time
 # that resources will be running.
 
@@ -89,8 +89,8 @@ else
   exit 1
 fi
 
-rm -f ./efs-uniquename
-echo ${CF_STACK_NAME} > ./efs-uniquename
+rm -f ./ebs-uniquename
+echo ${CF_STACK_NAME} > ./ebs-uniquename
 
 if [ ! -f ~/.aws/credentials ]; then
   aws configure set aws_access_key_id ${AWS_ACCESSKEY}

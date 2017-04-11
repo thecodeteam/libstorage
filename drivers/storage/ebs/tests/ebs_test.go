@@ -3,6 +3,7 @@
 package ebs
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -26,15 +27,34 @@ import (
 // Put contents of sample config.yml here
 var (
 	configYAMLec2 = []byte(`
+libstorage:
+  service: ec2
+  integration:
+    volume:
+      operations:
+        mount:
+          preempt: true
 ec2:
   region: us-west-2
-  tag: RR
-  endpoint: ec2.us-west-2.amazonaws.com`)
+  endpoint: ec2.us-west-2.amazonaws.com
+  accessKey: %s
+  secretKey: %s
+`)
+
 	configYAMLebs = []byte(`
+libstorage:
+  service: ebs
+  integration:
+    volume:
+      operations:
+        mount:
+          preempt: true
 ebs:
   region: us-west-2
-  tag: RR
-  endpoint: ec2.us-west-2.amazonaws.com`)
+  endpoint: ec2.us-west-2.amazonaws.com
+  accessKey: %s
+  secretKey: %s
+`)
 )
 
 var volumeName string
@@ -50,12 +70,28 @@ func skipTests() bool {
 
 // Set volume names to first part of UUID before the -
 func init() {
-	uuid, _ := types.NewUUID()
-	uuids := strings.Split(uuid.String(), "-")
-	volumeName = uuids[0]
-	uuid, _ = types.NewUUID()
-	uuids = strings.Split(uuid.String(), "-")
-	volumeName2 = uuids[0]
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.DebugLevel)
+
+	volumeName = os.Getenv("FIRST_VOLUME")
+	if len(volumeName) == 0 {
+		uuid, _ := types.NewUUID()
+		uuids := strings.Split(uuid.String(), "-")
+		volumeName = uuids[0]
+	}
+	volumeName2 = os.Getenv("SECOND_VOLUME")
+	if len(volumeName2) == 0 {
+		uuid, _ := types.NewUUID()
+		uuids := strings.Split(uuid.String(), "-")
+		volumeName2 = uuids[0]
+	}
+
+	// Build configuration based on provided environmet
+	awsAccessKey := os.Getenv("AWS_ACCESSKEY")
+	awsSecretKey := os.Getenv("AWS_SECRETKEY")
+
+	configYAMLec2 = []byte(fmt.Sprintf(string(configYAMLec2[:]), awsAccessKey, awsSecretKey))
+	configYAMLebs = []byte(fmt.Sprintf(string(configYAMLebs[:]), awsAccessKey, awsSecretKey))
 }
 
 func TestMain(m *testing.M) {
@@ -73,12 +109,12 @@ func TestConfig(t *testing.T) {
 		t.SkipNow()
 	}
 	tfEBS := func(config gofig.Config, client types.Client, t *testing.T) {
-		assert.NotEqual(t, config.GetString("ebs.tag"), "")
-		assert.Equal(t, config.GetString("ec2.tag"), "")
+		assert.NotEqual(t, config.GetString("ebs.accessKey"), "")
+		assert.Equal(t, config.GetString("ec2.accessKey"), "")
 	}
 	tfEC2 := func(config gofig.Config, client types.Client, t *testing.T) {
-		assert.NotEqual(t, config.GetString("ec2.tag"), "")
-		assert.Equal(t, config.GetString("ebs.tag"), "")
+		assert.NotEqual(t, config.GetString("ec2.accessKey"), "")
+		assert.Equal(t, config.GetString("ebs.accessKey"), "")
 	}
 	apitests.Run(t, "ec2", configYAMLebs, tfEBS)
 	apitests.Run(t, "ec2", configYAMLec2, tfEC2)
@@ -104,6 +140,7 @@ func TestInstanceID(t *testing.T) {
 	if err := sd.Init(ctx, registry.NewConfig()); err != nil {
 		t.Fatal(err)
 	}
+
 	// Get Instance ID metadata from executor
 	iid, err := ebsUtils.InstanceID(ctx, ebs.Name)
 	assert.NoError(t, err)
@@ -127,7 +164,6 @@ func TestInstanceID(t *testing.T) {
 			Driver:   ebs.Name,
 			Expected: iid,
 		}).Test)
-
 }
 
 // Check if InstanceID metadata is properly returned by executor
@@ -138,7 +174,7 @@ func TestInstanceIDEC2(t *testing.T) {
 	}
 
 	// create storage driver
-	sd, err := registry.NewStorageDriver("ec2")
+	sd, err := registry.NewStorageDriver("ebs")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -148,6 +184,7 @@ func TestInstanceIDEC2(t *testing.T) {
 	if err := sd.Init(ctx, registry.NewConfig()); err != nil {
 		t.Fatal(err)
 	}
+
 	// Get Instance ID metadata from executor
 	iid, err := ebsUtils.InstanceID(ctx, ebs.NameEC2)
 	assert.NoError(t, err)
@@ -171,7 +208,6 @@ func TestInstanceIDEC2(t *testing.T) {
 			Driver:   ebs.NameEC2,
 			Expected: iid,
 		}).Test)
-
 }
 
 // Test if Services are configured and returned properly from the client
@@ -205,9 +241,9 @@ func TestVolumeAttach(t *testing.T) {
 	if skipTests() {
 		t.SkipNow()
 	}
-	var vol *types.Volume
+
 	tf := func(config gofig.Config, client types.Client, t *testing.T) {
-		vol = volumeCreate(t, client, volumeName,
+		vol := volumeCreate(t, client, volumeName,
 			config.GetString("ec2.tag"))
 		_ = volumeAttach(t, client, vol.ID)
 		_ = volumeInspectAttached(t, client, vol.ID)
@@ -216,7 +252,8 @@ func TestVolumeAttach(t *testing.T) {
 		_ = volumeInspectDetached(t, client, vol.ID)
 		volumeRemove(t, client, vol.ID)
 	}
-	apitests.Run(t, ebs.Name, configYAMLec2, tf)
+
+	apitests.Run(t, ebs.Name, configYAMLebs, tf)
 }
 
 // Test volume functionality from storage driver
@@ -230,8 +267,8 @@ func TestVolumeCreateRemove(t *testing.T) {
 			config.GetString("ec2.tag"))
 		volumeRemove(t, client, vol.ID)
 	}
-	apitests.Run(t, ebs.Name, configYAMLec2, tf)
-	//apitests.Run(t, "ebs", configYAMLec2, tf)
+
+	apitests.Run(t, ebs.Name, configYAMLebs, tf)
 }
 
 // Test volume functionality from storage driver
@@ -245,8 +282,8 @@ func TestEncryptedVolumeCreateRemove(t *testing.T) {
 			config.GetString("ec2.tag"))
 		volumeRemove(t, client, vol.ID)
 	}
-	apitests.Run(t, ebs.Name, configYAMLec2, tf)
-	//apitests.Run(t, "ebs", configYAMLec2, tf)
+
+	apitests.Run(t, ebs.Name, configYAMLebs, tf)
 }
 
 // Test volume functionality from storage driver
@@ -269,7 +306,8 @@ func TestVolumes(t *testing.T) {
 		volumeRemove(t, client, vol1.ID)
 		volumeRemove(t, client, vol2.ID)
 	}
-	apitests.Run(t, ebs.Name, configYAMLec2, tf)
+
+	apitests.Run(t, ebs.Name, configYAMLebs, tf)
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -307,10 +345,6 @@ func volumeCreate(
 	}
 	apitests.LogAsJSON(reply, t)
 
-	// If tag is set, then add tag to expected volumeName
-	if tag != "" {
-		volumeName = tag + ebs.TagDelimiter + volumeName
-	}
 	// Check if name and size are same
 	assert.Equal(t, volumeName, reply.Name)
 	assert.Equal(t, size, reply.Size)
@@ -323,6 +357,7 @@ func volumeCreateEncrypted(
 	client types.Client,
 	volumeName,
 	tag string) *types.Volume {
+
 	log.WithField("volumeName", volumeName).Info(
 		"creating encrypted volume")
 	// Prepare request for storage driver call to create volume
@@ -351,10 +386,6 @@ func volumeCreateEncrypted(
 	}
 	apitests.LogAsJSON(reply, t)
 
-	// If tag is set, then add tag to expected volumeName
-	if tag != "" {
-		volumeName = tag + ebs.TagDelimiter + volumeName
-	}
 	// Check if name and size are same, and volume is encrypted
 	assert.Equal(t, volumeName, reply.Name)
 	assert.Equal(t, size, reply.Size)
@@ -378,10 +409,7 @@ func volumeByName(
 	if err != nil {
 		t.FailNow()
 	}
-	// If tag is set, then add tag to expected volumeName
-	if tag != "" {
-		volumeName = tag + ebs.TagDelimiter + volumeName
-	}
+
 	// Filter volumes to those under the ec2 service,
 	// and find a volume matching inputted volume name
 	assert.Contains(t, vols, ebs.Name)

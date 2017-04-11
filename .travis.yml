@@ -15,7 +15,7 @@ env:
   - VFS_INSTANCEID_USE_FIELDS=true BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
   - LIBSTORAGE_TEST_TCP=false LIBSTORAGE_TEST_TCP_TLS=true BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
   - LIBSTORAGE_TEST_TCP=false LIBSTORAGE_TEST_TCP_TLS_PEERS=true BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
-  - BUILD_TAGS="gofig pflag libstorage_integration_driver_linux"
+  - BUILD_TAGS="gofig pflag libstorage_integration_driver_linux" TRAVIS_TESTING=true DRIVERS="scaleio ebs efs" COVERAGE_ENABLED=1
   - BUILD_TAGS=""
 
 matrix:
@@ -59,6 +59,7 @@ script:
   - make gometalinter-all
   - make -j build
   - if [ "$BUILD_TAGS" = "$DEFAULT_BUILD_TAGS" ] && [ "$TRAVIS_GO_VERSION" = "$COVERED_GO_VERSION" ]; then make -j test; fi
+  - if [ "$COVERAGE_ENABLED" == "1" ] && [ "$TRAVIS_TESTING" == "true" ] && [ "$GOVERSION" == "1.8" ]; then IFS=' ' read -r -a array <<< "$DRIVERS"; for element in "${array[@]}"; do ./drivers/storage/$element/tests/test-env-down.sh; done fi
 
 after_success:
   - if [ "$BUILD_TAGS" = "$DEFAULT_BUILD_TAGS" ] && [ "$TRAVIS_GO_VERSION" = "$COVERED_GO_VERSION" ]; then make -j cover; fi
@@ -69,3 +70,4 @@ addons:
     - ubuntu-toolchain-r-test
     packages:
     - gcc-4.8
+    - parallel

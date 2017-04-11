@@ -31,7 +31,8 @@
         "parent": "19117008-4607-4d30-95d7-9e27b231f551",
         "embeds": [
           "b2904db7-7420-44e0-9bd7-078c253f58e8",
-          "05dd39d3-73fc-4732-be16-9966f7fa4769"
+          "05dd39d3-73fc-4732-be16-9966f7fa4769",
+          "0b3b1e8b-5559-4a13-bf67-7312d43b361c"
         ]
       },
       "d232ad6c-80ca-4c33-ac38-bbbf89e7dd4a": {
@@ -168,6 +169,25 @@
         },
         "position": {
           "x": 960,
+          "y": 270
+        },
+        "z": 3,
+        "parent": "e3f368ef-533b-484c-b3f4-897729901208",
+        "embeds": [],
+        "dependson": [
+          "fe5557b3-266c-40ef-b6bd-4ad21f7511c5"
+        ],
+        "isrelatedto": [
+          "d232ad6c-80ca-4c33-ac38-bbbf89e7dd4a"
+        ]
+      },
+      "0b3b1e8b-5559-4a13-bf67-7312d43b361c": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 1050,
           "y": 270
         },
         "z": 3,
@@ -331,7 +351,121 @@
         }
       }
     },
-    "EfsNode2": {
+    "EbsNode3": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "InstanceType": "t2.medium",
+        "ImageId": "ami-44831524",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "EbsNode3"
+          }
+        ],
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "NetworkInterfaces": [
+          {
+            "GroupSet": [
+              {
+                "Ref": "ScaleIOSecGroup"
+              }
+            ],
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "DeleteOnTermination": "true",
+            "PrivateIpAddress": "10.0.0.13",
+            "SubnetId": {
+              "Ref": "ScaleIOSubnet"
+            }
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -xe\n",
+                "echo EbsNode3 > /etc/hostname",
+                "yum update -y aws-cfn-bootstrap\n",
+                "# Install the files and packages from the metadata\n",
+                "/opt/aws/bin/cfn-init -v ",
+                "         --stack ",
+                {
+                  "Ref": "AWS::StackName"
+                },
+                "         --resource WebServerInstance ",
+                "         --configsets All ",
+                "         --region ",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "\n",
+                "# Signal the status from cfn-init\n",
+                "/opt/aws/bin/cfn-signal -e $? ",
+                "         --stack ",
+                {
+                  "Ref": "AWS::StackName"
+                },
+                "         --resource WebServerInstance ",
+                "         --region ",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "\n"
+              ]
+            ]
+          }
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "0b3b1e8b-5559-4a13-bf67-7312d43b361c"
+        },
+        "AWS::CloudFormation::Init": {
+          "configSets": {
+            "All": [
+              "ConfigureSampleApp"
+            ]
+          },
+          "ConfigureSampleApp": {
+            "packages": {
+              "yum": {
+                "httpd": []
+              }
+            },
+            "files": {
+              "/var/www/html/index.html": {
+                "content": {
+                  "Fn::Join": [
+                    "\n",
+                    [
+                      "<h1>Congratulations, you have successfully launched the AWS CloudFormation sample.</h1>"
+                    ]
+                  ]
+                },
+                "mode": "000644",
+                "owner": "root",
+                "group": "root"
+              }
+            },
+            "services": {
+              "sysvinit": {
+                "httpd": {
+                  "enabled": "true",
+                  "ensureRunning": "true"
+                }
+              }
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "PublicRoute"
+      ]
+    },
+    "EbsNode2": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "InstanceType": "t2.medium",
@@ -339,7 +473,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "EfsNode2"
+            "Value": "EbsNode2"
           }
         ],
         "KeyName": {
@@ -367,7 +501,7 @@
               "",
               [
                 "#!/bin/bash -xe\n",
-                "echo EfsNode2 > /etc/hostname",
+                "echo EbsNode2 > /etc/hostname",
                 "yum update -y aws-cfn-bootstrap\n",
                 "# Install the files and packages from the metadata\n",
                 "/opt/aws/bin/cfn-init -v ",
@@ -445,7 +579,7 @@
         "PublicRoute"
       ]
     },
-    "EfsNode1": {
+    "EbsNode1": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "InstanceType": "t2.medium",
@@ -453,7 +587,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "EfsNode1"
+            "Value": "EbsNode1"
           }
         ],
         "KeyName": {
@@ -481,7 +615,7 @@
               "",
               [
                 "#!/bin/bash -xe\n",
-                "echo EfsNode1 > /etc/hostname",
+                "echo EbsNode1 > /etc/hostname",
                 "yum update -y aws-cfn-bootstrap\n",
                 "# Install the files and packages from the metadata\n",
                 "/opt/aws/bin/cfn-init -v ",
@@ -631,7 +765,7 @@
             "http://",
             {
               "Fn::GetAtt": [
-                "EfsNode1",
+                "EbsNode1",
                 "PublicIp"
               ]
             }
