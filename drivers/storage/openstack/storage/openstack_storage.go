@@ -587,8 +587,13 @@ func (d *driver) VolumeAttach(
 	})
 
 	if opts.Force {
-		if _, err := d.VolumeDetach(ctx, volumeID, &types.VolumeDetachOpts{}); err != nil {
-			return nil, "", err
+		// check if attached before trying a detach
+		if vol, err := d.VolumeInspect(ctx, volumeID, &types.VolumeInspectOpts{Attachments: types.VolAttReq}); err == nil {
+			if len(vol.Attachments) > 0 {
+				if _, err := d.VolumeDetach(ctx, volumeID, &types.VolumeDetachOpts{}); err != nil {
+					return nil, "", err
+				}
+			}
 		}
 	}
 
