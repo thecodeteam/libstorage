@@ -3,7 +3,7 @@
 package remote
 
 import (
-	// import to load
+	// load the storage drivers
 	_ "github.com/codedellemc/libstorage/drivers/storage/azureud/storage"
 	_ "github.com/codedellemc/libstorage/drivers/storage/dobs/storage"
 	_ "github.com/codedellemc/libstorage/drivers/storage/ebs/storage"
