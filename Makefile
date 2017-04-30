@@ -1143,6 +1143,13 @@ test-rbd-clean:
 test-vfs:
 	DRIVERS=vfs $(MAKE) ./drivers/storage/vfs/tests/vfs.test
 
+test-openstack:
+	DRIVERS=openstack $(MAKE) deps
+	DRIVERS=openstack $(MAKE) ./drivers/storage/openstack/tests/openstack.test
+
+test-openstack-clean:
+	DRIVERS=openstack $(MAKE) clean
+
 clean: $(GO_CLEAN)
 
 clobber: clean $(GO_CLOBBER)

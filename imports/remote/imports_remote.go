@@ -11,6 +11,7 @@ import (
 	_ "github.com/codedellemc/libstorage/drivers/storage/fittedcloud/storage"
 	_ "github.com/codedellemc/libstorage/drivers/storage/gcepd/storage"
 	_ "github.com/codedellemc/libstorage/drivers/storage/isilon/storage"
+	_ "github.com/codedellemc/libstorage/drivers/storage/openstack/storage"
 	_ "github.com/codedellemc/libstorage/drivers/storage/rbd/storage"
 	_ "github.com/codedellemc/libstorage/drivers/storage/s3fs/storage"
 	_ "github.com/codedellemc/libstorage/drivers/storage/scaleio/storage"
