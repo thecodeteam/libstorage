@@ -20,6 +20,9 @@ const (
 	// ConfigEBSRegion is a config key.
 	ConfigEBSRegion = ConfigEBS + "." + Region
 
+	// ConfigEBSAvaiZone is a config key.
+	ConfigEBSAvaiZone = ConfigEBS + "." + AvaiZone
+
 	// ConfigEBSEndpoint is a config key.
 	ConfigEBSEndpoint = ConfigEBS + "." + Endpoint
 
@@ -43,6 +46,9 @@ const (
 
 	// ConfigEC2SecretKey is a config key.
 	ConfigEC2SecretKey = ConfigEC2 + "." + SecretKey
+
+	// ConfigEC2AvaiZone is a config key.
+	ConfigEC2AvaiZone = ConfigEC2 + "." + AvaiZone
 
 	// ConfigEC2Region is a config key.
 	ConfigEC2Region = ConfigEC2 + "." + Region
@@ -70,6 +76,9 @@ const (
 
 	// ConfigAWSSecretKey is a config key.
 	ConfigAWSSecretKey = ConfigAWS + "." + SecretKey
+
+	// ConfigAWSAvaiZone is a config key.
+	ConfigAWSAvaiZone = ConfigAWS + "." + AvaiZone
 
 	// ConfigAWSRegion is a config key.
 	ConfigAWSRegion = ConfigAWS + "." + Region
