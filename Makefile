@@ -22,6 +22,17 @@ ifneq (,$(BUILD_TAGS))
 BUILD_TAGS := $(sort $(BUILD_TAGS))
 endif
 
+#make a new line
+define \n
+
+
+endef
+
+#This allows the ability to enable code coverage testing based on if a
+#a particular driver's file has been modified. If it has, that test is enabled.
+#The issue with this is the code coverage percent jumps up and then back down.
+#FOUND_DRIVERS := $(foreach d,$(DRIVERS),$(foreach f,$(CHANGED_FILES),$(if $d,$(findstring $d,$f),$d)))
+
 all:
 # if docker is running, then let's use docker to build it
 ifneq (,$(shell if docker version &> /dev/null; then echo -; fi))
@@ -810,11 +821,23 @@ GO_PHONY += $$(PKG_TA_$1)-clean
 GO_CLEAN += $$(PKG_TA_$1)-clean
 
 $$(PKG_TC_$1): $$(PKG_TA_$1)
+ifeq (true,$(TRAVIS_TESTING))
+ifeq ($(COVERED_GO_VERSION),$(GOVERSION))
+	if [ -a $1/test-run.sh ] ; \
+	then \
+		$1/test-run.sh $$(PKG_TA_$1) ; \
+	else \
+		$$(PKG_TA_$1) -test.coverprofile $$@  $$(GO_TEST_FLAGS) ; \
+	fi;
+endif
+else
 ifeq (1,$(COVERAGE_ENABLED))
 	$$(PKG_TA_$1) -test.coverprofile $$@ $$(GO_TEST_FLAGS)
 else
 	$$(PKG_TA_$1) $$(GO_TEST_FLAGS) && touch $$@
 endif
+endif
+
 TEST_PROFILES += $$(PKG_TC_$1)
 
 $$(PKG_TC_$1)-clean:
@@ -1078,12 +1101,36 @@ build-client-nogofig:
 	go build ./client
 
 build:
+	$(MAKE) test-env-up
 	$(MAKE) build-generated
 	$(MAKE) build-libstorage
 ifeq ($(GOOS),$(GOHOSTOS))
 	$(MAKE) libstor-c libstor-s
 endif
 	$(MAKE) build-lss
+ifeq (true,$(TRAVIS_TESTING))
+	$(MAKE) cover
+endif
+	$(MAKE) test-env-down
+
+test-env-up:
+ifeq (true,$(TRAVIS_TESTING))
+ifeq ($(COVERED_GO_VERSION),$(GOVERSION))
+	@echo Begin environment creation
+	$(foreach d,$(DRIVERS), ./drivers/storage/$(d)/tests/test-env-up.sh${\n})
+	@echo Finish environment creation
+endif
+endif
+
+test-env-down:
+ifeq (true,$(TRAVIS_TESTING))
+ifeq ($(COVERED_GO_VERSION),$(GOVERSION))
+	@echo Begin environment teardown
+	$(foreach d,$(DRIVERS), echo ./drivers/storage/$(d)/tests/test-env-down.sh >> ./teardown.txt${\n})
+	NUMOFLINES=$$(wc -l ./teardown.txt | awk '{print $$1}'); parallel --jobs $$NUMOFLINES < ./teardown.txt
+	@echo Finish environment teardown
+endif
+endif
 
 parallel-test: $(filter-out ./drivers/storage/vfs/%,$(GO_TEST))
 vfs-test: $(filter ./drivers/storage/vfs/%,$(GO_TEST))
