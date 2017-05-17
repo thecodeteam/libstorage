@@ -1,0 +1,40 @@
+rexray:
+  logLevel: debug
+  modules:
+    default-docker:
+      type: docker
+      libstorage:
+        service: scaleio
+      host: unix:///run/docker/plugins/docker.sock
+    mesos:
+      type: docker
+      libstorage:
+        service: scaleio
+      host: unix:///run/docker/plugins/mesos.sock
+      libstorage:
+        integration:
+          volume:
+            operations:
+              unmount:
+                ignoreUsedCount: true
+    rexray:
+      type: docker
+      libstorage:
+        service: scaleio
+      host: unix:///run/docker/plugins/rexray.sock
+libstorage:
+  service: scaleio
+  integration:
+    volume:
+      operations:
+        mount:
+          preempt: true
+scaleio:
+  endpoint: https://10.0.0.11/api
+  insecure: true
+  thinOrThick: ThinProvisioned
+  userName: admin
+  password: F00barbaz
+  systemId: 6f831c6866417634
+  protectionDomainName: default
+  storagePoolName: default
