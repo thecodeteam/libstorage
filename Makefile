@@ -305,7 +305,7 @@ GO_STDLIB := archive archive/tar archive/zip bufio builtin bytes compress \
 			 runtime/trace sort strconv strings sync sync/atomic syscall \
 			 testing testing/iotest testing/quick text text/scanner \
 			 text/tabwriter text/template text/template/parse time unicode \
-			 unicode/utf16 unicode/utf8 unsafe
+			 unicode/utf16 unicode/utf8 unsafe context plugin
 
 
 ################################################################################
@@ -554,6 +554,7 @@ TEST_EXT_DEPS_SRCS := $(sort $(TEST_EXT_DEPS_SRCS))
 ALL_EXT_DEPS := $(sort $(EXT_DEPS) $(TEST_EXT_DEPS))
 ALL_EXT_DEPS_SRCS := $(sort $(EXT_DEPS_SRCS) $(TEST_EXT_DEPS_SRCS))
 
+ifneq (1,$(NODEPS))
 ifneq (1,$(VENDORED))
 
 $(GLIDE):
@@ -595,13 +596,15 @@ GO_PHONY += $(GLIDE_LOCK)-clean
 GO_CLOBBER += $(GLIDE_LOCK)-clean
 
 endif #ifneq (1,$(VENDORED))
-
+endif #ifneq (1,$(NODEPS))
 
 ################################################################################
 ##                                GOBINDATA                                   ##
 ################################################################################
 GO_BINDATA := $(GOPATH)/bin/go-bindata
 go-bindata: $(GO_BINDATA)
+
+ifneq (1,$(NODEPS))
 
 GO_BINDATA_IMPORT_PATH := vendor/github.com/jteeuwen/go-bindata/go-bindata
 ifneq (1,$(VENDORED))
@@ -618,6 +621,7 @@ $(GO_BINDATA):
 	@touch $@
 GO_DEPS += $(GO_BINDATA)
 
+endif #ifneq (1,$(NODEPS))
 
 ################################################################################
 ##                               GOMETALINTER                                 ##
@@ -629,10 +633,12 @@ endif
 ifneq (1,$(GOMETALINTER_DISABLED))
 GOMETALINTER := $(GOPATH)/bin/gometalinter
 
+ifneq (1,$(NODEPS))
 $(GOMETALINTER): | $(GOMETALINTER_TOOLS)
 	GOOS="" GOARCH="" go get -u github.com/alecthomas/gometalinter
 gometalinter: $(GOMETALINTER)
 GO_DEPS += $(GOMETALINTER)
+endif # ifneq (1,$(NODEPS))
 
 GOMETALINTER_TOOLS_D := .gometalinter.tools.d
 $(GOMETALINTER_TOOLS_D): $(GOMETALINTER)
@@ -1377,7 +1383,12 @@ cover-debug:
 ################################################################################
 ##                                  TARGETS                                   ##
 ################################################################################
+ifeq (1,$(NODEPS))
+deps:
+	@echo nodeps
+else
 deps: $(GO_DEPS)
+endif
 
 build-tests: $(GO_BUILD_TESTS)
 

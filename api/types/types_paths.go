@@ -18,6 +18,9 @@ type PathConfig struct {
 	// Log is the path to the log directory.
 	Log string
 
+	// Mod is the path to the mod directory.
+	Mod string
+
 	// Run is the path to the run directory.
 	Run string
 

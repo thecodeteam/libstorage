@@ -14,6 +14,7 @@ import (
 	"github.com/akutz/goof"
 
 	"github.com/codedellemc/libstorage/api/context"
+	apimods "github.com/codedellemc/libstorage/api/mods"
 	"github.com/codedellemc/libstorage/api/registry"
 	apitypes "github.com/codedellemc/libstorage/api/types"
 	"github.com/codedellemc/libstorage/api/utils"
@@ -31,7 +32,12 @@ var cmdRx = regexp.MustCompile(
 func Run() {
 
 	ctx := context.Background()
-	ctx = ctx.WithValue(context.PathConfigKey, utils.NewPathConfig(ctx, "", ""))
+	pathConfig := utils.NewPathConfig(ctx, "", "")
+	ctx = ctx.WithValue(context.PathConfigKey, pathConfig)
+
+	// load shared objects
+	apimods.LoadModules(ctx, pathConfig)
+
 	registry.ProcessRegisteredConfigs(ctx)
 
 	args := os.Args

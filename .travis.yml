@@ -2,23 +2,23 @@ go_import_path: github.com/codedellemc/libstorage
 
 language: go
 go:
-  - 1.6.3
-  - 1.7.5
-  - 1.8
-  - tip
+#  - 1.6.3
+#  - 1.7.5
+  - 1.8.3
+#  - tip
 
 os:
   - linux
 
 env:
   - TRAVIS_GOARCH=amd64 BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
-  - TRAVIS_GOARCH=arm BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
-  - TRAVIS_GOARCH=arm64 BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
-  - VFS_INSTANCEID_USE_FIELDS=true BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
-  - LIBSTORAGE_TEST_TCP=false LIBSTORAGE_TEST_TCP_TLS=true BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
-  - LIBSTORAGE_TEST_TCP=false LIBSTORAGE_TEST_TCP_TLS_PEERS=true BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
-  - BUILD_TAGS="gofig pflag libstorage_integration_driver_linux"
-  - BUILD_TAGS=""
+#  - TRAVIS_GOARCH=arm BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
+#  - TRAVIS_GOARCH=arm64 BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
+#  - VFS_INSTANCEID_USE_FIELDS=true BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
+#  - LIBSTORAGE_TEST_TCP=false LIBSTORAGE_TEST_TCP_TLS=true BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
+#  - LIBSTORAGE_TEST_TCP=false LIBSTORAGE_TEST_TCP_TLS_PEERS=true BUILD_TAGS="gofig pflag libstorage_integration_driver_linux libstorage_storage_driver libstorage_storage_driver_vfs libstorage_storage_executor libstorage_storage_executor_vfs"
+#  - BUILD_TAGS="gofig pflag libstorage_integration_driver_linux"
+#  - BUILD_TAGS=""
 
 matrix:
   fast_finish: true
@@ -55,9 +55,18 @@ before_install:
   - git config --global 'url.https://gopkg.in/fsnotify.v1.insteadof' 'https://gopkg.in/fsnotify.v1/'
   - git config --global 'url.https://github.com/.insteadof' 'git://github.com/'
   - git config --global 'url.https://github.com/.insteadof' 'git@github.com:'
-  - make version
-  - make info
   - make deps
+  - export PROJECT_NAME="libstorage"
+  - export GOPATH_OLD="$GOPATH"
+  - export GOPATH="/tmp/go"
+  - mkdir -p "$GOPATH"/{bin,pkg,src}
+  - mv "$GOPATH_OLD"/bin/* "$GOPATH"/bin/
+  - export PATH="${GOPATH}/bin:${PATH}"
+  - mkdir -p "$GOPATH"/src/github.com/codedellemc
+  - rsync -ax vendor/ "$GOPATH"/src/ && rm -fr vendor
+  - cd .. && mv "$PROJECT_NAME" "$GOPATH"/src/github.com/codedellemc/
+  - cd "$GOPATH"/src/github.com/codedellemc/"$PROJECT_NAME"
+  - make info
 
 script:
   - make gometalinter-all
