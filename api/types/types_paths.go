@@ -15,6 +15,9 @@ type PathConfig struct {
 	// Lib is the path to the lib directory.
 	Lib string
 
+	// Mod is the path to the mod directory.
+	Mod string
+
 	// Log is the path to the log directory.
 	Log string
 
