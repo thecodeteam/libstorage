@@ -14,14 +14,15 @@ import (
 	"github.com/akutz/goof"
 
 	"github.com/codedellemc/libstorage/api/context"
+	apimods "github.com/codedellemc/libstorage/api/mods"
 	"github.com/codedellemc/libstorage/api/registry"
 	apitypes "github.com/codedellemc/libstorage/api/types"
+	apitypesV1 "github.com/codedellemc/libstorage/api/types/v1"
 	"github.com/codedellemc/libstorage/api/utils"
 	apiconfig "github.com/codedellemc/libstorage/api/utils/config"
 
 	// load these packages
 	_ "github.com/codedellemc/libstorage/imports/config"
-	_ "github.com/codedellemc/libstorage/imports/executors"
 )
 
 var cmdRx = regexp.MustCompile(
@@ -31,7 +32,12 @@ var cmdRx = regexp.MustCompile(
 func Run() {
 
 	ctx := context.Background()
-	ctx = ctx.WithValue(context.PathConfigKey, utils.NewPathConfig(ctx, "", ""))
+	pathConfig := utils.NewPathConfig(ctx, "", "")
+	ctx = ctx.WithValue(context.PathConfigKey, pathConfig)
+
+	// load shared objects
+	apimods.LoadModules(ctx, pathConfig)
+
 	registry.ProcessRegisteredConfigs(ctx)
 
 	args := os.Args
@@ -39,13 +45,13 @@ func Run() {
 		printUsageAndExit()
 	}
 
-	d, err := registry.NewStorageExecutor(args[1])
+	d, err := registry.NewModType(args[1])
 	if err != nil {
 		fmt.Fprintf(apitypes.Stderr, "error: %v\n", err)
 		os.Exit(1)
 	}
 
-	driverName := strings.ToLower(d.Name())
+	//driverName := strings.ToLower(d.Name())
 
 	config, err := apiconfig.NewConfig(ctx)
 	if err != nil {
@@ -180,16 +186,15 @@ func Run() {
 		}
 	} else if strings.EqualFold(cmd, apitypes.LSXCmdInstanceID) {
 		op = apitypes.LSXCmdInstanceID
-		opResult, opErr := d.InstanceID(ctx, store)
+		opResult, opErr := d.Do(ctx, apitypesV1.SdInstanceID)
 		if opErr != nil {
 			err = opErr
 		} else {
-			opResult.Driver = driverName
 			result = opResult
 		}
 	} else if strings.EqualFold(cmd, apitypes.LSXCmdNextDevice) {
 		op = apitypes.LSXCmdNextDevice
-		opResult, opErr := d.NextDevice(ctx, store)
+		opResult, opErr := d.Do(ctx, apitypesV1.SdNextDevice)
 		if opErr != nil && opErr != apitypes.ErrNotImplemented {
 			err = opErr
 		} else {
@@ -200,14 +205,14 @@ func Run() {
 			printUsageAndExit()
 		}
 		op = apitypes.LSXCmdLocalDevices
-		opResult, opErr := d.LocalDevices(ctx, &apitypes.LocalDevicesOpts{
-			ScanType: apitypes.ParseDeviceScanType(args[3]),
-			Opts:     store,
-		})
+		opResult, opErr := d.Do(ctx, apitypesV1.SdLocalDevices,
+			&apitypes.LocalDevicesOpts{
+				ScanType: apitypes.ParseDeviceScanType(args[3]),
+				Opts:     store,
+			})
 		if opErr != nil {
 			err = opErr
 		} else {
-			opResult.Driver = driverName
 			result = opResult
 		}
 	} else if strings.EqualFold(cmd, apitypes.LSXCmdWaitForDevice) {
@@ -224,23 +229,24 @@ func Run() {
 			Timeout: utils.DeviceAttachTimeout(args[5]),
 		}
 
-		ldl := func() (bool, *apitypes.LocalDevices, error) {
-			ldm, err := d.LocalDevices(ctx, &opts.LocalDevicesOpts)
+		ldl := func() (bool, interface{}, error) {
+			/*opResult, opErr :=*/ d.Do(
+				ctx, apitypesV1.SdLocalDevices, &opts.LocalDevicesOpts)
 			if err != nil {
 				return false, nil, err
 			}
-			for k := range ldm.DeviceMap {
+			/*for k := range ldm.DeviceMap {
 				if strings.ToLower(k) == opts.Token {
 					return true, ldm, nil
 				}
-			}
-			return false, ldm, nil
+			}*/
+			return false, nil, nil
 		}
 
 		var (
 			found    bool
 			opErr    error
-			opResult *apitypes.LocalDevices
+			opResult interface{}
 			timeoutC = time.After(opts.Timeout)
 			tick     = time.Tick(500 * time.Millisecond)
 		)
@@ -262,7 +268,6 @@ func Run() {
 		if opErr != nil {
 			err = opErr
 		} else {
-			opResult.Driver = driverName
 			result = opResult
 		}
 	}
@@ -334,7 +339,7 @@ func isNullBuf(buf []byte) bool {
 func executorNames() <-chan string {
 	c := make(chan string)
 	go func() {
-		for se := range registry.StorageExecutors() {
+		for se := range registry.ModTypes() {
 			c <- strings.ToLower(se.Name())
 		}
 		close(c)

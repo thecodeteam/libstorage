@@ -3,6 +3,7 @@
 package registry
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 
@@ -10,9 +11,13 @@ import (
 	"github.com/akutz/goof"
 
 	"github.com/codedellemc/libstorage/api/types"
+	apitypesV1 "github.com/codedellemc/libstorage/api/types/v1"
 )
 
 var (
+	modTypeCtors    = map[string]func() interface{}{}
+	modTypeCtorsRWL = &sync.RWMutex{}
+
 	storExecsCtors    = map[string]types.NewStorageExecutor{}
 	storExecsCtorsRWL = &sync.RWMutex{}
 
@@ -42,6 +47,13 @@ func RegisterConfigReg(name string, f types.NewConfigReg) {
 	cfgRegsRWL.Lock()
 	defer cfgRegsRWL.Unlock()
 	cfgRegs = append(cfgRegs, &cregW{name, f})
+}
+
+// RegisterModType registers a type from a plug-in mod.
+func RegisterModType(name string, ctor func() interface{}) {
+	modTypeCtorsRWL.Lock()
+	defer modTypeCtorsRWL.Unlock()
+	modTypeCtors[strings.ToLower(name)] = ctor
 }
 
 // RegisterRouter registers a Router.
@@ -78,6 +90,31 @@ func RegisterIntegrationDriver(name string, ctor types.NewIntegrationDriver) {
 	intDriverCtorsRWL.Lock()
 	defer intDriverCtorsRWL.Unlock()
 	intDriverCtors[strings.ToLower(name)] = ctor
+}
+
+// NewModType returns a new instance of the specified module type.
+func NewModType(name string) (apitypesV1.Driver, error) {
+
+	var ok bool
+	var ctor func() interface{}
+
+	func() {
+		modTypeCtorsRWL.RLock()
+		defer modTypeCtorsRWL.RUnlock()
+		ctor, ok = modTypeCtors[name]
+	}()
+
+	if !ok {
+		return nil, goof.WithField("modType", name, "invalid type name")
+	}
+
+	d, ok := ctor().(apitypesV1.Driver)
+	if !ok {
+		return nil, goof.WithField(
+			"modType", fmt.Sprintf("%T", d), "invalid type")
+	}
+
+	return d, nil
 }
 
 // NewStorageExecutor returns a new instance of the executor specified by the
@@ -171,6 +208,23 @@ func ConfigRegs(ctx types.Context) <-chan gofig.ConfigRegistration {
 			r := NewConfigReg(cr.name)
 			cr.creg(ctx, r)
 			c <- r
+		}
+		close(c)
+	}()
+	return c
+}
+
+// ModTypes returns a channel on which new instances of all registered
+// module types.
+func ModTypes() <-chan apitypesV1.Driver {
+	c := make(chan apitypesV1.Driver)
+	go func() {
+		modTypeCtorsRWL.RLock()
+		defer modTypeCtorsRWL.RUnlock()
+		for _, ctor := range modTypeCtors {
+			if d, ok := ctor().(apitypesV1.Driver); ok {
+				c <- d
+			}
 		}
 		close(c)
 	}()

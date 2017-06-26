@@ -36,6 +36,7 @@ func NewPathConfig(ctx types.Context, home, token string) *types.PathConfig {
 		envVarHomeEtc    = fmt.Sprintf("%s_HOME_ETC", ucTok)
 		envVarHomeEtcTLS = fmt.Sprintf("%s_HOME_ETC_TLS", ucTok)
 		envVarHomeLib    = fmt.Sprintf("%s_HOME_LIB", ucTok)
+		envVarHomeLibMod = fmt.Sprintf("%s_HOME_LIB_MOD", ucTok)
 		envVarHomeLog    = fmt.Sprintf("%s_HOME_LOG", ucTok)
 		envVarHomeRun    = fmt.Sprintf("%s_HOME_RUN", ucTok)
 		envVarHomeLSX    = fmt.Sprintf("%s_HOME_LSX", ucTok)
@@ -57,6 +58,7 @@ func NewPathConfig(ctx types.Context, home, token string) *types.PathConfig {
 	initPathConfigFieldWithEnvVar(ctx, envVarHomeEtc, &pathConfig.Etc)
 	initPathConfigFieldWithEnvVar(ctx, envVarHomeEtcTLS, &pathConfig.TLS)
 	initPathConfigFieldWithEnvVar(ctx, envVarHomeLib, &pathConfig.Lib)
+	initPathConfigFieldWithEnvVar(ctx, envVarHomeLibMod, &pathConfig.Mod)
 	initPathConfigFieldWithEnvVar(ctx, envVarHomeLog, &pathConfig.Log)
 	initPathConfigFieldWithEnvVar(ctx, envVarHomeRun, &pathConfig.Run)
 	initPathConfigFieldWithEnvVar(ctx, envVarHomeLSX, &pathConfig.LSX)
@@ -84,6 +86,8 @@ func NewPathConfig(ctx types.Context, home, token string) *types.PathConfig {
 		ctx, false, true, token, pathConfig.Etc, "tls", &pathConfig.TLS)
 	initPathConfigFieldWithPath(
 		ctx, root, true, token, pathConfig.Home, "var/lib", &pathConfig.Lib)
+	initPathConfigFieldWithPath(
+		ctx, false, true, token, pathConfig.Lib, "mod", &pathConfig.Mod)
 	initPathConfigFieldWithPath(
 		ctx, root, true, token, pathConfig.Home, "var/log", &pathConfig.Log)
 	initPathConfigFieldWithPath(
