@@ -74,9 +74,12 @@ var errNoAvaiDevice = goof.New("no available device")
 func (d *driver) NextDevice(
 	ctx types.Context,
 	opts types.Store) (string, error) {
-	// All possible device paths on Linux EC2 instances are /dev/xvd[f-p]
-	letters := []string{
-		"f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"}
+	// All possible device paths on Linux EC2 instances are /dev/xvd[b-c][a-z]
+	// See http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html
+	parentLetters := []string{"b", "c"}
+	childLetters := []string{
+		"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+		"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 
 	// Find which letters are used for local devices
 	localDeviceNames := make(map[string]bool)
@@ -115,19 +118,22 @@ func (d *driver) NextDevice(
 	}
 
 	// Find next available letter for device path
-	for _, letter := range letters {
-		if localDeviceNames[letter] {
-			continue
+	for _, p := range parentLetters {
+		for _, c := range childLetters {
+			suffix := p + c
+			if localDeviceNames[suffix] {
+				continue
+			}
+			return fmt.Sprintf(
+				"/dev/%s%s", ebsUtils.NextDeviceInfo.Prefix, suffix), nil
 		}
-		return fmt.Sprintf(
-			"/dev/%s%s", ebsUtils.NextDeviceInfo.Prefix, letter), nil
 	}
 	return "", errNoAvaiDevice
 }
 
 const procPartitions = "/proc/partitions"
 
-var xvdRX = regexp.MustCompile(`^xvd[a-z]$`)
+var xvdRX = regexp.MustCompile(`^xvd[b-c][a-z]$`)
 
 // Retrieve device paths currently attached and/or mounted
 func (d *driver) LocalDevices(

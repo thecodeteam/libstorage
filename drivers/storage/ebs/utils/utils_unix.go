@@ -14,6 +14,6 @@ import (
 // it will appear locally as /dev/xvd*
 var NextDeviceInfo = &types.NextDeviceInfo{
 	Prefix:  "xvd",
-	Pattern: "[f-p]",
+	Pattern: "[b-c][a-z]",
 	Ignore:  false,
 }
