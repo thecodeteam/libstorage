@@ -6,10 +6,12 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"math/rand"
 	"os"
 	"path"
 	"regexp"
 	"strings"
+	"time"
 
 	gofig "github.com/akutz/gofig/types"
 	"github.com/akutz/goof"
@@ -118,9 +120,10 @@ func (d *driver) NextDevice(
 	}
 
 	// Find next available letter for device path
-	for _, p := range parentLetters {
-		for _, c := range childLetters {
-			suffix := p + c
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+	for _, pIndex := range r.Perm(len(parentLetters)) {
+		for _, cIndex := range r.Perm(len(childLetters)) {
+			suffix := parentLetters[pIndex] + childLetters[cIndex]
 			if localDeviceNames[suffix] {
 				continue
 			}
