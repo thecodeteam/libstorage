@@ -120,7 +120,7 @@ func (d *driver) NextDevice(
 	}
 
 	// Find next available letter for device path
-	r := rand.New(rand.NewSource(time.Now().Unix()))
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for _, pIndex := range r.Perm(len(parentLetters)) {
 		for _, cIndex := range r.Perm(len(childLetters)) {
 			suffix := parentLetters[pIndex] + childLetters[cIndex]
