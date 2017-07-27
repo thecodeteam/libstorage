@@ -6,10 +6,12 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"math/rand"
 	"os"
 	"path"
 	"regexp"
 	"strings"
+	"time"
 
 	gofig "github.com/akutz/gofig/types"
 	"github.com/akutz/goof"
@@ -74,9 +76,12 @@ var errNoAvaiDevice = goof.New("no available device")
 func (d *driver) NextDevice(
 	ctx types.Context,
 	opts types.Store) (string, error) {
-	// All possible device paths on Linux EC2 instances are /dev/xvd[f-p]
-	letters := []string{
-		"f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"}
+	// All possible device paths on Linux EC2 instances are /dev/xvd[b-c][a-z]
+	// See http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html
+	parentLetters := []string{"b", "c"}
+	childLetters := []string{
+		"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+		"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 
 	// Find which letters are used for local devices
 	localDeviceNames := make(map[string]bool)
@@ -115,19 +120,23 @@ func (d *driver) NextDevice(
 	}
 
 	// Find next available letter for device path
-	for _, letter := range letters {
-		if localDeviceNames[letter] {
-			continue
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for _, pIndex := range r.Perm(len(parentLetters)) {
+		for _, cIndex := range r.Perm(len(childLetters)) {
+			suffix := parentLetters[pIndex] + childLetters[cIndex]
+			if localDeviceNames[suffix] {
+				continue
+			}
+			return fmt.Sprintf(
+				"/dev/%s%s", ebsUtils.NextDeviceInfo.Prefix, suffix), nil
 		}
-		return fmt.Sprintf(
-			"/dev/%s%s", ebsUtils.NextDeviceInfo.Prefix, letter), nil
 	}
 	return "", errNoAvaiDevice
 }
 
 const procPartitions = "/proc/partitions"
 
-var xvdRX = regexp.MustCompile(`^xvd[a-z]$`)
+var xvdRX = regexp.MustCompile(`^xvd[b-c][a-z]$`)
 
 // Retrieve device paths currently attached and/or mounted
 func (d *driver) LocalDevices(
