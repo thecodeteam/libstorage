@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"hash"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -44,6 +45,7 @@ type driver struct {
 	config        gofig.Config
 	region        *string
 	endpoint      *string
+	avaiZone      *string
 	maxRetries    *int
 	accessKey     string
 	kmsKeyID      string
@@ -76,6 +78,9 @@ func (d *driver) Init(context types.Context, config gofig.Config) error {
 	ebs.BackCompat(config)
 	d.config = config
 	d.accessKey = d.getAccessKey()
+	if v := d.getAvaiZone(); v != "" {
+		d.avaiZone = &v
+	}
 	if v := d.getRegion(); v != "" {
 		d.region = &v
 	}
@@ -124,18 +129,27 @@ func (d *driver) Login(ctx types.Context) (interface{}, error) {
 	defer sessionsL.Unlock()
 
 	var (
-		endpoint *string
-		ckey     string
-		hkey     = md5.New()
-		akey     = d.accessKey
-		region   = d.mustRegion(ctx)
+		endpoint            *string
+		endpointIsImportant bool
+		ckey                string
+		hkey                = md5.New()
+		akey                = d.accessKey
+		region              = d.mustRegion(ctx)
 	)
 
-	if region != nil {
-		szEndpint := fmt.Sprintf("ec2.%s.amazonaws.com", *region)
-		endpoint = &szEndpint
-	} else {
-		endpoint = d.endpoint
+	if d.endpoint != nil {
+		if v, ok := isImportant(*d.endpoint); ok {
+			endpoint = &v
+			endpointIsImportant = true
+		}
+	}
+	if !endpointIsImportant {
+		if region != nil {
+			szEndpint := fmt.Sprintf("ec2.%s.amazonaws.com", *region)
+			endpoint = &szEndpint
+		} else {
+			endpoint = d.endpoint
+		}
 	}
 
 	writeHkey(hkey, region)
@@ -211,7 +225,22 @@ func mustInstanceIDID(ctx types.Context) *string {
 	return &context.MustInstanceID(ctx).ID
 }
 
+var rxImportant = regexp.MustCompile(`^(?i)(.+?)\s+!important$`)
+
+func isImportant(s string) (string, bool) {
+	m := rxImportant.FindStringSubmatch(s)
+	if len(m) == 0 {
+		return "", false
+	}
+	return m[1], true
+}
+
 func (d *driver) mustRegion(ctx types.Context) *string {
+	if d.region != nil {
+		if region, ok := isImportant(*d.region); ok {
+			return &region
+		}
+	}
 	if iid, ok := context.InstanceID(ctx); ok {
 		if v, ok := iid.Fields[ebs.InstanceIDFieldRegion]; ok && v != "" {
 			return &v
@@ -221,6 +250,11 @@ func (d *driver) mustRegion(ctx types.Context) *string {
 }
 
 func (d *driver) mustAvailabilityZone(ctx types.Context) *string {
+	if d.avaiZone != nil {
+		if az, ok := isImportant(*d.avaiZone); ok {
+			return &az
+		}
+	}
 	if iid, ok := context.InstanceID(ctx); ok {
 		if v, ok := iid.Fields[ebs.InstanceIDFieldAvailabilityZone]; ok {
 			if v != "" {
@@ -1385,6 +1419,16 @@ func (d *driver) getRegion() string {
 		return region
 	}
 	return d.config.GetString(ebs.ConfigEC2Region)
+}
+
+func (d *driver) getAvaiZone() string {
+	if az := d.config.GetString(ebs.ConfigEBSAvaiZone); az != "" {
+		return az
+	}
+	if az := d.config.GetString(ebs.ConfigAWSAvaiZone); az != "" {
+		return az
+	}
+	return d.config.GetString(ebs.ConfigEC2AvaiZone)
 }
 
 func (d *driver) getEndpoint() string {

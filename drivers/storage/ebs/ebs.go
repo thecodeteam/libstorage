@@ -51,6 +51,9 @@ const (
 	// Endpoint is a key constant.
 	Endpoint = "endpoint"
 
+	// AvaiZone is a key constant.
+	AvaiZone = "availabilityZone"
+
 	// MaxRetries is a key constant.
 	MaxRetries = "maxRetries"
 
@@ -90,6 +93,7 @@ func init() {
 	r.Key(gofig.String, "", "", "", Name+"."+SecretKey)
 	r.Key(gofig.String, "", "", "", Name+"."+Region)
 	r.Key(gofig.String, "", "", "", Name+"."+Endpoint)
+	r.Key(gofig.String, "", "", "", Name+"."+AvaiZone)
 	r.Key(gofig.Int, "", DefaultMaxRetries, "", Name+"."+MaxRetries)
 	r.Key(gofig.String, "", "", "Tag prefix for EBS naming", Name+"."+Tag)
 	r.Key(gofig.String, "", "", "", Name+"."+KmsKeyID)
@@ -104,6 +108,7 @@ func init() {
 	r.Key(gofig.String, "", "", "", NameEC2+"."+SecretKey)
 	r.Key(gofig.String, "", "", "", NameEC2+"."+Region)
 	r.Key(gofig.String, "", "", "", NameEC2+"."+Endpoint)
+	r.Key(gofig.String, "", "", "", NameEC2+"."+AvaiZone)
 	r.Key(gofig.Int, "", DefaultMaxRetries, "", NameEC2+"."+MaxRetries)
 	r.Key(gofig.String, "", "", "Tag prefix for EBS naming", NameEC2+"."+Tag)
 	r.Key(gofig.String, "", "", "", NameEC2+"."+KmsKeyID)
@@ -112,6 +117,7 @@ func init() {
 	r.Key(gofig.String, "", "", "", NameAWS+"."+SecretKey)
 	r.Key(gofig.String, "", "", "", NameAWS+"."+Region)
 	r.Key(gofig.String, "", "", "", NameAWS+"."+Endpoint)
+	r.Key(gofig.String, "", "", "", NameAWS+"."+AvaiZone)
 	r.Key(gofig.Int, "", DefaultMaxRetries, "", NameAWS+"."+MaxRetries)
 	r.Key(gofig.String, "", "", "Tag prefix for EBS naming", NameAWS+"."+Tag)
 	r.Key(gofig.String, "", "", "", NameAWS+"."+KmsKeyID)
